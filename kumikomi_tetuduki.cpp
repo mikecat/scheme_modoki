@@ -165,7 +165,14 @@ data_t* apply(const std::vector<data_t*>& args,kankyo_t* kankyo) {
 			"apply",2,args.size(),true);
 	} else {
 		std::vector<data_t*> args_list;
-		for(data_t* cur_data=args[1];cur_data->type==DT_CONS;cur_data=cur_data->cons_cdr) {
+		for(std::vector<data_t*>::const_iterator it=args.begin()+1;it+1!=args.end();it++) {
+			args_list.push_back(*it);
+		}
+		if(args.back()->type!=DT_CONS && args.back()->type!=DT_NULL) {
+			return creater_t::creater().create_error_data(
+				"the last argument of apply must be a list");
+		}
+		for(data_t* cur_data=args.back();cur_data->type==DT_CONS;cur_data=cur_data->cons_cdr) {
 			args_list.push_back(cur_data->cons_car);
 		}
 		return tekiyou(args[0],args_list,kankyo);
