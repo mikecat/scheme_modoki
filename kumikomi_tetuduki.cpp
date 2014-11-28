@@ -17,7 +17,8 @@ data_t* add(const std::vector<data_t*>& args,kankyo_t*) {
 // 引き算 例: (- 1 2) => -1
 data_t* sub(const std::vector<data_t*>& args,kankyo_t*) {
 	if(args.size()==0) {
-		return creater_t::creater().create_error_data("cannot subtract nothing");
+		return creater_t::creater().create_argument_number_error_data(
+			"sub",1,args.size(),true);
 	} else if(args.size()==1) {
 		if(args[0]->type==DT_NUM) {
 			return creater_t::creater().create_num_data(-args[0]->num);
@@ -59,7 +60,8 @@ data_t* mul(const std::vector<data_t*>& args,kankyo_t*) {
 // 割り算 例: (/ 4 2) => 2
 data_t* div_func(const std::vector<data_t*>& args,kankyo_t*) {
 	if(args.size()==0) {
-		return creater_t::creater().create_error_data("cannot divide nothing");
+		return creater_t::creater().create_argument_number_error_data(
+			"div",1,args.size(),true);
 	} else {
 		if(args[0]->type!=DT_NUM) {
 			return creater_t::creater().create_error_data(
@@ -81,7 +83,8 @@ data_t* div_func(const std::vector<data_t*>& args,kankyo_t*) {
 // consセルを作成する
 data_t* cons(const std::vector<data_t*>& args,kankyo_t*) {
 	if(args.size()!=2) {
-		return creater_t::creater().create_error_data("bad argument number for cons");
+		return creater_t::creater().create_argument_number_error_data(
+			"cons",2,args.size(),false);
 	} else {
 		return creater_t::creater().create_cons_data(args[0],args[1]);
 	}
@@ -90,7 +93,8 @@ data_t* cons(const std::vector<data_t*>& args,kankyo_t*) {
 // consセルの前の要素
 data_t* car(const std::vector<data_t*>& args,kankyo_t*) {
 	if(args.size()!=1) {
-		return creater_t::creater().create_error_data("bad argument number for car");
+		return creater_t::creater().create_argument_number_error_data(
+			"car",1,args.size(),false);
 	} else {
 		if(args[0]->type!=DT_CONS) {
 			return creater_t::creater().create_error_data(
@@ -104,7 +108,8 @@ data_t* car(const std::vector<data_t*>& args,kankyo_t*) {
 // consセルの後ろの要素
 data_t* cdr(const std::vector<data_t*>& args,kankyo_t*) {
 	if(args.size()!=1) {
-		return creater_t::creater().create_error_data("bad argument number for cdr");
+		return creater_t::creater().create_argument_number_error_data(
+			"cdr",1,args.size(),false);
 	} else {
 		if(args[0]->type!=DT_CONS) {
 			return creater_t::creater().create_error_data(
@@ -118,7 +123,8 @@ data_t* cdr(const std::vector<data_t*>& args,kankyo_t*) {
 // consセルの前の要素を設定する
 data_t* set_car(const std::vector<data_t*>& args,kankyo_t*) {
 	if(args.size()!=2) {
-		return creater_t::creater().create_error_data("bad argument number for set-car!");
+		return creater_t::creater().create_argument_number_error_data(
+			"set-car!",2,args.size(),false);
 	} else if(args[0]->type!=DT_CONS) {
 		return creater_t::creater().create_error_data(
 			"attempt to set car of what is not a cons-cell");
@@ -131,7 +137,8 @@ data_t* set_car(const std::vector<data_t*>& args,kankyo_t*) {
 // consセルの後ろの要素を設定する
 data_t* set_cdr(const std::vector<data_t*>& args,kankyo_t*) {
 	if(args.size()!=2) {
-		return creater_t::creater().create_error_data("bad argument number for set-cdr!");
+		return creater_t::creater().create_argument_number_error_data(
+			"set-cdr!",2,args.size(),false);
 	} else if(args[0]->type!=DT_CONS) {
 		return creater_t::creater().create_error_data(
 			"attempt to set cdr of what is not a cons-cell");
@@ -144,7 +151,8 @@ data_t* set_cdr(const std::vector<data_t*>& args,kankyo_t*) {
 // 引数が'()かを判定する
 data_t* is_null(const std::vector<data_t*>& args,kankyo_t*) {
 	if(args.size()!=1) {
-		return creater_t::creater().create_error_data("bad argument number for null?");
+		return creater_t::creater().create_argument_number_error_data(
+			"null?",1,args.size(),false);
 	} else {
 		return creater_t::creater().create_boolean_data(args[0]->type==DT_NULL);
 	}
@@ -153,7 +161,8 @@ data_t* is_null(const std::vector<data_t*>& args,kankyo_t*) {
 // 手続きを引数リストに適用する
 data_t* apply(const std::vector<data_t*>& args,kankyo_t* kankyo) {
 	if(args.size()<2) {
-		return creater_t::creater().create_error_data("bad argument number for apply");
+		return creater_t::creater().create_argument_number_error_data(
+			"apply",2,args.size(),true);
 	} else {
 		std::vector<data_t*> args_list;
 		for(data_t* cur_data=args[1];cur_data->type==DT_CONS;cur_data=cur_data->cons_cdr) {
@@ -171,7 +180,8 @@ data_t* exit_func(const std::vector<data_t*>&,kankyo_t*) {
 // 引数(未評価)を返す
 data_t* quote_proc(const std::vector<data_t*>& args,kankyo_t*) {
 	if(args.size()!=1) {
-		return creater_t::creater().create_error_data("bad number of arguments for quote");
+		return creater_t::creater().create_argument_number_error_data(
+			"quote",1,args.size(),false);
 	} else {
 		return args[0];
 	}
@@ -180,7 +190,8 @@ data_t* quote_proc(const std::vector<data_t*>& args,kankyo_t*) {
 // 新規束縛の作成
 data_t* define_proc(const std::vector<data_t*>& args,kankyo_t* kankyo) {
 	if(args.size()!=2) {
-		return creater_t::creater().create_error_data("bad number of arguments for define");
+		return creater_t::creater().create_argument_number_error_data(
+			"define",2,args.size(),false);
 	} else if(args[0]->type!=DT_KIGOU) {
 		return creater_t::creater().create_error_data(
 			"you must specify kigou for first argument of define");
@@ -195,7 +206,8 @@ data_t* define_proc(const std::vector<data_t*>& args,kankyo_t* kankyo) {
 // 代入
 data_t* set_proc(const std::vector<data_t*>& args,kankyo_t* kankyo) {
 	if(args.size()!=2) {
-		return creater_t::creater().create_error_data("bad number of arguments for set!");
+		return creater_t::creater().create_argument_number_error_data(
+			"set!",2,args.size(),false);
 	} else if(args[0]->type!=DT_KIGOU) {
 		return creater_t::creater().create_error_data(
 			"you must specify kigou for first argument of set!");
@@ -212,7 +224,8 @@ data_t* set_proc(const std::vector<data_t*>& args,kankyo_t* kankyo) {
 // 新規手続きの作成
 data_t* lambda_proc(const std::vector<data_t*>& args,kankyo_t* kankyo) {
 	if(args.size()<2) {
-		return creater_t::creater().create_error_data("bad number of arguments for lambda");
+		return creater_t::creater().create_argument_number_error_data(
+			"lambda",2,args.size(),true);
 	} else {
 		std::vector<std::string> karihikisu_list;
 		std::vector<data_t*> hontai_list;
@@ -259,7 +272,8 @@ data_t* lambda_proc(const std::vector<data_t*>& args,kankyo_t* kankyo) {
 // 条件分岐
 data_t* if_proc(const std::vector<data_t*>& args,kankyo_t* kankyo) {
 	if(args.size()!=3) {
-		return creater_t::creater().create_error_data("bad number of arguments for if");
+		return creater_t::creater().create_argument_number_error_data(
+			"if",3,args.size(),false);
 	} else {
 		data_t* sinriti=hyouka_data(args[0],kankyo);
 		if(sinriti->type==DT_ERROR)return sinriti;
