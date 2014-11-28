@@ -44,8 +44,8 @@ data_t* tekiyou(data_t* proc, const std::vector<data_t*> args,kankyo_t* kankyo) 
 		kankyo_t* new_kankyo=creater_t::creater().create_kankyo(proc->lambda_kankyo);
 		if(proc->is_kahencho) {
 			if(args.size()+1 < proc->karihikisu.size()) {
-				return creater_t::creater().create_error_data(
-					"arguments too few for lambda-siki");
+				return creater_t::creater().create_argument_number_error_data(
+					"lambda-siki",proc->karihikisu.size()-1,args.size(),true);
 			}
 			for(size_t i=0;i<proc->karihikisu.size()-1;i++) {
 				new_kankyo->sokubaku[proc->karihikisu[i]]=args[i];
@@ -60,8 +60,8 @@ data_t* tekiyou(data_t* proc, const std::vector<data_t*> args,kankyo_t* kankyo) 
 			new_kankyo->sokubaku[proc->karihikisu.back()]=args_list;
 		} else {
 			if(proc->karihikisu.size()!=args.size()) {
-				return creater_t::creater().create_error_data(
-					"invalid number of arguments for lambda-siki");
+				return creater_t::creater().create_argument_number_error_data(
+					"lambda-siki",proc->karihikisu.size(),args.size(),false);
 			}
 			for(size_t i=0;i<args.size();i++) {
 				new_kankyo->sokubaku[proc->karihikisu[i]]=args[i];
