@@ -46,7 +46,6 @@ const std::string& name,size_t min_number,size_t got_number,bool is_kahencho) {
 	char buffer[16];
 	if(is_kahencho) {
 		message+=" at least ";
-		min_number--;
 	}
 	sprintf(buffer,"%u",(unsigned int)min_number);
 	message+=buffer;
