@@ -80,6 +80,55 @@ data_t* div_func(const std::vector<data_t*>& args,kankyo_t*) {
 	}
 }
 
+// 比較共通関数
+data_t* num_cmp(const std::vector<data_t*>& args,
+bool (*cmp_func)(double,double),const std::string& name) {
+	if(args.size()<2) {
+		return creater_t::creater().create_argument_number_error_data(
+			name,2,args.size(),true);
+	} else {
+		bool ok=true;
+		for(size_t i=0;i<args.size();i++) {
+			if(args[i]->type!=DT_NUM) {
+				return creater_t::creater().create_error_data(
+					std::string("arguments for ")+name+" must be numbers");
+			}
+			if(i>0 && !cmp_func(args[i-1]->num,args[i]->num))ok=false;
+		}
+		return creater_t::creater().create_boolean_data(ok);
+	}
+}
+
+// 比較「同じ」
+bool cmp_eq(double a,double b){return a==b;}
+data_t* num_eq(const std::vector<data_t*>& args,kankyo_t*) {
+	return num_cmp(args,cmp_eq,"=");
+}
+
+// 比較「小さい」
+bool cmp_lt(double a,double b){return a<b;}
+data_t* num_lt(const std::vector<data_t*>& args,kankyo_t*) {
+	return num_cmp(args,cmp_lt,"<");
+}
+
+// 比較「以下」
+bool cmp_leq(double a,double b){return a<=b;}
+data_t* num_leq(const std::vector<data_t*>& args,kankyo_t*) {
+	return num_cmp(args,cmp_leq,"<=");
+}
+
+// 比較「大きい」
+bool cmp_gt(double a,double b){return a>b;}
+data_t* num_gt(const std::vector<data_t*>& args,kankyo_t*) {
+	return num_cmp(args,cmp_gt,">");
+}
+
+// 比較「以上」
+bool cmp_geq(double a,double b){return a>=b;}
+data_t* num_geq(const std::vector<data_t*>& args,kankyo_t*) {
+	return num_cmp(args,cmp_geq,">=");
+}
+
 // consセルを作成する
 data_t* cons(const std::vector<data_t*>& args,kankyo_t*) {
 	if(args.size()!=2) {
@@ -295,6 +344,11 @@ void add_kumikomi_tetuduki_to_kankyo(kankyo_t* kankyo) {
 	kankyo->sokubaku["-"]=creater_t::creater().create_native_func_data(sub);
 	kankyo->sokubaku["*"]=creater_t::creater().create_native_func_data(mul);
 	kankyo->sokubaku["/"]=creater_t::creater().create_native_func_data(div_func);
+	kankyo->sokubaku["="]=creater_t::creater().create_native_func_data(num_eq);
+	kankyo->sokubaku["<"]=creater_t::creater().create_native_func_data(num_lt);
+	kankyo->sokubaku["<="]=creater_t::creater().create_native_func_data(num_leq);
+	kankyo->sokubaku[">"]=creater_t::creater().create_native_func_data(num_gt);
+	kankyo->sokubaku[">="]=creater_t::creater().create_native_func_data(num_geq);
 	kankyo->sokubaku["cons"]=creater_t::creater().create_native_func_data(cons);
 	kankyo->sokubaku["car"]=creater_t::creater().create_native_func_data(car);
 	kankyo->sokubaku["cdr"]=creater_t::creater().create_native_func_data(cdr);
