@@ -2,21 +2,9 @@
 #include <cstdlib>
 #include <cctype>
 #include "scheme_modoki.h"
+#include "creater.h"
 #include "kumikomi_tetuduki.h"
 #include "stream_reader.h"
-
-creater_t creater_t::cr;
-
-creater_t::~creater_t() {
-	printf("number of kankyo = %u\n",(unsigned int)kankyo_log.size());
-	printf("number of data   = %u\n",(unsigned int)data_log.size());
-	for(std::vector<kankyo_t*>::iterator it=kankyo_log.begin();it!=kankyo_log.end();it++) {
-		delete *it;
-	}
-	for(std::vector<data_t*>::iterator it=data_log.begin();it!=data_log.end();it++) {
-		delete *it;
-	}
-}
 
 bool is_space_chars(int c) {
 	return c==' ' || c=='\t' || c=='\r' || c=='\n';

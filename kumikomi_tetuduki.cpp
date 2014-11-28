@@ -1,4 +1,5 @@
 #include "kumikomi_tetuduki.h"
+#include "creater.h"
 
 // 足し算 例: (+ 1 2) => 3
 data_t* add(const std::vector<data_t*>& args,kankyo_t*) {
