@@ -212,6 +212,11 @@ data_t* hyouka(stream_reader& sr,kankyo_t* kankyo,bool quote_mode=false) {
 		isdigit(namae[0]) ||
 		(namae[0]=='.' && (namae.length()>1 && isdigit(namae[1]))))) {
 			return creater_t::creater().create_num_data(atof(namae.c_str()));
+		} else if(!namae.empty() && namae[0]=='#') {
+			if(namae=="#t")return creater_t::creater().create_boolean_data(true);
+			else if(namae=="#f")return creater_t::creater().create_boolean_data(false);
+			else return creater_t::creater().create_error_data(
+				"invalid name with sharp : "+namae);
 		} else if(quote_mode) {
 			return creater_t::creater().create_kigou_data(namae);
 		} else {
