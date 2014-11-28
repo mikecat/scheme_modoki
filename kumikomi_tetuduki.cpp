@@ -1,3 +1,4 @@
+#include <cstdio>
 #include "kumikomi_tetuduki.h"
 #include "creater.h"
 
@@ -327,14 +328,19 @@ data_t* lambda_proc(const std::vector<data_t*>& args,kankyo_t* kankyo) {
 
 // 条件分岐
 data_t* if_proc(const std::vector<data_t*>& args,kankyo_t* kankyo) {
-	if(args.size()!=3) {
-		return creater_t::creater().create_argument_number_error_data(
-			"if",3,args.size(),false);
+	if(args.size()!=2 && args.size()!=3) {
+		char buf[16];
+		sprintf(buf,"%u",(unsigned int)args.size());
+		return creater_t::creater().create_error_data(
+			std::string("invalid number of arguments for if : expected 2 or 3, got ")+buf);
 	} else {
 		data_t* sinriti=hyouka_data(args[0],kankyo);
 		if(sinriti->type==DT_ERROR)return sinriti;
-		return hyouka_data(args[
-			(sinriti->type==DT_BOOLEAN && !sinriti->is_true)?2:1],kankyo);
+		if(sinriti->type==DT_BOOLEAN && !sinriti->is_true) {
+			return args.size()>=3?args[2]:creater_t::creater().create_null_data();
+		} else {
+			return hyouka_data(args[1],kankyo);
+		}
 	}
 }
 
