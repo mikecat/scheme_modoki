@@ -40,7 +40,7 @@ data_t* creater_t::create_error_data(const std::string& str,bool please_exit) {
 	return new_data;
 }
 
-data_t* creater_t::create_argument_number_error(
+data_t* creater_t::create_argument_number_error_data(
 const std::string& name,size_t min_number,size_t got_number,bool is_kahencho) {
 	std::string message="invalid number of arguments for "+name+" : expected ";
 	char buffer[16];
