@@ -14,17 +14,33 @@ data_t* quote_proc(const std::vector<data_t*>& args,kankyo_t*) {
 
 // 新規束縛の作成
 data_t* define_proc(const std::vector<data_t*>& args,kankyo_t* kankyo) {
-	if(args.size()!=2) {
+	if(args.size()<2) {
 		return creater_t::creater().create_argument_number_error_data(
-			"define",2,args.size(),false);
-	} else if(args[0]->type!=DT_KIGOU) {
-		return creater_t::creater().create_error_data(
-			"you must specify kigou for first argument of define");
-	} else {
+			"define",2,args.size(),true);
+	} else if(args[0]->type==DT_CONS) {
+		data_t* name=args[0]->cons_car;
+		if(name->type!=DT_KIGOU) {
+			return creater_t::creater().create_error_data(
+				"you must specify kigou for first argument of define");
+		} else {
+			std::vector<data_t*> lambda_args=args;
+			lambda_args[0]=args[0]->cons_cdr;
+			data_t* lambda_data=lambda_proc(lambda_args,kankyo);
+			kankyo->sokubaku[name->kigou]=lambda_data;
+			return creater_t::creater().create_kigou_data(name->kigou);
+		}
+	} else if(args[0]->type==DT_KIGOU) {
+		if(args.size()!=2) {
+			return creater_t::creater().create_argument_number_error_data(
+				"define",2,args.size(),false);
+		}
 		data_t* ret_data=hyouka_data(args[1],kankyo);
 		if(ret_data->type==DT_ERROR)return ret_data;
 		kankyo->sokubaku[args[0]->kigou]=ret_data;
 		return creater_t::creater().create_kigou_data(args[0]->kigou);
+	} else {
+		return creater_t::creater().create_error_data(
+			"you must specify kigou for first argument of define");
 	}
 }
 
