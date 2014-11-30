@@ -21,7 +21,6 @@ enum DATATYPE {
 
 struct kankyo_t;
 struct data_t;
-
 typedef sansyo_t<kankyo_t> p_kankyo_t;
 typedef sansyo_t<data_t> p_data_t;
 

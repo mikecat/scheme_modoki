@@ -1,6 +1,8 @@
 #ifndef SANSYO_COUNT_G_GUARD_E44496BE_324B_4675_AAF3_087F670507B4
 #define SANSYO_COUNT_G_GUARD_E44496BE_324B_4675_AAF3_087F670507B4
 
+#include <cstdio>
+
 // 参照カウントを持つクラス
 struct with_sansyo_count_t {
 	int sansyo_count;
@@ -11,6 +13,10 @@ template<typename T>
 class sansyo_t {
 	private:
 		T* sansyo;
+		void increment_sansyo_count() {
+			if(sansyo!=NULL)sansyo->sansyo_count++;
+		}
+		void decrement_sansyo_count();
 	public:
 		sansyo_t(): sansyo(NULL) {}
 
@@ -61,5 +67,18 @@ class sansyo_t {
 			return sansyo;
 		}
 };
+
+#include "creater.h"
+
+template<typename T>
+void sansyo_t<T>::decrement_sansyo_count() {
+	if(sansyo!=NULL)sansyo->sansyo_count--;
+}
+
+template<>
+void sansyo_t<kankyo_t>::decrement_sansyo_count();
+
+template<>
+void sansyo_t<data_t>::decrement_sansyo_count();
 
 #endif

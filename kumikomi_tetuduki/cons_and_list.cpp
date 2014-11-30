@@ -1,5 +1,4 @@
 #include "cons_and_list.h"
-#include "../creater.h"
 
 // consセルを作成する
 p_data_t cons(const std::vector<p_data_t>& args,p_kankyo_t&) {

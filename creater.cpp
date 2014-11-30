@@ -1,5 +1,5 @@
 #include <cstdio>
-#include "creater.h"
+#include "sansyo_count.h"
 
 creater_t creater_t::cr;
 
