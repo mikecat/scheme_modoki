@@ -68,9 +68,11 @@ void add_kumikomi_tetuduki_to_kankyo(kankyo_t* kankyo) {
 	kankyo->sokubaku["set-cdr!"]=creater_t::creater().create_native_func_data(set_cdr);
 	kankyo->sokubaku["null?"]=creater_t::creater().create_native_func_data(is_null);
 
+	// その他の手続き
 	kankyo->sokubaku["apply"]=creater_t::creater().create_native_func_data(apply);
 	kankyo->sokubaku["exit"]=creater_t::creater().create_native_func_data(exit_func);
 	kankyo->sokubaku["not"]=creater_t::creater().create_native_func_data(not_func);
+
 	// 特殊形式 (special_form.cpp)
 	kankyo->sokubaku["quote"]=creater_t::creater().create_native_func_data(quote_proc,true);
 	kankyo->sokubaku["define"]=creater_t::creater().create_native_func_data(define_proc,true);
@@ -79,6 +81,7 @@ void add_kumikomi_tetuduki_to_kankyo(kankyo_t* kankyo) {
 	kankyo->sokubaku["if"]=creater_t::creater().create_native_func_data(if_proc,true);
 	kankyo->sokubaku["and"]=creater_t::creater().create_native_func_data(and_proc,true);
 	kankyo->sokubaku["or"]=creater_t::creater().create_native_func_data(or_proc,true);
+
 	// その他
 	kankyo->sokubaku["else"]=creater_t::creater().create_boolean_data(true);
 }
