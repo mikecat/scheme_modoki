@@ -5,6 +5,7 @@
 #include <map>
 #include <vector>
 
+// データの種類
 enum DATATYPE {
 	DT_EOF, // (入力の終わり)
 	DT_ERROR, // エラー
@@ -21,6 +22,7 @@ struct kankyo_t;
 struct data_t;
 typedef data_t* (*p_native_func)(const std::vector<data_t*>& args,kankyo_t* kankyo);
 
+// データを表す構造体
 struct data_t {
 	DATATYPE type;
 	// DT_ERROR
@@ -45,15 +47,20 @@ struct data_t {
 	bool tokusyu_keisiki;
 };
 
+// 環境を表す構造体
 struct kankyo_t {
 	kankyo_t *parent;
 	std::map<std::string, data_t*> sokubaku;
 	kankyo_t(kankyo_t *oya=NULL):parent(oya),sokubaku() {}
 };
 
+// 名前の規則を用いて名前を探し、そのポインタを返す
 data_t** namae_no_kisoku2(const std::string& namae,kankyo_t* kankyo);
+// 名前の規則を用いて名前を探し、そのデータを返す
 data_t* namae_no_kisoku(const std::string& namae, kankyo_t* kankyo);
+// 適用の規則を用いて手続きを適用する
 data_t* tekiyou(data_t* proc, const std::vector<data_t*> args,kankyo_t* kankyo);
+// 記号やリストで表現された式データを評価する
 data_t* hyouka_data(data_t* data,kankyo_t* kankyo);
 
 #endif

@@ -3,6 +3,7 @@
 
 #include "scheme_modoki.h"
 
+// 環境に組み込み手続きを追加する
 void add_kumikomi_tetuduki_to_kankyo(kankyo_t* kankyo);
 
 #endif

@@ -376,6 +376,7 @@ data_t* or_proc(const std::vector<data_t*>& args,kankyo_t* kankyo) {
 	return creater_t::creater().create_boolean_data(false);
 }
 
+// 環境に組み込み手続きを追加する
 void add_kumikomi_tetuduki_to_kankyo(kankyo_t* kankyo) {
 	// 手続き
 	kankyo->sokubaku["+"]=creater_t::creater().create_native_func_data(add);

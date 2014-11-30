@@ -4,6 +4,7 @@
 #include <cstdio>
 #include <stack>
 
+// 汎用のデータを順に読み出すクラス
 class stream_reader {
 	private:
 		std::stack<int> ungetted_chars;
@@ -14,6 +15,7 @@ class stream_reader {
 		virtual bool is_eof(void) = 0;
 };
 
+// ファイルを順に読み出すクラス
 class file_reader : public stream_reader {
 	private:
 		FILE* fp;
