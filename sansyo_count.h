@@ -52,6 +52,10 @@ class sansyo_t {
 		T& operator*() const {
 			return *sansyo;
 		}
+
+		T* const& operator->() const {
+			return sansyo;
+		}
 };
 
 #endif
