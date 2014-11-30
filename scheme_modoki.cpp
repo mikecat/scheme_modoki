@@ -278,8 +278,6 @@ void print_data(data_t& data,bool do_syouryaku,bool please_syouryaku=false) {
 }
 
 int main(int argc,char *argv[]) {
-	p_kankyo_t taiiki_kankyo=creater_t::creater().create_kankyo();
-	file_reader fr(stdin);
 	bool do_syouryaku=true;
 	for(int i=1;i<argc;i++) {
 		std::string cur_arg=argv[i];
@@ -289,7 +287,9 @@ int main(int argc,char *argv[]) {
 			sansyo_all_t::set_do_auto_delete(false);
 		}
 	}
+	p_kankyo_t taiiki_kankyo=creater_t::creater().create_kankyo();
 	add_kumikomi_tetuduki_to_kankyo(taiiki_kankyo);
+	file_reader fr(stdin);
 	for(;;) {
 		p_data_t data;
 		printf("input> ");
