@@ -4,6 +4,7 @@
 #include <string>
 #include <map>
 #include <vector>
+#include "sansyo_count.h"
 
 // データの種類
 enum DATATYPE {
@@ -23,7 +24,7 @@ struct data_t;
 typedef data_t* (*p_native_func)(const std::vector<data_t*>& args,kankyo_t* kankyo);
 
 // データを表す構造体
-struct data_t {
+struct data_t : public with_sansyo_count_t {
 	DATATYPE type;
 	// DT_ERROR
 	std::string error_mes;
@@ -48,7 +49,7 @@ struct data_t {
 };
 
 // 環境を表す構造体
-struct kankyo_t {
+struct kankyo_t : public with_sansyo_count_t {
 	kankyo_t *parent;
 	std::map<std::string, data_t*> sokubaku;
 	kankyo_t(kankyo_t *oya=NULL):parent(oya),sokubaku() {}
