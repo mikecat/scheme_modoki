@@ -64,6 +64,7 @@ p_data_t not_func(const std::vector<p_data_t>& args,p_kankyo_t&) {
 	}
 }
 
+// 生成され、削除されていない環境とデータの数を表示する
 p_data_t print_number_of_kankyo_and_data(const std::vector<p_data_t>& args,p_kankyo_t&) {
 	if(args.size()!=0) {
 		return creater_t::creater().create_argument_number_error_data(
