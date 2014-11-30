@@ -1,4 +1,5 @@
 #include <cstdio>
+#include <vector>
 #include "sansyo_count.h"
 
 creater_t creater_t::cr;
@@ -148,6 +149,27 @@ void creater_t::delete_data(data_t* data) {
 			data_log.erase(it);
 		}
 		delete data;
+	}
+}
+
+void creater_t::delete_zero_sansyo() {
+	std::vector<kankyo_t*> kankyo_to_delete;
+	std::vector<data_t*> data_to_delete;
+	for(std::set<kankyo_t*>::iterator it=kankyo_log.begin();it!=kankyo_log.end();it++) {
+		if((*it)->sansyo_count<=0)kankyo_to_delete.push_back(*it);
+	}
+	for(std::set<data_t*>::iterator it=data_log.begin();it!=data_log.end();it++) {
+		if((*it)->sansyo_count<=0)data_to_delete.push_back(*it);
+	}
+	for(std::vector<kankyo_t*>::iterator it=kankyo_to_delete.begin();
+	it!=kankyo_to_delete.end();it++) {
+		kankyo_log.erase(*it);
+		delete *it;
+	}
+	for(std::vector<data_t*>::iterator it=data_to_delete.begin();
+	it!=data_to_delete.end();it++) {
+		data_log.erase(*it);
+		delete *it;
 	}
 }
 

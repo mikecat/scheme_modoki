@@ -53,6 +53,8 @@ class creater_t {
 		void delete_kankyo(kankyo_t* kankyo);
 		// データを削除する
 		void delete_data(data_t* data);
+		// 参照カウントが0以下の環境とデータを削除する
+		void delete_zero_sansyo();
 
 		// 生成器のインスタンスを得る
 		static creater_t& creater(void);
