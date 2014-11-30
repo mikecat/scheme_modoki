@@ -5,10 +5,10 @@ creater_t creater_t::cr;
 
 creater_t::~creater_t() {
 	print_number_of_kankyo_and_data();
-	for(std::vector<kankyo_t*>::iterator it=kankyo_log.begin();it!=kankyo_log.end();it++) {
+	for(std::set<kankyo_t*>::iterator it=kankyo_log.begin();it!=kankyo_log.end();it++) {
 		delete *it;
 	}
-	for(std::vector<data_t*>::iterator it=data_log.begin();it!=data_log.end();it++) {
+	for(std::set<data_t*>::iterator it=data_log.begin();it!=data_log.end();it++) {
 		delete *it;
 	}
 }
@@ -20,13 +20,13 @@ void creater_t::print_number_of_kankyo_and_data() {
 
 kankyo_t* creater_t::create_kankyo(kankyo_t* oya) {
 	kankyo_t* new_kankyo=new kankyo_t(oya);
-	kankyo_log.push_back(new_kankyo);
+	kankyo_log.insert(new_kankyo);
 	return new_kankyo;
 }
 
 data_t* creater_t::create_data() {
 	data_t *new_data=new data_t();
-	data_log.push_back(new_data);
+	data_log.insert(new_data);
 	return new_data;
 }
 

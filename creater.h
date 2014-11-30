@@ -1,13 +1,14 @@
 #ifndef CREATER_H_GUARD_85D8EF3B_8D4D_4B3A_824C_8B783B6BE20D
 #define CREATER_H_GUARD_85D8EF3B_8D4D_4B3A_824C_8B783B6BE20D
 
+#include <set>
 #include "scheme_modoki.h"
 
 class creater_t {
 	private:
 		static creater_t cr;
-		std::vector<kankyo_t*> kankyo_log;
-		std::vector<data_t*> data_log;
+		std::set<kankyo_t*> kankyo_log;
+		std::set<data_t*> data_log;
 		creater_t(){}
 		~creater_t();
 	public:
