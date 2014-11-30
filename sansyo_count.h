@@ -49,6 +49,10 @@ class sansyo_t {
 			return sansyo<san.sansyo;
 		}
 
+		bool is_null() const {
+			return sansyo==NULL;
+		}
+
 		T& operator*() const {
 			return *sansyo;
 		}
