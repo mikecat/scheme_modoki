@@ -6,7 +6,7 @@
 
 // 汎用のデータを順に読み出すクラス
 class stream_reader {
-	private:
+	protected:
 		std::stack<int> ungetted_chars;
 		virtual int read_char(void) = 0;
 	public:

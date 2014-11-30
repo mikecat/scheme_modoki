@@ -19,5 +19,5 @@ int file_reader::read_char(void) {
 }
 
 bool file_reader::is_eof(void) {
-	return feof(fp);
+	return ungetted_chars.empty() && feof(fp);
 }
