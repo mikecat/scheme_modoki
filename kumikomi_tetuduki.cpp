@@ -363,6 +363,19 @@ data_t* and_proc(const std::vector<data_t*>& args,kankyo_t* kankyo) {
 	}
 }
 
+// 途中に1個でも#f以外があればその値、無ければ#fを返す
+data_t* or_proc(const std::vector<data_t*>& args,kankyo_t* kankyo) {
+	for(std::vector<data_t*>::const_iterator it=args.begin();it!=args.end();it++) {
+		data_t* cur_data=hyouka_data(*it,kankyo);
+		if(cur_data->type==DT_ERROR) {
+			return cur_data;
+		} else if(cur_data->type!=DT_BOOLEAN || cur_data->is_true) {
+			return cur_data;
+		}
+	}
+	return creater_t::creater().create_boolean_data(false);
+}
+
 void add_kumikomi_tetuduki_to_kankyo(kankyo_t* kankyo) {
 	// 手続き
 	kankyo->sokubaku["+"]=creater_t::creater().create_native_func_data(add);
@@ -389,6 +402,7 @@ void add_kumikomi_tetuduki_to_kankyo(kankyo_t* kankyo) {
 	kankyo->sokubaku["lambda"]=creater_t::creater().create_native_func_data(lambda_proc,true);
 	kankyo->sokubaku["if"]=creater_t::creater().create_native_func_data(if_proc,true);
 	kankyo->sokubaku["and"]=creater_t::creater().create_native_func_data(and_proc,true);
+	kankyo->sokubaku["or"]=creater_t::creater().create_native_func_data(or_proc,true);
 	// その他
 	kankyo->sokubaku["else"]=creater_t::creater().create_boolean_data(true);
 }
