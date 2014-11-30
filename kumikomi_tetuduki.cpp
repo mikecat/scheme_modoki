@@ -74,6 +74,25 @@ p_data_t print_number_of_kankyo_and_data(const std::vector<p_data_t>& args,p_kan
 	return creater_t::creater().create_null_data();
 }
 
+// 環境とデータの自動削除の有効/無効を設定する
+p_data_t set_enable_auto_delete(const std::vector<p_data_t>& args,p_kankyo_t&) {
+	if(args.size()!=1) {
+		return creater_t::creater().create_argument_number_error_data(
+			"set-enable-auto-delete",1,args.size(),false);
+	}
+	sansyo_all_t::set_do_auto_delete(!(args[0]->type==DT_BOOLEAN && !args[0]->is_true));
+	return args[0];
+}
+
+// 環境とデータの自動削除の有効/無効を取得する
+p_data_t get_enable_auto_delete(const std::vector<p_data_t>& args,p_kankyo_t&) {
+	if(args.size()!=0) {
+		return creater_t::creater().create_argument_number_error_data(
+			"get-enable-auto-delete",0,args.size(),false);
+	}
+	return creater_t::creater().create_boolean_data(sansyo_all_t::get_do_auto_delete());
+}
+
 // 環境に組み込み手続きを追加する
 void add_kumikomi_tetuduki_to_kankyo(p_kankyo_t& kankyo) {
 	// 数値計算 (number_calc.cpp)
@@ -106,6 +125,10 @@ void add_kumikomi_tetuduki_to_kankyo(p_kankyo_t& kankyo) {
 	kankyo->sokubaku["not"]=creater_t::creater().create_native_func_data(not_func);
 	kankyo->sokubaku["print-number-of-kankyo-and-data"]=
 		creater_t::creater().create_native_func_data(print_number_of_kankyo_and_data);
+	kankyo->sokubaku["set-enable-auto-delete"]=
+		creater_t::creater().create_native_func_data(set_enable_auto_delete);
+	kankyo->sokubaku["get-enable-auto-delete"]=
+		creater_t::creater().create_native_func_data(get_enable_auto_delete);
 
 	// 特殊形式 (special_form.cpp)
 	kankyo->sokubaku["quote"]=creater_t::creater().create_native_func_data(quote_proc,true);
