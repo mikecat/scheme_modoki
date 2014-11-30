@@ -282,7 +282,12 @@ int main(int argc,char *argv[]) {
 	file_reader fr(stdin);
 	bool do_syouryaku=true;
 	for(int i=1;i<argc;i++) {
-		if(std::string(argv[i])=="--no-syouryaku")do_syouryaku=false;
+		std::string cur_arg=argv[i];
+		if(cur_arg=="--no-syouryaku") {
+			do_syouryaku=false;
+		} else if(cur_arg=="--no-auto-delete") {
+			sansyo_all_t::set_do_auto_delete(false);
+		}
 	}
 	add_kumikomi_tetuduki_to_kankyo(taiiki_kankyo);
 	for(;;) {

@@ -9,9 +9,22 @@ struct with_sansyo_count_t {
 	with_sansyo_count_t(): sansyo_count(0) {}
 };
 
+class sansyo_all_t {
+	protected:
+		static bool do_auto_delete;
+	public:
+		static void set_do_auto_delete(bool is_do) {
+			do_auto_delete=is_do;
+		}
+
+		static bool get_do_auto_delete() {
+			return do_auto_delete;
+		}
+};
+
 // 参照カウントの操作を行う「ポインタ」
 template<typename T>
-class sansyo_t {
+class sansyo_t: public sansyo_all_t {
 	private:
 		T* sansyo;
 		bool check_sansyo() const;
