@@ -6,6 +6,28 @@
 #include "kumikomi_tetuduki/cons_and_list.h"
 #include "kumikomi_tetuduki/special_form.h"
 
+// データが等価か判定する
+data_t* is_eq(const std::vector<data_t*>& args,kankyo_t*) {
+	if(args.size()!=2) {
+		return creater_t::creater().create_argument_number_error_data(
+			"eq?",2,args.size(),false);
+	} else {
+		if(args[0]->type!=args[1]->type) {
+			return creater_t::creater().create_boolean_data(false);
+		} else if(args[0]->type==DT_EOF || args[0]->type==DT_NULL) {
+			return creater_t::creater().create_boolean_data(true);
+		} else if(args[0]->type==DT_NUM) {
+			return creater_t::creater().create_boolean_data(args[0]->num==args[1]->num);
+		} else if(args[0]->type==DT_KIGOU) {
+			return creater_t::creater().create_boolean_data(args[0]->kigou==args[1]->kigou);
+		} else if(args[0]->type==DT_BOOLEAN) {
+			return creater_t::creater().create_boolean_data(args[0]->is_true==args[1]->is_true);
+		} else {
+			return creater_t::creater().create_boolean_data(args[0]==args[1]);
+		}
+	}
+}
+
 // 手続きを引数リストに適用する
 data_t* apply(const std::vector<data_t*>& args,kankyo_t* kankyo) {
 	if(args.size()<2) {
@@ -78,6 +100,7 @@ void add_kumikomi_tetuduki_to_kankyo(kankyo_t* kankyo) {
 	kankyo->sokubaku["null?"]=creater_t::creater().create_native_func_data(is_null);
 
 	// その他の手続き
+	kankyo->sokubaku["eq?"]=creater_t::creater().create_native_func_data(is_eq);
 	kankyo->sokubaku["apply"]=creater_t::creater().create_native_func_data(apply);
 	kankyo->sokubaku["exit"]=creater_t::creater().create_native_func_data(exit_func);
 	kankyo->sokubaku["not"]=creater_t::creater().create_native_func_data(not_func);
