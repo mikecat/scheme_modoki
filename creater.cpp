@@ -118,6 +118,26 @@ p_data_t creater_t::create_null_data() {
 	return new_data;
 }
 
+void creater_t::delete_kankyo(kankyo_t* kankyo) {
+	if(kankyo->sansyo_count<=0) {
+		std::set<kankyo_t*>::iterator it=kankyo_log.find(kankyo);
+		if(it!=kankyo_log.end()) {
+			kankyo_log.erase(it);
+		}
+		delete kankyo;
+	}
+}
+
+void creater_t::delete_data(data_t* data) {
+	if(data->sansyo_count<=0) {
+		std::set<data_t*>::iterator it=data_log.find(data);
+		if(it!=data_log.end()) {
+			data_log.erase(it);
+		}
+		delete data;
+	}
+}
+
 creater_t& creater_t::creater(void) {
 	return cr;
 }

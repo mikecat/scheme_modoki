@@ -15,6 +15,7 @@ class creater_t {
 	public:
 		// 生成した環境とデータの数を表示する
 		void print_number_of_kankyo_and_data();
+
 		// 環境データを生成する
 		p_kankyo_t create_kankyo(const p_kankyo_t& oya=NULL);
 		// 適当なデータを生成する
@@ -42,6 +43,12 @@ class creater_t {
 		p_data_t create_native_func_data(p_native_func native_func,bool tokusyu_keisiki=false);
 		// '()データを生成する
 		p_data_t create_null_data();
+
+		// 環境を削除する
+		void delete_kankyo(kankyo_t* kankyo);
+		// データを削除する
+		void delete_data(data_t* data);
+
 		// 生成器のインスタンスを得る
 		static creater_t& creater(void);
 };
