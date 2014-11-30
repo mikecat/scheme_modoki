@@ -22,29 +22,29 @@ class sansyo_t {
 
 		sansyo_t(T* data) {
 			sansyo=data;
-			if(sansyo!=NULL)sansyo->sansyo_count++;
+			increment_sansyo_count();
 		}
 
 		sansyo_t(const sansyo_t<T>& san) {
 			sansyo=san.sansyo;
-			if(sansyo!=NULL)sansyo->sansyo_count++;
+			increment_sansyo_count();
 		}
 
 		~sansyo_t() {
-			if(sansyo!=NULL)sansyo->sansyo_count--;
+			decrement_sansyo_count();
 		}
 
 		sansyo_t& operator=(const sansyo_t<T>& san) {
-			if(sansyo!=NULL)sansyo->sansyo_count--;
+			decrement_sansyo_count();
 			sansyo=san.sansyo;
-			if(sansyo!=NULL)sansyo->sansyo_count++;
+			increment_sansyo_count();
 			return *this;
 		}
 
 		sansyo_t& operator=(T* data) {
-			if(sansyo!=NULL)sansyo->sansyo_count--;
+			decrement_sansyo_count();
 			sansyo=data;
-			if(sansyo!=NULL)sansyo->sansyo_count++;
+			increment_sansyo_count();
 		}
 
 		bool operator==(const sansyo_t<T>& san) const {
