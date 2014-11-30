@@ -234,6 +234,17 @@ data_t* exit_func(const std::vector<data_t*>&,kankyo_t*) {
 	return creater_t::creater().create_error_data("",true);
 }
 
+// 引数が#f以外なら#fを、#fなら#tを返す
+data_t* not_func(const std::vector<data_t*>& args,kankyo_t*) {
+	if(args.size()!=1) {
+		return creater_t::creater().create_argument_number_error_data(
+			"not",1,args.size(),false);
+	} else {
+		return creater_t::creater().create_boolean_data(
+			args[0]->type==DT_BOOLEAN && !args[0]->is_true); // args[0]が#fかを判定
+	}
+}
+
 // 引数(未評価)を返す
 data_t* quote_proc(const std::vector<data_t*>& args,kankyo_t*) {
 	if(args.size()!=1) {
@@ -396,6 +407,7 @@ void add_kumikomi_tetuduki_to_kankyo(kankyo_t* kankyo) {
 	kankyo->sokubaku["null?"]=creater_t::creater().create_native_func_data(is_null);
 	kankyo->sokubaku["apply"]=creater_t::creater().create_native_func_data(apply);
 	kankyo->sokubaku["exit"]=creater_t::creater().create_native_func_data(exit_func);
+	kankyo->sokubaku["not"]=creater_t::creater().create_native_func_data(not_func);
 	// 特殊形式
 	kankyo->sokubaku["quote"]=creater_t::creater().create_native_func_data(quote_proc,true);
 	kankyo->sokubaku["define"]=creater_t::creater().create_native_func_data(define_proc,true);
