@@ -121,7 +121,11 @@ data_t* if_proc(const std::vector<data_t*>& args,kankyo_t* kankyo) {
 		data_t* sinriti=hyouka_data(args[0],kankyo);
 		if(sinriti->type==DT_ERROR)return sinriti;
 		if(sinriti->type==DT_BOOLEAN && !sinriti->is_true) {
-			return args.size()>=3?args[2]:creater_t::creater().create_null_data();
+			if(args.size()>=3) {
+				return hyouka_data(args[2],kankyo);
+			} else {
+				return creater_t::creater().create_null_data();
+			}
 		} else {
 			return hyouka_data(args[1],kankyo);
 		}
