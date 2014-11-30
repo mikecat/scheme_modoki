@@ -5,6 +5,16 @@
 #include "kumikomi_tetuduki.h"
 #include "stream_reader.h"
 
+static bool do_syouryaku=true;
+
+void set_do_syouryaku(bool enable) {
+	do_syouryaku=enable;
+}
+
+bool get_do_syouryaku() {
+	return do_syouryaku;
+}
+
 bool is_space_chars(int c) {
 	return c==' ' || c=='\t' || c=='\r' || c=='\n';
 }
@@ -278,7 +288,6 @@ void print_data(data_t& data,bool do_syouryaku,bool please_syouryaku=false) {
 }
 
 int main(int argc,char *argv[]) {
-	bool do_syouryaku=true;
 	for(int i=1;i<argc;i++) {
 		std::string cur_arg=argv[i];
 		if(cur_arg=="--no-syouryaku") {

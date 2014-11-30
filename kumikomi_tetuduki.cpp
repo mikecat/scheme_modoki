@@ -64,6 +64,25 @@ p_data_t not_func(const std::vector<p_data_t>& args,p_kankyo_t&) {
 	}
 }
 
+// 省略できるconsセルの表示を省略するかを設定する
+p_data_t set_enable_syouryaku(const std::vector<p_data_t>& args,p_kankyo_t&) {
+	if(args.size()!=1) {
+		return creater_t::creater().create_argument_number_error_data(
+			"set-enable-syouryaku",1,args.size(),false);
+	}
+	set_do_syouryaku(!(args[0]->type==DT_BOOLEAN && !args[0]->is_true));
+	return args[0];
+}
+
+// 省略できるconsセルの表示を省略するかを取得する
+p_data_t get_enable_syouryaku(const std::vector<p_data_t>& args,p_kankyo_t&) {
+	if(args.size()!=0) {
+		return creater_t::creater().create_argument_number_error_data(
+			"get-enable-syouryaku",0,args.size(),false);
+	}
+	return creater_t::creater().create_boolean_data(get_do_syouryaku());
+}
+
 // 生成され、削除されていない環境とデータの数を表示する
 p_data_t print_number_of_kankyo_and_data(const std::vector<p_data_t>& args,p_kankyo_t&) {
 	if(args.size()!=0) {
@@ -133,6 +152,10 @@ void add_kumikomi_tetuduki_to_kankyo(p_kankyo_t& kankyo) {
 	kankyo->sokubaku["apply"]=creater_t::creater().create_native_func_data(apply);
 	kankyo->sokubaku["exit"]=creater_t::creater().create_native_func_data(exit_func);
 	kankyo->sokubaku["not"]=creater_t::creater().create_native_func_data(not_func);
+	kankyo->sokubaku["set-enable-syouryaku"]=
+		creater_t::creater().create_native_func_data(set_enable_syouryaku);
+	kankyo->sokubaku["get-enable-syouryaku"]=
+		creater_t::creater().create_native_func_data(get_enable_syouryaku);
 	kankyo->sokubaku["print-number-of-kankyo-and-data"]=
 		creater_t::creater().create_native_func_data(print_number_of_kankyo_and_data);
 	kankyo->sokubaku["set-enable-auto-delete"]=

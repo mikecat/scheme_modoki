@@ -58,6 +58,11 @@ struct kankyo_t : public with_sansyo_count_t {
 	kankyo_t(p_kankyo_t oya=NULL):parent(oya),sokubaku() {}
 };
 
+// 省略できるconsセルの表示を省略するかを設定する
+void set_do_syouryaku(bool enable);
+// 省略できるconsセルの表示を省略するかを取得する
+bool get_do_syouryaku();
+
 // 名前の規則を用いて名前を探し、そのポインタを返す
 p_data_t* namae_no_kisoku2(const std::string& namae,p_kankyo_t& kankyo);
 // 名前の規則を用いて名前を探し、そのデータを返す
