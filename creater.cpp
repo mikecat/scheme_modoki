@@ -4,14 +4,18 @@
 creater_t creater_t::cr;
 
 creater_t::~creater_t() {
-	printf("number of kankyo = %u\n",(unsigned int)kankyo_log.size());
-	printf("number of data   = %u\n",(unsigned int)data_log.size());
+	print_number_of_kankyo_and_data();
 	for(std::vector<kankyo_t*>::iterator it=kankyo_log.begin();it!=kankyo_log.end();it++) {
 		delete *it;
 	}
 	for(std::vector<data_t*>::iterator it=data_log.begin();it!=data_log.end();it++) {
 		delete *it;
 	}
+}
+
+void creater_t::print_number_of_kankyo_and_data() {
+	printf("number of kankyo = %u\n",(unsigned int)kankyo_log.size());
+	printf("number of data   = %u\n",(unsigned int)data_log.size());
 }
 
 kankyo_t* creater_t::create_kankyo(kankyo_t* oya) {

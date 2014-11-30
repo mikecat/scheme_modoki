@@ -11,6 +11,8 @@ class creater_t {
 		creater_t(){}
 		~creater_t();
 	public:
+		// 生成した環境とデータの数を表示する
+		void print_number_of_kankyo_and_data();
 		// 環境データを生成する
 		kankyo_t *create_kankyo(kankyo_t* oya=NULL);
 		// 適当なデータを生成する

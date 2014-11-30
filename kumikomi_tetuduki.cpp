@@ -43,6 +43,15 @@ data_t* not_func(const std::vector<data_t*>& args,kankyo_t*) {
 	}
 }
 
+data_t* print_number_of_kankyo_and_data(const std::vector<data_t*>& args,kankyo_t*) {
+	if(args.size()!=0) {
+		return creater_t::creater().create_argument_number_error_data(
+			"print-number-of-kankyo-and-data",0,args.size(),false);
+	}
+	creater_t::creater().print_number_of_kankyo_and_data();
+	return creater_t::creater().create_null_data();
+}
+
 // 環境に組み込み手続きを追加する
 void add_kumikomi_tetuduki_to_kankyo(kankyo_t* kankyo) {
 	// 数値計算 (number_calc.cpp)
@@ -72,6 +81,8 @@ void add_kumikomi_tetuduki_to_kankyo(kankyo_t* kankyo) {
 	kankyo->sokubaku["apply"]=creater_t::creater().create_native_func_data(apply);
 	kankyo->sokubaku["exit"]=creater_t::creater().create_native_func_data(exit_func);
 	kankyo->sokubaku["not"]=creater_t::creater().create_native_func_data(not_func);
+	kankyo->sokubaku["print-number-of-kankyo-and-data"]=
+		creater_t::creater().create_native_func_data(print_number_of_kankyo_and_data);
 
 	// 特殊形式 (special_form.cpp)
 	kankyo->sokubaku["quote"]=creater_t::creater().create_native_func_data(quote_proc,true);
