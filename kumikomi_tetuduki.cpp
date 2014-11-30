@@ -272,6 +272,22 @@ data_t* is_odd(const std::vector<data_t*>& args,kankyo_t*) {
 	}
 }
 
+// 引数の平方根を返す
+data_t* sqrt_func(const std::vector<data_t*>& args,kankyo_t*) {
+	if(args.size()!=1) {
+		return creater_t::creater().create_argument_number_error_data(
+			"sqrt",1,args.size(),false);
+	} else if(args[0]->type!=DT_NUM) {
+		return creater_t::creater().create_error_data(
+			"attempt to calculate square root of what is not a number");
+	} else if(args[0]->num<0.0) {
+		return creater_t::creater().create_error_data(
+			"sqrt of negative value is not supported");
+	} else {
+		return creater_t::creater().create_num_data(sqrt(args[0]->num));
+	}
+}
+
 // 引数(未評価)を返す
 data_t* quote_proc(const std::vector<data_t*>& args,kankyo_t*) {
 	if(args.size()!=1) {
@@ -437,6 +453,7 @@ void add_kumikomi_tetuduki_to_kankyo(kankyo_t* kankyo) {
 	kankyo->sokubaku["not"]=creater_t::creater().create_native_func_data(not_func);
 	kankyo->sokubaku["even?"]=creater_t::creater().create_native_func_data(is_even);
 	kankyo->sokubaku["odd?"]=creater_t::creater().create_native_func_data(is_odd);
+	kankyo->sokubaku["sqrt"]=creater_t::creater().create_native_func_data(sqrt_func);
 	// 特殊形式
 	kankyo->sokubaku["quote"]=creater_t::creater().create_native_func_data(quote_proc,true);
 	kankyo->sokubaku["define"]=creater_t::creater().create_native_func_data(define_proc,true);
