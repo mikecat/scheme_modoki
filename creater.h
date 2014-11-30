@@ -44,6 +44,11 @@ class creater_t {
 		// '()データを生成する
 		p_data_t create_null_data();
 
+		// 環境が存在するか確認する
+		bool is_exist_kankyo(kankyo_t* kankyo);
+		// データが存在するか確認する
+		bool is_exist_data(data_t* data);
+
 		// 環境を削除する
 		void delete_kankyo(kankyo_t* kankyo);
 		// データを削除する

@@ -11,6 +11,8 @@ creater_t::~creater_t() {
 	for(std::set<data_t*>::iterator it=data_log.begin();it!=data_log.end();it++) {
 		delete *it;
 	}
+	kankyo_log.clear();
+	data_log.clear();
 }
 
 void creater_t::print_number_of_kankyo_and_data() {
@@ -116,6 +118,13 @@ p_data_t creater_t::create_null_data() {
 	data_t *new_data=create_raw_data();
 	new_data->type=DT_NULL;
 	return new_data;
+}
+bool creater_t::is_exist_kankyo(kankyo_t* kankyo) {
+	return kankyo_log.find(kankyo)!=kankyo_log.end();
+}
+
+bool creater_t::is_exist_data(data_t* data) {
+	return data_log.find(data)!=data_log.end();
 }
 
 void creater_t::delete_kankyo(kankyo_t* kankyo) {
