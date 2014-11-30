@@ -17,7 +17,6 @@ class sansyo_t {
 		bool check_sansyo() const;
 		void increment_sansyo_count() {
 			if(sansyo!=NULL)sansyo->sansyo_count++;
-			//if(sansyo!=NULL)printf("inc %p -> %d\n",(void*)sansyo,sansyo->sansyo_count);
 		}
 		void decrement_sansyo_count();
 	public:

@@ -5,14 +5,18 @@ creater_t creater_t::cr;
 
 creater_t::~creater_t() {
 	print_number_of_kankyo_and_data();
-	for(std::set<kankyo_t*>::iterator it=kankyo_log.begin();it!=kankyo_log.end();it++) {
-		delete *it;
+	while(!kankyo_log.empty()) {
+		std::set<kankyo_t*>::iterator it=kankyo_log.begin();
+		kankyo_t* p=*it;
+		kankyo_log.erase(it);
+		delete p;
 	}
-	for(std::set<data_t*>::iterator it=data_log.begin();it!=data_log.end();it++) {
-		delete *it;
+	while(!data_log.empty()) {
+		std::set<data_t*>::iterator it=data_log.begin();
+		data_t* p=*it;
+		data_log.erase(it);
+		delete p;
 	}
-	kankyo_log.clear();
-	data_log.clear();
 }
 
 void creater_t::print_number_of_kankyo_and_data() {
