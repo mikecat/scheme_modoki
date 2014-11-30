@@ -3,85 +3,8 @@
 #include "kumikomi_tetuduki.h"
 #include "creater.h"
 #include "kumikomi_tetuduki/number_calc.h"
+#include "kumikomi_tetuduki/cons_and_list.h"
 #include "kumikomi_tetuduki/special_form.h"
-
-// consセルを作成する
-data_t* cons(const std::vector<data_t*>& args,kankyo_t*) {
-	if(args.size()!=2) {
-		return creater_t::creater().create_argument_number_error_data(
-			"cons",2,args.size(),false);
-	} else {
-		return creater_t::creater().create_cons_data(args[0],args[1]);
-	}
-}
-
-// consセルの前の要素
-data_t* car(const std::vector<data_t*>& args,kankyo_t*) {
-	if(args.size()!=1) {
-		return creater_t::creater().create_argument_number_error_data(
-			"car",1,args.size(),false);
-	} else {
-		if(args[0]->type!=DT_CONS) {
-			return creater_t::creater().create_error_data(
-				"requested car of what is not a cons-cell");
-		} else {
-			return args[0]->cons_car;
-		}
-	}
-}
-
-// consセルの後ろの要素
-data_t* cdr(const std::vector<data_t*>& args,kankyo_t*) {
-	if(args.size()!=1) {
-		return creater_t::creater().create_argument_number_error_data(
-			"cdr",1,args.size(),false);
-	} else {
-		if(args[0]->type!=DT_CONS) {
-			return creater_t::creater().create_error_data(
-				"requested cdr of what is not a cons-cell");
-		} else {
-			return args[0]->cons_cdr;
-		}
-	}
-}
-
-// consセルの前の要素を設定する
-data_t* set_car(const std::vector<data_t*>& args,kankyo_t*) {
-	if(args.size()!=2) {
-		return creater_t::creater().create_argument_number_error_data(
-			"set-car!",2,args.size(),false);
-	} else if(args[0]->type!=DT_CONS) {
-		return creater_t::creater().create_error_data(
-			"attempt to set car of what is not a cons-cell");
-	} else {
-		args[0]->cons_car=args[1];
-		return args[1];
-	}
-}
-
-// consセルの後ろの要素を設定する
-data_t* set_cdr(const std::vector<data_t*>& args,kankyo_t*) {
-	if(args.size()!=2) {
-		return creater_t::creater().create_argument_number_error_data(
-			"set-cdr!",2,args.size(),false);
-	} else if(args[0]->type!=DT_CONS) {
-		return creater_t::creater().create_error_data(
-			"attempt to set cdr of what is not a cons-cell");
-	} else {
-		args[0]->cons_cdr=args[1];
-		return args[1];
-	}
-}
-
-// 引数が'()かを判定する
-data_t* is_null(const std::vector<data_t*>& args,kankyo_t*) {
-	if(args.size()!=1) {
-		return creater_t::creater().create_argument_number_error_data(
-			"null?",1,args.size(),false);
-	} else {
-		return creater_t::creater().create_boolean_data(args[0]->type==DT_NULL);
-	}
-}
 
 // 手続きを引数リストに適用する
 data_t* apply(const std::vector<data_t*>& args,kankyo_t* kankyo) {
@@ -137,12 +60,14 @@ void add_kumikomi_tetuduki_to_kankyo(kankyo_t* kankyo) {
 	kankyo->sokubaku["odd?"]=creater_t::creater().create_native_func_data(is_odd);
 	kankyo->sokubaku["sqrt"]=creater_t::creater().create_native_func_data(sqrt_func);
 
+	// リスト操作 (cons_and_list.cpp)
 	kankyo->sokubaku["cons"]=creater_t::creater().create_native_func_data(cons);
 	kankyo->sokubaku["car"]=creater_t::creater().create_native_func_data(car);
 	kankyo->sokubaku["cdr"]=creater_t::creater().create_native_func_data(cdr);
 	kankyo->sokubaku["set-car!"]=creater_t::creater().create_native_func_data(set_car);
 	kankyo->sokubaku["set-cdr!"]=creater_t::creater().create_native_func_data(set_cdr);
 	kankyo->sokubaku["null?"]=creater_t::creater().create_native_func_data(is_null);
+
 	kankyo->sokubaku["apply"]=creater_t::creater().create_native_func_data(apply);
 	kankyo->sokubaku["exit"]=creater_t::creater().create_native_func_data(exit_func);
 	kankyo->sokubaku["not"]=creater_t::creater().create_native_func_data(not_func);
