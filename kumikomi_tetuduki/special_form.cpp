@@ -3,7 +3,7 @@
 #include "special_form.h"
 
 // 引数(未評価)を返す
-data_t* quote_proc(const std::vector<data_t*>& args,kankyo_t*) {
+p_data_t quote_proc(const std::vector<p_data_t>& args,p_kankyo_t&) {
 	if(args.size()!=1) {
 		return creater_t::creater().create_argument_number_error_data(
 			"quote",1,args.size(),false);
@@ -13,19 +13,19 @@ data_t* quote_proc(const std::vector<data_t*>& args,kankyo_t*) {
 }
 
 // 新規束縛の作成
-data_t* define_proc(const std::vector<data_t*>& args,kankyo_t* kankyo) {
+p_data_t define_proc(const std::vector<p_data_t>& args,p_kankyo_t& kankyo) {
 	if(args.size()<2) {
 		return creater_t::creater().create_argument_number_error_data(
 			"define",2,args.size(),true);
 	} else if(args[0]->type==DT_CONS) {
-		data_t* name=args[0]->cons_car;
+		p_data_t name=args[0]->cons_car;
 		if(name->type!=DT_KIGOU) {
 			return creater_t::creater().create_error_data(
 				"you must specify kigou for first argument of define");
 		} else {
-			std::vector<data_t*> lambda_args=args;
+			std::vector<p_data_t> lambda_args=args;
 			lambda_args[0]=args[0]->cons_cdr;
-			data_t* lambda_data=lambda_proc(lambda_args,kankyo);
+			p_data_t lambda_data=lambda_proc(lambda_args,kankyo);
 			kankyo->sokubaku[name->kigou]=lambda_data;
 			return creater_t::creater().create_kigou_data(name->kigou);
 		}
@@ -34,7 +34,7 @@ data_t* define_proc(const std::vector<data_t*>& args,kankyo_t* kankyo) {
 			return creater_t::creater().create_argument_number_error_data(
 				"define",2,args.size(),false);
 		}
-		data_t* ret_data=hyouka_data(args[1],kankyo);
+		p_data_t ret_data=hyouka_data(args[1],kankyo);
 		if(ret_data->type==DT_ERROR)return ret_data;
 		kankyo->sokubaku[args[0]->kigou]=ret_data;
 		return creater_t::creater().create_kigou_data(args[0]->kigou);
@@ -45,7 +45,7 @@ data_t* define_proc(const std::vector<data_t*>& args,kankyo_t* kankyo) {
 }
 
 // 代入
-data_t* set_proc(const std::vector<data_t*>& args,kankyo_t* kankyo) {
+p_data_t set_proc(const std::vector<p_data_t>& args,p_kankyo_t& kankyo) {
 	if(args.size()!=2) {
 		return creater_t::creater().create_argument_number_error_data(
 			"set!",2,args.size(),false);
@@ -53,9 +53,9 @@ data_t* set_proc(const std::vector<data_t*>& args,kankyo_t* kankyo) {
 		return creater_t::creater().create_error_data(
 			"you must specify kigou for first argument of set!");
 	} else {
-		data_t** zittai=namae_no_kisoku2(args[0]->kigou,kankyo);
+		p_data_t* zittai=namae_no_kisoku2(args[0]->kigou,kankyo);
 		if(zittai==NULL)return namae_no_kisoku(args[0]->kigou,kankyo);
-		data_t* value=hyouka_data(args[1],kankyo);
+		p_data_t value=hyouka_data(args[1],kankyo);
 		if(value->type==DT_ERROR)return value;
 		*zittai=value;
 		return value;
@@ -63,18 +63,18 @@ data_t* set_proc(const std::vector<data_t*>& args,kankyo_t* kankyo) {
 }
 
 // 新規手続きの作成
-data_t* lambda_proc(const std::vector<data_t*>& args,kankyo_t* kankyo) {
+p_data_t lambda_proc(const std::vector<p_data_t>& args,p_kankyo_t& kankyo) {
 	if(args.size()<2) {
 		return creater_t::creater().create_argument_number_error_data(
 			"lambda",2,args.size(),true);
 	} else {
 		std::vector<std::string> karihikisu_list;
-		std::vector<data_t*> hontai_list;
+		std::vector<p_data_t> hontai_list;
 		bool is_kahencho=false;
 		bool karihikisu_valid_flag=false;
 		// 仮引数リストの取得
 		if(args[0]->type==DT_KIGOU || args[0]->type==DT_CONS || args[0]->type==DT_NULL) {
-			data_t* cur_karihikisu=args[0];
+			p_data_t cur_karihikisu=args[0];
 			for(;;) {
 				if(cur_karihikisu->type==DT_KIGOU) {
 					karihikisu_list.push_back(cur_karihikisu->kigou);
@@ -102,7 +102,7 @@ data_t* lambda_proc(const std::vector<data_t*>& args,kankyo_t* kankyo) {
 			return creater_t::creater().create_error_data("invalid karihikisu for lambda");
 		}
 		// 本体の格納
-		for(std::vector<data_t*>::const_iterator it=args.begin()+1;it!=args.end();it++) {
+		for(std::vector<p_data_t>::const_iterator it=args.begin()+1;it!=args.end();it++) {
 			hontai_list.push_back(*it);
 		}
 		return creater_t::creater().create_lambda_data(
@@ -111,14 +111,14 @@ data_t* lambda_proc(const std::vector<data_t*>& args,kankyo_t* kankyo) {
 }
 
 // 条件分岐
-data_t* if_proc(const std::vector<data_t*>& args,kankyo_t* kankyo) {
+p_data_t if_proc(const std::vector<p_data_t>& args,p_kankyo_t& kankyo) {
 	if(args.size()!=2 && args.size()!=3) {
 		char buf[16];
 		sprintf(buf,"%u",(unsigned int)args.size());
 		return creater_t::creater().create_error_data(
 			std::string("invalid number of arguments for if : expected 2 or 3, got ")+buf);
 	} else {
-		data_t* sinriti=hyouka_data(args[0],kankyo);
+		p_data_t sinriti=hyouka_data(args[0],kankyo);
 		if(sinriti->type==DT_ERROR)return sinriti;
 		if(sinriti->type==DT_BOOLEAN && !sinriti->is_true) {
 			return args.size()>=3?args[2]:creater_t::creater().create_null_data();
@@ -129,13 +129,13 @@ data_t* if_proc(const std::vector<data_t*>& args,kankyo_t* kankyo) {
 }
 
 // 途中に1個でも#fがあれば#f、無ければ最後の値を返す
-data_t* and_proc(const std::vector<data_t*>& args,kankyo_t* kankyo) {
+p_data_t and_proc(const std::vector<p_data_t>& args,p_kankyo_t& kankyo) {
 	if(args.size()==0) {
 		return creater_t::creater().create_boolean_data(true);
 	} else {
-		data_t* last_data=NULL;
-		for(std::vector<data_t*>::const_iterator it=args.begin();it!=args.end();it++) {
-			data_t* cur_data=hyouka_data(*it,kankyo);
+		p_data_t last_data=NULL;
+		for(std::vector<p_data_t>::const_iterator it=args.begin();it!=args.end();it++) {
+			p_data_t cur_data=hyouka_data(*it,kankyo);
 			if(cur_data->type==DT_ERROR) {
 				return cur_data;
 			} else if(cur_data->type==DT_BOOLEAN && !cur_data->is_true) {
@@ -148,9 +148,9 @@ data_t* and_proc(const std::vector<data_t*>& args,kankyo_t* kankyo) {
 }
 
 // 途中に1個でも#f以外があればその値、無ければ#fを返す
-data_t* or_proc(const std::vector<data_t*>& args,kankyo_t* kankyo) {
-	for(std::vector<data_t*>::const_iterator it=args.begin();it!=args.end();it++) {
-		data_t* cur_data=hyouka_data(*it,kankyo);
+p_data_t or_proc(const std::vector<p_data_t>& args,p_kankyo_t& kankyo) {
+	for(std::vector<p_data_t>::const_iterator it=args.begin();it!=args.end();it++) {
+		p_data_t cur_data=hyouka_data(*it,kankyo);
 		if(cur_data->type==DT_ERROR) {
 			return cur_data;
 		} else if(cur_data->type!=DT_BOOLEAN || cur_data->is_true) {

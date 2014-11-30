@@ -21,7 +21,11 @@ enum DATATYPE {
 
 struct kankyo_t;
 struct data_t;
-typedef data_t* (*p_native_func)(const std::vector<data_t*>& args,kankyo_t* kankyo);
+
+typedef sansyo_t<kankyo_t> p_kankyo_t;
+typedef sansyo_t<data_t> p_data_t;
+
+typedef p_data_t(*p_native_func)(const std::vector<p_data_t>& args,p_kankyo_t& kankyo);
 
 // データを表す構造体
 struct data_t : public with_sansyo_count_t {
@@ -37,12 +41,12 @@ struct data_t : public with_sansyo_count_t {
 	bool is_true;
 	// DT_LAMBDA
 	std::vector<std::string> karihikisu;
-	std::vector<data_t*> hontai;
-	kankyo_t* lambda_kankyo;
+	std::vector<p_data_t> hontai;
+	p_kankyo_t lambda_kankyo;
 	bool is_kahencho;
 	// DT_CONS
-	data_t* cons_car;
-	data_t* cons_cdr;
+	p_data_t cons_car;
+	p_data_t cons_cdr;
 	// DT_NATIVE_FUNC
 	p_native_func native_func;
 	bool tokusyu_keisiki;
@@ -50,18 +54,18 @@ struct data_t : public with_sansyo_count_t {
 
 // 環境を表す構造体
 struct kankyo_t : public with_sansyo_count_t {
-	kankyo_t *parent;
-	std::map<std::string, data_t*> sokubaku;
-	kankyo_t(kankyo_t *oya=NULL):parent(oya),sokubaku() {}
+	p_kankyo_t parent;
+	std::map<std::string, p_data_t> sokubaku;
+	kankyo_t(p_kankyo_t oya=NULL):parent(oya),sokubaku() {}
 };
 
 // 名前の規則を用いて名前を探し、そのポインタを返す
-data_t** namae_no_kisoku2(const std::string& namae,kankyo_t* kankyo);
+p_data_t* namae_no_kisoku2(const std::string& namae,p_kankyo_t& kankyo);
 // 名前の規則を用いて名前を探し、そのデータを返す
-data_t* namae_no_kisoku(const std::string& namae, kankyo_t* kankyo);
+p_data_t namae_no_kisoku(const std::string& namae,p_kankyo_t& kankyo);
 // 適用の規則を用いて手続きを適用する
-data_t* tekiyou(data_t* proc, const std::vector<data_t*> args,kankyo_t* kankyo);
+p_data_t tekiyou(const p_data_t& proc, const std::vector<p_data_t>& args,p_kankyo_t& kankyo);
 // 記号やリストで表現された式データを評価する
-data_t* hyouka_data(data_t* data,kankyo_t* kankyo);
+p_data_t hyouka_data(const p_data_t& data,p_kankyo_t& kankyo);
 
 #endif

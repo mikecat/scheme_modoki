@@ -7,7 +7,7 @@
 #include "kumikomi_tetuduki/special_form.h"
 
 // データが等価か判定する
-data_t* is_eq(const std::vector<data_t*>& args,kankyo_t*) {
+p_data_t is_eq(const std::vector<p_data_t>& args,p_kankyo_t&) {
 	if(args.size()!=2) {
 		return creater_t::creater().create_argument_number_error_data(
 			"eq?",2,args.size(),false);
@@ -29,20 +29,20 @@ data_t* is_eq(const std::vector<data_t*>& args,kankyo_t*) {
 }
 
 // 手続きを引数リストに適用する
-data_t* apply(const std::vector<data_t*>& args,kankyo_t* kankyo) {
+p_data_t apply(const std::vector<p_data_t>& args,p_kankyo_t& kankyo) {
 	if(args.size()<2) {
 		return creater_t::creater().create_argument_number_error_data(
 			"apply",2,args.size(),true);
 	} else {
-		std::vector<data_t*> args_list;
-		for(std::vector<data_t*>::const_iterator it=args.begin()+1;it+1!=args.end();it++) {
+		std::vector<p_data_t> args_list;
+		for(std::vector<p_data_t>::const_iterator it=args.begin()+1;it+1!=args.end();it++) {
 			args_list.push_back(*it);
 		}
 		if(args.back()->type!=DT_CONS && args.back()->type!=DT_NULL) {
 			return creater_t::creater().create_error_data(
 				"the last argument of apply must be a list");
 		}
-		for(data_t* cur_data=args.back();cur_data->type==DT_CONS;cur_data=cur_data->cons_cdr) {
+		for(p_data_t cur_data=args.back();cur_data->type==DT_CONS;cur_data=cur_data->cons_cdr) {
 			args_list.push_back(cur_data->cons_car);
 		}
 		return tekiyou(args[0],args_list,kankyo);
@@ -50,12 +50,12 @@ data_t* apply(const std::vector<data_t*>& args,kankyo_t* kankyo) {
 }
 
 // 終了する指示を出す
-data_t* exit_func(const std::vector<data_t*>&,kankyo_t*) {
+p_data_t exit_func(const std::vector<p_data_t>&,p_kankyo_t&) {
 	return creater_t::creater().create_error_data("",true);
 }
 
 // 引数が#f以外なら#fを、#fなら#tを返す
-data_t* not_func(const std::vector<data_t*>& args,kankyo_t*) {
+p_data_t not_func(const std::vector<p_data_t>& args,p_kankyo_t&) {
 	if(args.size()!=1) {
 		return creater_t::creater().create_argument_number_error_data(
 			"not",1,args.size(),false);
@@ -65,7 +65,7 @@ data_t* not_func(const std::vector<data_t*>& args,kankyo_t*) {
 	}
 }
 
-data_t* print_number_of_kankyo_and_data(const std::vector<data_t*>& args,kankyo_t*) {
+p_data_t print_number_of_kankyo_and_data(const std::vector<p_data_t>& args,p_kankyo_t&) {
 	if(args.size()!=0) {
 		return creater_t::creater().create_argument_number_error_data(
 			"print-number-of-kankyo-and-data",0,args.size(),false);
@@ -75,7 +75,7 @@ data_t* print_number_of_kankyo_and_data(const std::vector<data_t*>& args,kankyo_
 }
 
 // 環境に組み込み手続きを追加する
-void add_kumikomi_tetuduki_to_kankyo(kankyo_t* kankyo) {
+void add_kumikomi_tetuduki_to_kankyo(p_kankyo_t& kankyo) {
 	// 数値計算 (number_calc.cpp)
 	kankyo->sokubaku["+"]=creater_t::creater().create_native_func_data(add);
 	kankyo->sokubaku["-"]=creater_t::creater().create_native_func_data(sub);
