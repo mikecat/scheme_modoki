@@ -1,8 +1,8 @@
 CXX=g++
 LD=g++
 RM=rm -f
-CXXFLAGS=-std=c++98 -pedantic -g3 -static -Wall -Wextra -finput-charset=utf-8 -fexec-charset=cp932
-LDFLAGS=-g3 -static -finput-charset=utf-8 -fexec-charset=cp932
+CXXFLAGS=-std=c++98 -pedantic -O2 -s -static -Wall -Wextra -finput-charset=utf-8 -fexec-charset=cp932
+LDFLAGS=-O2 -s -static -finput-charset=utf-8 -fexec-charset=cp932
 OBJS=scheme_modoki.o kumikomi_tetuduki.o stream_reader.o creater.o sansyo_count.o \
 	kumikomi_tetuduki/special_form.o kumikomi_tetuduki/number_calc.o \
 	kumikomi_tetuduki/cons_and_list.o
