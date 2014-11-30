@@ -82,6 +82,19 @@ data_t* div_func(const std::vector<data_t*>& args,kankyo_t*) {
 	}
 }
 
+// 商の整数部分
+data_t* quotient(const std::vector<data_t*>& args,kankyo_t*) {
+	if(args.size()!=2) {
+		return creater_t::creater().create_argument_number_error_data(
+			"quotient",2,args.size(),false);
+	} else if(args[0]->type!=DT_NUM || args[1]->type!=DT_NUM) {
+		return creater_t::creater().create_error_data(
+			"attempt to calculate quotient of what is not a number");
+	} else {
+		return creater_t::creater().create_num_data(trunc(args[0]->num/args[1]->num));
+	}
+}
+
 // 比較共通関数
 data_t* num_cmp(const std::vector<data_t*>& args,
 bool (*cmp_func)(double,double),const std::string& name) {
@@ -437,6 +450,7 @@ void add_kumikomi_tetuduki_to_kankyo(kankyo_t* kankyo) {
 	kankyo->sokubaku["-"]=creater_t::creater().create_native_func_data(sub);
 	kankyo->sokubaku["*"]=creater_t::creater().create_native_func_data(mul);
 	kankyo->sokubaku["/"]=creater_t::creater().create_native_func_data(div_func);
+	kankyo->sokubaku["quotient"]=creater_t::creater().create_native_func_data(quotient);
 	kankyo->sokubaku["="]=creater_t::creater().create_native_func_data(num_eq);
 	kankyo->sokubaku["<"]=creater_t::creater().create_native_func_data(num_lt);
 	kankyo->sokubaku["<="]=creater_t::creater().create_native_func_data(num_leq);
