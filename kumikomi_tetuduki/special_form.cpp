@@ -33,7 +33,7 @@ p_data_t define_proc(const std::vector<p_data_t>& args,p_kankyo_t& kankyo) {
 			return creater_t::creater().create_argument_number_error_data(
 				"define",2,args.size(),false);
 		}
-		p_data_t ret_data=hyouka_data(args[1],kankyo);
+		p_data_t ret_data=evaluate(args[1],kankyo);
 		if(ret_data->type==DT_ERROR)return ret_data;
 		kankyo->sokubaku[args[0]->kigou]=ret_data;
 		return creater_t::creater().create_kigou_data(args[0]->kigou);
@@ -54,7 +54,7 @@ p_data_t set_proc(const std::vector<p_data_t>& args,p_kankyo_t& kankyo) {
 	} else {
 		p_data_t* zittai=namae_no_kisoku2(args[0]->kigou,kankyo);
 		if(zittai==NULL)return namae_no_kisoku(args[0]->kigou,kankyo);
-		p_data_t value=hyouka_data(args[1],kankyo);
+		p_data_t value=evaluate(args[1],kankyo);
 		if(value->type==DT_ERROR)return value;
 		*zittai=value;
 		return value;
@@ -117,16 +117,16 @@ p_data_t if_proc(const std::vector<p_data_t>& args,p_kankyo_t& kankyo) {
 		return creater_t::creater().create_error_data(
 			std::string("invalid number of arguments for if : expected 2 or 3, got ")+buf);
 	} else {
-		p_data_t sinriti=hyouka_data(args[0],kankyo);
+		p_data_t sinriti=evaluate(args[0],kankyo);
 		if(sinriti->type==DT_ERROR)return sinriti;
 		if(sinriti->type==DT_BOOLEAN && !sinriti->is_true) {
 			if(args.size()>=3) {
-				return hyouka_data(args[2],kankyo);
+				return evaluate(args[2],kankyo);
 			} else {
 				return creater_t::creater().create_null_data();
 			}
 		} else {
-			return hyouka_data(args[1],kankyo);
+			return evaluate(args[1],kankyo);
 		}
 	}
 }
@@ -138,7 +138,7 @@ p_data_t and_proc(const std::vector<p_data_t>& args,p_kankyo_t& kankyo) {
 	} else {
 		p_data_t last_data=NULL;
 		for(std::vector<p_data_t>::const_iterator it=args.begin();it!=args.end();it++) {
-			p_data_t cur_data=hyouka_data(*it,kankyo);
+			p_data_t cur_data=evaluate(*it,kankyo);
 			if(cur_data->type==DT_ERROR) {
 				return cur_data;
 			} else if(cur_data->type==DT_BOOLEAN && !cur_data->is_true) {
@@ -153,7 +153,7 @@ p_data_t and_proc(const std::vector<p_data_t>& args,p_kankyo_t& kankyo) {
 // 途中に1個でも#f以外があればその値、無ければ#fを返す
 p_data_t or_proc(const std::vector<p_data_t>& args,p_kankyo_t& kankyo) {
 	for(std::vector<p_data_t>::const_iterator it=args.begin();it!=args.end();it++) {
-		p_data_t cur_data=hyouka_data(*it,kankyo);
+		p_data_t cur_data=evaluate(*it,kankyo);
 		if(cur_data->type==DT_ERROR) {
 			return cur_data;
 		} else if(cur_data->type!=DT_BOOLEAN || cur_data->is_true) {

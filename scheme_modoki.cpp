@@ -46,7 +46,7 @@ p_data_t namae_no_kisoku(const std::string& namae,p_kankyo_t& kankyo) {
 	}
 }
 
-p_data_t tekiyou(const p_data_t& proc, const std::vector<p_data_t>& args,p_kankyo_t& kankyo) {
+p_data_t apply_proc(const p_data_t& proc, const std::vector<p_data_t>& args,p_kankyo_t& kankyo) {
 	if(proc->type==DT_NATIVE_FUNC) {
 		return (proc->native_func)(args,kankyo);
 	} else if(proc->type==DT_LAMBDA) {
@@ -79,42 +79,42 @@ p_data_t tekiyou(const p_data_t& proc, const std::vector<p_data_t>& args,p_kanky
 		p_data_t res=NULL;
 		for(std::vector<p_data_t>::const_iterator it=proc->hontai.begin();
 		it!=proc->hontai.end();it++) {
-			res=hyouka_data(*it,new_kankyo);
+			res=evaluate(*it,new_kankyo);
 			if(res->type==DT_ERROR)break;
 		}
 		return res;
 	} else {
 		return creater_t::creater().create_error_data(
-			"attempt to tekiyou a data that is unavailable for tekiyou");
+			"attempt to apply a data that is unavailable for applying");
 	}
 }
 
-p_data_t hyouka_data(const p_data_t& data,p_kankyo_t& kankyo) {
+p_data_t evaluate(const p_data_t& data,p_kankyo_t& kankyo) {
 	if(data->type==DT_KIGOU) {
 		// 名前
 		return namae_no_kisoku(data->kigou,kankyo);
 	} else if(data->type==DT_CONS) {
 		// 組合せ
-		p_data_t proc=hyouka_data(data->cons_car,kankyo);
+		p_data_t proc=evaluate(data->cons_car,kankyo);
 		p_data_t next=data->cons_cdr;
 		std::vector<p_data_t> args;
 		bool tokusyu_keisiki;
 		if(proc->type==DT_ERROR)return proc;
 		tokusyu_keisiki=is_tokusyu_keisiki(proc);
 		while(next->type==DT_CONS) {
-			p_data_t next_arg=tokusyu_keisiki?next->cons_car:hyouka_data(next->cons_car,kankyo);
+			p_data_t next_arg=tokusyu_keisiki?next->cons_car:evaluate(next->cons_car,kankyo);
 			if(next_arg->type==DT_ERROR)return next_arg;
 			args.push_back(next_arg);
 			next=next->cons_cdr;
 		}
-		return tekiyou(proc,args,kankyo);
+		return apply_proc(proc,args,kankyo);
 	} else {
 		// その他のデータ
 		return data;
 	}
 }
 
-p_data_t hyouka(stream_reader& sr) {
+p_data_t parse(stream_reader& sr) {
 	int in;
 	do {
 		in=sr.get_char();
@@ -122,7 +122,7 @@ p_data_t hyouka(stream_reader& sr) {
 	if(in==EOF)return creater_t::creater().create_eof_data();
 	if(in=='\'') {
 		// クオート
-		p_data_t data=hyouka(sr);
+		p_data_t data=parse(sr);
 		return creater_t::creater().create_cons_data(
 			creater_t::creater().create_kigou_data("quote"),
 			creater_t::creater().create_cons_data(
@@ -159,7 +159,7 @@ p_data_t hyouka(stream_reader& sr) {
 				}
 				p_data_t cur_data;
 				sr.unget_char(in);
-				cur_data=hyouka(sr);
+				cur_data=parse(sr);
 				if(error_data.is_null()) {
 					if(cur_data->type==DT_ERROR) {
 						error_data=cur_data;
@@ -218,7 +218,7 @@ p_data_t hyouka(stream_reader& sr) {
 			return creater_t::creater().create_kigou_data(namae);
 		}
 	}
-	return creater_t::creater().create_error_data("reached end of hyouka(bug!)");
+	return creater_t::creater().create_error_data("reached end of parse(bug!)");
 }
 
 void print_data(data_t& data,bool do_syouryaku,bool please_syouryaku=false) {
@@ -288,9 +288,9 @@ int main(int argc,char *argv[]) {
 	for(;;) {
 		p_data_t data;
 		printf("input> ");
-		data=hyouka(fr);
+		data=parse(fr);
 		if(data->type==DT_EOF || (data->type==DT_ERROR && data->please_exit))break;
-		data=hyouka_data(data,taiiki_kankyo);
+		data=evaluate(data,taiiki_kankyo);
 		if(data->type==DT_EOF || (data->type==DT_ERROR && data->please_exit))break;
 		print_data(*data,do_syouryaku);
 		putchar('\n');

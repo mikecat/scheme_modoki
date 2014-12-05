@@ -44,7 +44,7 @@ p_data_t apply(const std::vector<p_data_t>& args,p_kankyo_t& kankyo) {
 		for(p_data_t cur_data=args.back();cur_data->type==DT_CONS;cur_data=cur_data->cons_cdr) {
 			args_list.push_back(cur_data->cons_car);
 		}
-		return tekiyou(args[0],args_list,kankyo);
+		return apply_proc(args[0],args_list,kankyo);
 	}
 }
 

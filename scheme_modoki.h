@@ -68,8 +68,8 @@ p_data_t* namae_no_kisoku2(const std::string& namae,p_kankyo_t& kankyo);
 // 名前の規則を用いて名前を探し、そのデータを返す
 p_data_t namae_no_kisoku(const std::string& namae,p_kankyo_t& kankyo);
 // 適用の規則を用いて手続きを適用する
-p_data_t tekiyou(const p_data_t& proc, const std::vector<p_data_t>& args,p_kankyo_t& kankyo);
+p_data_t apply_proc(const p_data_t& proc, const std::vector<p_data_t>& args,p_kankyo_t& kankyo);
 // 記号やリストで表現された式データを評価する
-p_data_t hyouka_data(const p_data_t& data,p_kankyo_t& kankyo);
+p_data_t evaluate(const p_data_t& data,p_kankyo_t& kankyo);
 
 #endif
