@@ -160,10 +160,12 @@ p_data_t hyouka(stream_reader& sr,p_kankyo_t& kankyo) {
 				p_data_t cur_data;
 				sr.unget_char(in);
 				cur_data=hyouka(sr,kankyo);
-				if(cur_data->type==DT_ERROR) {
-					if(error_data.is_null())error_data=cur_data;
-				} else if(error_data.is_null()) {
-					youso.push_back(cur_data);
+				if(error_data.is_null()) {
+					if(cur_data->type==DT_ERROR) {
+						error_data=cur_data;
+					} else {
+						youso.push_back(cur_data);
+					}
 				}
 			}
 		}
