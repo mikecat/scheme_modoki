@@ -114,7 +114,7 @@ p_data_t hyouka_data(const p_data_t& data,p_kankyo_t& kankyo) {
 	}
 }
 
-p_data_t hyouka(stream_reader& sr,p_kankyo_t& kankyo) {
+p_data_t hyouka(stream_reader& sr) {
 	int in;
 	do {
 		in=sr.get_char();
@@ -122,7 +122,7 @@ p_data_t hyouka(stream_reader& sr,p_kankyo_t& kankyo) {
 	if(in==EOF)return creater_t::creater().create_eof_data();
 	if(in=='\'') {
 		// クオート
-		p_data_t data=hyouka(sr,kankyo);
+		p_data_t data=hyouka(sr);
 		return creater_t::creater().create_cons_data(
 			creater_t::creater().create_kigou_data("quote"),
 			creater_t::creater().create_cons_data(
@@ -159,7 +159,7 @@ p_data_t hyouka(stream_reader& sr,p_kankyo_t& kankyo) {
 				}
 				p_data_t cur_data;
 				sr.unget_char(in);
-				cur_data=hyouka(sr,kankyo);
+				cur_data=hyouka(sr);
 				if(error_data.is_null()) {
 					if(cur_data->type==DT_ERROR) {
 						error_data=cur_data;
@@ -288,7 +288,7 @@ int main(int argc,char *argv[]) {
 	for(;;) {
 		p_data_t data;
 		printf("input> ");
-		data=hyouka(fr,taiiki_kankyo);
+		data=hyouka(fr);
 		if(data->type==DT_EOF || (data->type==DT_ERROR && data->please_exit))break;
 		data=hyouka_data(data,taiiki_kankyo);
 		if(data->type==DT_EOF || (data->type==DT_ERROR && data->please_exit))break;
