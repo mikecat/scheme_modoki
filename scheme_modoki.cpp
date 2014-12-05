@@ -114,7 +114,7 @@ p_data_t hyouka_data(const p_data_t& data,p_kankyo_t& kankyo) {
 	}
 }
 
-p_data_t hyouka(stream_reader& sr,p_kankyo_t& kankyo,bool quote_mode=false) {
+p_data_t hyouka(stream_reader& sr,p_kankyo_t& kankyo) {
 	int in;
 	do {
 		in=sr.get_char();
@@ -122,23 +122,18 @@ p_data_t hyouka(stream_reader& sr,p_kankyo_t& kankyo,bool quote_mode=false) {
 	if(in==EOF)return creater_t::creater().create_eof_data();
 	if(in=='\'') {
 		// クオート
-		p_data_t data=hyouka(sr,kankyo,true);
-		if(quote_mode) {
-			return creater_t::creater().create_cons_data(
-				creater_t::creater().create_kigou_data("quote"),
-				creater_t::creater().create_cons_data(
-					data,
-					creater_t::creater().create_null_data()
-				)
-			);
-		} else {
-			return data;
-		}
+		p_data_t data=hyouka(sr,kankyo);
+		return creater_t::creater().create_cons_data(
+			creater_t::creater().create_kigou_data("quote"),
+			creater_t::creater().create_cons_data(
+				data,
+				creater_t::creater().create_null_data()
+			)
+		);
 	}
 	if(in=='(') {
 		// 組合せ
 		std::vector<p_data_t> youso;
-		bool tokusyu_keisiki=false;
 		bool dot_flag=false;
 		p_data_t error_data=NULL;
 		for(;;) {
@@ -164,13 +159,10 @@ p_data_t hyouka(stream_reader& sr,p_kankyo_t& kankyo,bool quote_mode=false) {
 				}
 				p_data_t cur_data;
 				sr.unget_char(in);
-				cur_data=hyouka(sr,kankyo,tokusyu_keisiki?true:quote_mode);
+				cur_data=hyouka(sr,kankyo);
 				if(cur_data->type==DT_ERROR) {
 					if(error_data.is_null())error_data=cur_data;
 				} else if(error_data.is_null()) {
-					if(youso.empty()) {
-						tokusyu_keisiki=is_tokusyu_keisiki(cur_data);
-					}
 					youso.push_back(cur_data);
 				}
 			}
@@ -180,25 +172,19 @@ p_data_t hyouka(stream_reader& sr,p_kankyo_t& kankyo,bool quote_mode=false) {
 		} else if(youso.empty()) {
 			return creater_t::creater().create_null_data();
 		} else {
-			if(quote_mode) {
-				p_data_t ret;
-				if(dot_flag) {
-					ret=youso.back();
-					for(std::vector<p_data_t>::reverse_iterator rit=youso.rbegin()+1;rit!=youso.rend();rit++) {
-						ret=creater_t::creater().create_cons_data(*rit,ret);
-					}
-				} else {
-					ret=creater_t::creater().create_null_data();
-					for(std::vector<p_data_t>::reverse_iterator rit=youso.rbegin();rit!=youso.rend();rit++) {
-						ret=creater_t::creater().create_cons_data(*rit,ret);
-					}
+			p_data_t ret;
+			if(dot_flag) {
+				ret=youso.back();
+				for(std::vector<p_data_t>::reverse_iterator rit=youso.rbegin()+1;rit!=youso.rend();rit++) {
+					ret=creater_t::creater().create_cons_data(*rit,ret);
 				}
-				return ret;
 			} else {
-				p_data_t proc=youso[0];
-				youso.erase(youso.begin());
-				return tekiyou(proc,youso,kankyo);
+				ret=creater_t::creater().create_null_data();
+				for(std::vector<p_data_t>::reverse_iterator rit=youso.rbegin();rit!=youso.rend();rit++) {
+					ret=creater_t::creater().create_cons_data(*rit,ret);
+				}
 			}
+			return ret;
 		}
 	} else if(in==')') {
 		return creater_t::creater().create_error_data("extra ) found");
@@ -226,10 +212,8 @@ p_data_t hyouka(stream_reader& sr,p_kankyo_t& kankyo,bool quote_mode=false) {
 			else if(namae=="#f")return creater_t::creater().create_boolean_data(false);
 			else return creater_t::creater().create_error_data(
 				"invalid name with sharp : "+namae);
-		} else if(quote_mode) {
-			return creater_t::creater().create_kigou_data(namae);
 		} else {
-			return namae_no_kisoku(namae,kankyo);
+			return creater_t::creater().create_kigou_data(namae);
 		}
 	}
 	return creater_t::creater().create_error_data("reached end of hyouka(bug!)");
@@ -303,6 +287,8 @@ int main(int argc,char *argv[]) {
 		p_data_t data;
 		printf("input> ");
 		data=hyouka(fr,taiiki_kankyo);
+		if(data->type==DT_EOF || (data->type==DT_ERROR && data->please_exit))break;
+		data=hyouka_data(data,taiiki_kankyo);
 		if(data->type==DT_EOF || (data->type==DT_ERROR && data->please_exit))break;
 		print_data(*data,do_syouryaku);
 		putchar('\n');
