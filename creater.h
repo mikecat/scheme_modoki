@@ -10,13 +10,10 @@ class creater_t {
 		std::set<data_t*> data_log;
 		creater_t(){}
 		~creater_t();
-		data_t* create_raw_data();
 	public:
 		// 生成したデータの数を表示する
 		void print_number_of_data();
 
-		// 適当なデータを生成する
-		p_data_t create_data();
 		// EOFデータを生成する
 		p_data_t create_eof_data();
 		// エラーまたは終了指示データを生成する

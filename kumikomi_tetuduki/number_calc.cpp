@@ -6,11 +6,11 @@
 p_data_t add(const std::vector<p_data_t>& args,p_data_t&) {
 	double ret=0;
 	for(std::vector<p_data_t>::const_iterator it=args.begin();it!=args.end();it++) {
-		if((*it)->type!=DT_NUM) {
+		if((*it)->get_type()!=DT_NUM) {
 			return creater_t::creater().create_error_data(
 				"attempt to add what is not a number");
 		}
-		ret+=(*it)->num;
+		ret+=((num_t*)&*(*it))->num;
 	}
 	return creater_t::creater().create_num_data(ret);
 }
@@ -21,24 +21,24 @@ p_data_t sub(const std::vector<p_data_t>& args,p_data_t&) {
 		return creater_t::creater().create_argument_number_error_data(
 			"sub",1,args.size(),true);
 	} else if(args.size()==1) {
-		if(args[0]->type==DT_NUM) {
-			return creater_t::creater().create_num_data(-args[0]->num);
+		if(args[0]->get_type()==DT_NUM) {
+			return creater_t::creater().create_num_data(-((num_t*)&*args[0])->num);
 		} else {
 			return creater_t::creater().create_error_data(
 				"attempt to negate what is not a number");
 		}
 	} else {
-		if(args[0]->type!=DT_NUM) {
+		if(args[0]->get_type()!=DT_NUM) {
 			return creater_t::creater().create_error_data(
 				"attempt to subtract what is not a number");
 		} else {
-			double ret=args[0]->num;
+			double ret=((num_t*)&*args[0])->num;
 			for(std::vector<p_data_t>::const_iterator it=args.begin()+1;it!=args.end();it++) {
-				if((*it)->type!=DT_NUM) {
+				if((*it)->get_type()!=DT_NUM) {
 					return creater_t::creater().create_error_data(
 						"attempt to subtract what is not a number");
 				}
-				ret-=(*it)->num;
+				ret-=((num_t*)&*(*it))->num;
 			}
 			return creater_t::creater().create_num_data(ret);
 		}
@@ -49,11 +49,11 @@ p_data_t sub(const std::vector<p_data_t>& args,p_data_t&) {
 p_data_t mul(const std::vector<p_data_t>& args,p_data_t&) {
 	double ret=1;
 	for(std::vector<p_data_t>::const_iterator it=args.begin();it!=args.end();it++) {
-		if((*it)->type!=DT_NUM) {
+		if((*it)->get_type()!=DT_NUM) {
 			return creater_t::creater().create_error_data(
 				"attempt to add what is not a number");
 		}
-		ret*=(*it)->num;
+		ret*=((num_t*)&*(*it))->num;
 	}
 	return creater_t::creater().create_num_data(ret);
 }
@@ -64,17 +64,17 @@ p_data_t div_func(const std::vector<p_data_t>& args,p_data_t&) {
 		return creater_t::creater().create_argument_number_error_data(
 			"div",1,args.size(),true);
 	} else {
-		if(args[0]->type!=DT_NUM) {
+		if(args[0]->get_type()!=DT_NUM) {
 			return creater_t::creater().create_error_data(
 				"attempt to divide what is not a number");
 		} else {
-			double ret=args[0]->num;
+			double ret=((num_t*)&*args[0])->num;
 			for(std::vector<p_data_t>::const_iterator it=args.begin()+1;it!=args.end();it++) {
-				if((*it)->type!=DT_NUM) {
+				if((*it)->get_type()!=DT_NUM) {
 					return creater_t::creater().create_error_data(
 						"attempt to divide what is not a number");
 				}
-				ret/=(*it)->num;
+				ret/=((num_t*)&*(*it))->num;
 			}
 			return creater_t::creater().create_num_data(ret);
 		}
@@ -86,11 +86,12 @@ p_data_t quotient(const std::vector<p_data_t>& args,p_data_t&) {
 	if(args.size()!=2) {
 		return creater_t::creater().create_argument_number_error_data(
 			"quotient",2,args.size(),false);
-	} else if(args[0]->type!=DT_NUM || args[1]->type!=DT_NUM) {
+	} else if(args[0]->get_type()!=DT_NUM || args[1]->get_type()!=DT_NUM) {
 		return creater_t::creater().create_error_data(
 			"attempt to calculate quotient of what is not a number");
 	} else {
-		return creater_t::creater().create_num_data(trunc(args[0]->num/args[1]->num));
+		return creater_t::creater().create_num_data(
+			trunc(((num_t*)&*args[0])->num/((num_t*)&*args[1])->num));
 	}
 }
 
@@ -103,11 +104,11 @@ bool (*cmp_func)(double,double),const std::string& name) {
 	} else {
 		bool ok=true;
 		for(size_t i=0;i<args.size();i++) {
-			if(args[i]->type!=DT_NUM) {
+			if(args[i]->get_type()!=DT_NUM) {
 				return creater_t::creater().create_error_data(
 					std::string("arguments for ")+name+" must be numbers");
 			}
-			if(i>0 && !cmp_func(args[i-1]->num,args[i]->num))ok=false;
+			if(i>0 && !cmp_func(((num_t*)&*args[i-1])->num,((num_t*)&*args[i])->num))ok=false;
 		}
 		return creater_t::creater().create_boolean_data(ok);
 	}
@@ -150,8 +151,9 @@ p_data_t is_even(const std::vector<p_data_t>& args,p_data_t&) {
 			"even?",1,args.size(),false);
 	} else {
 		return creater_t::creater().create_boolean_data(
-			args[0]->type==DT_NUM && args[0]->num==floor(args[0]->num) &&
-			(int)args[0]->num%2==0
+			args[0]->get_type()==DT_NUM &&
+			((num_t*)&*args[0])->num==floor(((num_t*)&*args[0])->num) &&
+			(int)((num_t*)&*args[0])->num%2==0
 		);
 	}
 }
@@ -163,8 +165,9 @@ p_data_t is_odd(const std::vector<p_data_t>& args,p_data_t&) {
 			"odd?",1,args.size(),false);
 	} else {
 		return creater_t::creater().create_boolean_data(
-			args[0]->type==DT_NUM && args[0]->num==floor(args[0]->num) &&
-			(int)args[0]->num%2!=0
+			args[0]->get_type()==DT_NUM &&
+			((num_t*)&*args[0])->num==floor(((num_t*)&*args[0])->num) &&
+			(int)((num_t*)&*args[0])->num%2!=0
 		);
 	}
 }
@@ -174,13 +177,13 @@ p_data_t sqrt_func(const std::vector<p_data_t>& args,p_data_t&) {
 	if(args.size()!=1) {
 		return creater_t::creater().create_argument_number_error_data(
 			"sqrt",1,args.size(),false);
-	} else if(args[0]->type!=DT_NUM) {
+	} else if(args[0]->get_type()!=DT_NUM) {
 		return creater_t::creater().create_error_data(
 			"attempt to calculate square root of what is not a number");
-	} else if(args[0]->num<0.0) {
+	} else if(((num_t*)&*args[0])->num<0.0) {
 		return creater_t::creater().create_error_data(
 			"sqrt of negative value is not supported");
 	} else {
-		return creater_t::creater().create_num_data(sqrt(args[0]->num));
+		return creater_t::creater().create_num_data(sqrt(((num_t*)&*args[0])->num));
 	}
 }

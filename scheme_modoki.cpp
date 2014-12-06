@@ -21,18 +21,18 @@ bool is_space_chars(int c) {
 }
 
 bool is_tokusyu_keisiki(const p_data_t& data) {
-	return data->type==DT_NATIVE_FUNC && data->tokusyu_keisiki;
+	return data->get_type()==DT_NATIVE_FUNC && ((native_func_t*)&*data)->tokusyu_keisiki;
 }
 
 p_data_t* namae_no_kisoku2(const std::string& namae,p_data_t& kankyo) {
 	if(kankyo==NULL) {
 		return NULL;
 	} else {
-		std::map<std::string, p_data_t>::iterator it=kankyo->sokubaku.find(namae);
-		if(it!=kankyo->sokubaku.end()) {
+		std::map<std::string, p_data_t>::iterator it=((kankyo_t*)&*kankyo)->sokubaku.find(namae);
+		if(it!=((kankyo_t*)&*kankyo)->sokubaku.end()) {
 			return &it->second;
 		} else {
-			return namae_no_kisoku2(namae,kankyo->parent);
+			return namae_no_kisoku2(namae,((kankyo_t*)&*kankyo)->parent);
 		}
 	}
 }
@@ -48,40 +48,40 @@ p_data_t namae_no_kisoku(const std::string& namae,p_data_t& kankyo) {
 }
 
 p_data_t apply_proc(const p_data_t& proc, const std::vector<p_data_t>& args,p_data_t& kankyo) {
-	if(proc->type==DT_NATIVE_FUNC) {
-		return (proc->native_func)(args,kankyo);
-	} else if(proc->type==DT_LAMBDA) {
-		p_data_t new_kankyo=creater_t::creater().create_kankyo_data(proc->lambda_kankyo);
-		if(proc->is_kahencho) {
-			if(args.size()+1 < proc->karihikisu.size()) {
+	if(proc->get_type()==DT_NATIVE_FUNC) {
+		return (((native_func_t*)&*proc)->native_func)(args,kankyo);
+	} else if(proc->get_type()==DT_LAMBDA) {
+		p_data_t new_kankyo=creater_t::creater().create_kankyo_data(((lambda_t*)&*proc)->lambda_kankyo);
+		if(((lambda_t*)&*proc)->is_kahencho) {
+			if(args.size()+1 < ((lambda_t*)&*proc)->karihikisu.size()) {
 				return creater_t::creater().create_argument_number_error_data(
-					"lambda-siki",proc->karihikisu.size()-1,args.size(),true);
+					"lambda-siki",((lambda_t*)&*proc)->karihikisu.size()-1,args.size(),true);
 			}
-			for(size_t i=0;i<proc->karihikisu.size()-1;i++) {
-				new_kankyo->sokubaku[proc->karihikisu[i]]=args[i];
+			for(size_t i=0;i<((lambda_t*)&*proc)->karihikisu.size()-1;i++) {
+				((kankyo_t*)&*new_kankyo)->sokubaku[((lambda_t*)&*proc)->karihikisu[i]]=args[i];
 			}
 			p_data_t args_list;
 			p_data_t* args_buf=&args_list;
-			for(size_t i=proc->karihikisu.size()-1;i<args.size();i++) {
+			for(size_t i=((lambda_t*)&*proc)->karihikisu.size()-1;i<args.size();i++) {
 				*args_buf=creater_t::creater().create_cons_data(args[i],NULL);
-				args_buf=&(*args_buf)->cons_cdr;
+				args_buf=&((cons_t*)&*(*args_buf))->cons_cdr;
 			}
 			*args_buf=creater_t::creater().create_null_data();
-			new_kankyo->sokubaku[proc->karihikisu.back()]=args_list;
+			((kankyo_t*)&*new_kankyo)->sokubaku[((lambda_t*)&*proc)->karihikisu.back()]=args_list;
 		} else {
-			if(proc->karihikisu.size()!=args.size()) {
+			if(((lambda_t*)&*proc)->karihikisu.size()!=args.size()) {
 				return creater_t::creater().create_argument_number_error_data(
-					"lambda-siki",proc->karihikisu.size(),args.size(),false);
+					"lambda-siki",((lambda_t*)&*proc)->karihikisu.size(),args.size(),false);
 			}
 			for(size_t i=0;i<args.size();i++) {
-				new_kankyo->sokubaku[proc->karihikisu[i]]=args[i];
+				((kankyo_t*)&*new_kankyo)->sokubaku[((lambda_t*)&*proc)->karihikisu[i]]=args[i];
 			}
 		}
 		p_data_t res=NULL;
-		for(std::vector<p_data_t>::const_iterator it=proc->hontai.begin();
-		it!=proc->hontai.end();it++) {
+		for(std::vector<p_data_t>::const_iterator it=((lambda_t*)&*proc)->hontai.begin();
+		it!=((lambda_t*)&*proc)->hontai.end();it++) {
 			res=evaluate(*it,new_kankyo);
-			if(res->type==DT_ERROR)break;
+			if(res->get_type()==DT_ERROR)break;
 		}
 		return res;
 	} else {
@@ -91,22 +91,22 @@ p_data_t apply_proc(const p_data_t& proc, const std::vector<p_data_t>& args,p_da
 }
 
 p_data_t evaluate(const p_data_t& data,p_data_t& kankyo) {
-	if(data->type==DT_KIGOU) {
+	if(data->get_type()==DT_KIGOU) {
 		// 名前
-		return namae_no_kisoku(data->kigou,kankyo);
-	} else if(data->type==DT_CONS) {
+		return namae_no_kisoku(((kigou_t*)&*data)->kigou,kankyo);
+	} else if(data->get_type()==DT_CONS) {
 		// 組合せ
-		p_data_t proc=evaluate(data->cons_car,kankyo);
-		p_data_t next=data->cons_cdr;
+		p_data_t proc=evaluate(((cons_t*)&*data)->cons_car,kankyo);
+		p_data_t next=((cons_t*)&*data)->cons_cdr;
 		std::vector<p_data_t> args;
 		bool tokusyu_keisiki;
-		if(proc->type==DT_ERROR)return proc;
+		if(proc->get_type()==DT_ERROR)return proc;
 		tokusyu_keisiki=is_tokusyu_keisiki(proc);
-		while(next->type==DT_CONS) {
-			p_data_t next_arg=tokusyu_keisiki?next->cons_car:evaluate(next->cons_car,kankyo);
-			if(next_arg->type==DT_ERROR)return next_arg;
+		while(next->get_type()==DT_CONS) {
+			p_data_t next_arg=tokusyu_keisiki?((cons_t*)&*next)->cons_car:evaluate(((cons_t*)&*next)->cons_car,kankyo);
+			if(next_arg->get_type()==DT_ERROR)return next_arg;
 			args.push_back(next_arg);
-			next=next->cons_cdr;
+			next=((cons_t*)&*next)->cons_cdr;
 		}
 		return apply_proc(proc,args,kankyo);
 	} else {
@@ -162,7 +162,7 @@ p_data_t parse(stream_reader& sr) {
 				sr.unget_char(in);
 				cur_data=parse(sr);
 				if(error_data.is_null()) {
-					if(cur_data->type==DT_ERROR) {
+					if(cur_data->get_type()==DT_ERROR) {
 						error_data=cur_data;
 					} else {
 						youso.push_back(cur_data);
@@ -222,44 +222,44 @@ p_data_t parse(stream_reader& sr) {
 	return creater_t::creater().create_error_data("reached end of parse(bug!)");
 }
 
-void print_data(data_t& data,bool do_syouryaku,bool please_syouryaku=false) {
-	switch(data.type) {
+void print_data(p_data_t& data,bool do_syouryaku,bool please_syouryaku=false) {
+	switch(data->get_type()) {
 		case DT_EOF:
 			break;
 		case DT_ERROR:
-			printf("ERROR: %s",data.error_mes.c_str());
+			printf("ERROR: %s",((error_t*)&*data)->error_mes.c_str());
 			break;
 		case DT_NUM:
-			printf("%.15g",data.num);
+			printf("%.15g",((num_t*)&*data)->num);
 			break;
 		case DT_KIGOU:
-			printf("%s",data.kigou.c_str());
+			printf("%s",((kigou_t*)&*data)->kigou.c_str());
 			break;
 		case DT_BOOLEAN:
-			printf("#%c",data.is_true?'t':'f');
+			printf("#%c",((boolean_t*)&*data)->is_true?'t':'f');
 			break;
 		case DT_LAMBDA:
 			printf("<lambda-siki>");
 			break;
 		case DT_CONS:
 			if(!do_syouryaku || !please_syouryaku)printf("(");
-			if(!data.cons_car.is_null()) {
-				print_data(*data.cons_car,do_syouryaku);
+			if(!((cons_t*)&*data)->cons_car.is_null()) {
+				print_data(((cons_t*)&*data)->cons_car,do_syouryaku);
 			} else {
 				printf("<NULL(bug?)>");
 			}
-			if(!data.cons_cdr.is_null()) {
+			if(!((cons_t*)&*data)->cons_cdr.is_null()) {
 				if(!do_syouryaku) {
 					printf(" . ");
 				} else {
-					if(data.cons_cdr->type!=DT_NULL){
+					if(((cons_t*)&*data)->cons_cdr->get_type()!=DT_NULL){
 						printf(" ");
-						if(data.cons_cdr->type!=DT_CONS) {
+						if(((cons_t*)&*data)->cons_cdr->get_type()!=DT_CONS) {
 							printf(". ");
 						}
 					}
 				}
-				print_data(*data.cons_cdr,do_syouryaku,true);
+				print_data(((cons_t*)&*data)->cons_cdr,do_syouryaku,true);
 			} else {
 				printf(" . <NULL(bug?)>");
 			}
@@ -293,10 +293,10 @@ int main(int argc,char *argv[]) {
 		p_data_t data;
 		printf("input> ");
 		data=parse(fr);
-		if(data->type==DT_EOF || (data->type==DT_ERROR && data->please_exit))break;
+		if(data->get_type()==DT_EOF || (data->get_type()==DT_ERROR && ((error_t*)&*data)->please_exit))break;
 		data=evaluate(data,taiiki_kankyo);
-		if(data->type==DT_EOF || (data->type==DT_ERROR && data->please_exit))break;
-		print_data(*data,do_syouryaku);
+		if(data->get_type()==DT_EOF || (data->get_type()==DT_ERROR && ((error_t*)&*data)->please_exit))break;
+		print_data(data,do_syouryaku);
 		putchar('\n');
 	}
 	return 0;

@@ -71,7 +71,7 @@ bool p_data_t::is_null() const {
 
 data_t& p_data_t::operator*() const {
 	if(!check_sansyo()) {
-		static data_t tmp;
+		static null_t tmp;
 		return tmp;
 	}
 	return *sansyo;

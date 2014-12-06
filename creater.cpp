@@ -18,25 +18,15 @@ void creater_t::print_number_of_data() {
 	printf("number of data = %u\n",(unsigned int)data_log.size());
 }
 
-data_t* creater_t::create_raw_data() {
-	data_t *new_data=new data_t();
+p_data_t creater_t::create_eof_data() {
+	eof_t *new_data=new eof_t;
 	data_log.insert(new_data);
 	return new_data;
 }
 
-p_data_t creater_t::create_data() {
-	return create_raw_data();
-}
-
-p_data_t creater_t::create_eof_data() {
-	data_t *new_data=create_raw_data();
-	new_data->type=DT_EOF;
-	return new_data;
-}
-
 p_data_t creater_t::create_error_data(const std::string& str,bool please_exit) {
-	data_t *new_data=create_raw_data();
-	new_data->type=DT_ERROR;
+	error_t *new_data=new error_t;
+	data_log.insert(new_data);
 	new_data->error_mes=str;
 	new_data->please_exit=please_exit;
 	return new_data;
@@ -58,22 +48,22 @@ const std::string& name,size_t min_number,size_t got_number,bool is_kahencho) {
 }
 
 p_data_t creater_t::create_num_data(double num) {
-	data_t *new_data=create_raw_data();
-	new_data->type=DT_NUM;
+	num_t *new_data=new num_t;
+	data_log.insert(new_data);
 	new_data->num=num;
 	return new_data;
 }
 
 p_data_t creater_t::create_kigou_data(const std::string& str) {
-	data_t *new_data=create_raw_data();
-	new_data->type=DT_KIGOU;
+	kigou_t *new_data=new kigou_t;
+	data_log.insert(new_data);
 	new_data->kigou=str;
 	return new_data;
 }
 
 p_data_t creater_t::create_boolean_data(bool is_true) {
-	data_t *new_data=create_raw_data();
-	new_data->type=DT_BOOLEAN;
+	boolean_t *new_data=new boolean_t;
+	data_log.insert(new_data);
 	new_data->is_true=is_true;
 	return new_data;
 }
@@ -81,8 +71,8 @@ p_data_t creater_t::create_boolean_data(bool is_true) {
 p_data_t creater_t::create_lambda_data(
 const std::vector<std::string>& karihikisu,
 const std::vector<p_data_t>& hontai,bool is_kahencho,const p_data_t& kankyo) {
-	data_t *new_data=create_raw_data();
-	new_data->type=DT_LAMBDA;
+	lambda_t *new_data=new lambda_t;
+	data_log.insert(new_data);
 	new_data->karihikisu=karihikisu;
 	new_data->hontai=hontai;
 	new_data->lambda_kankyo=kankyo;
@@ -91,32 +81,31 @@ const std::vector<p_data_t>& hontai,bool is_kahencho,const p_data_t& kankyo) {
 }
 
 p_data_t creater_t::create_cons_data(const p_data_t& car,const p_data_t& cdr) {
-	data_t *new_data=create_raw_data();
-	new_data->type=DT_CONS;
+	cons_t *new_data=new cons_t;
+	data_log.insert(new_data);
 	new_data->cons_car=car;
 	new_data->cons_cdr=cdr;
 	return new_data;
 }
 
 p_data_t creater_t::create_native_func_data(p_native_func native_func,bool tokusyu_keisiki) {
-	data_t* new_data=create_raw_data();
-	new_data->type=DT_NATIVE_FUNC;
+	native_func_t* new_data=new native_func_t;
+	data_log.insert(new_data);
 	new_data->native_func=native_func;
 	new_data->tokusyu_keisiki=tokusyu_keisiki;
 	return new_data;
 }
 
 p_data_t creater_t::create_null_data() {
-	data_t *new_data=create_raw_data();
-	new_data->type=DT_NULL;
+	null_t *new_data=new null_t;
+	data_log.insert(new_data);
 	return new_data;
 }
 
 p_data_t creater_t::create_kankyo_data(const p_data_t& oya) {
-	data_t *new_data=create_raw_data();
-	new_data->type=DT_KANKYO;
-	new_data->parent=oya;
+	kankyo_t *new_data=new kankyo_t;
 	data_log.insert(new_data);
+	new_data->parent=oya;
 	return new_data;
 }
 

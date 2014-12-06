@@ -25,31 +25,69 @@ typedef p_data_t(*p_native_func)(const std::vector<p_data_t>& args,p_data_t& kan
 
 // データを表す構造体(参照カウントを持つ)
 struct data_t {
+	// 参照カウント
 	int sansyo_count;
-	data_t(): sansyo_count(0) {}
+	// このデータをもらったら、次の評価を中止して呼び出し元に戻るべきというフラグ
+	bool force_return_flag;
 
-	DATATYPE type;
-	// DT_ERROR
+	data_t(): sansyo_count(0) {}
+	virtual ~data_t() {}
+
+	// このデータの種類を返す
+	virtual DATATYPE get_type() const = 0;
+};
+
+struct eof_t : public data_t {
+	DATATYPE get_type() const {return DT_EOF;}
+};
+
+struct error_t : public data_t {
+	DATATYPE get_type() const {return DT_ERROR;}
 	std::string error_mes;
 	bool please_exit;
-	// DT_NUM
+};
+
+struct num_t : public data_t {
+	DATATYPE get_type() const {return DT_NUM;}
 	double num;
-	// DT_KIGOU
+};
+
+struct kigou_t : public data_t {
+	DATATYPE get_type() const {return DT_KIGOU;}
 	std::string kigou;
-	// DT_BOOLEAN
+};
+
+struct boolean_t : public data_t {
+	DATATYPE get_type() const {return DT_BOOLEAN;}
 	bool is_true;
-	// DT_LAMBDA
+};
+
+struct lambda_t : public data_t {
+	DATATYPE get_type() const {return DT_LAMBDA;}
 	std::vector<std::string> karihikisu;
 	std::vector<p_data_t> hontai;
 	p_data_t lambda_kankyo;
 	bool is_kahencho;
-	// DT_CONS
+};
+
+struct cons_t : public data_t {
+	DATATYPE get_type() const {return DT_CONS;}
 	p_data_t cons_car;
 	p_data_t cons_cdr;
-	// DT_NATIVE_FUNC
+};
+
+struct native_func_t : public data_t {
+	DATATYPE get_type() const {return DT_NATIVE_FUNC;}
 	p_native_func native_func;
 	bool tokusyu_keisiki;
-	// DT_KANKYO
+};
+
+struct null_t : public data_t {
+	DATATYPE get_type() const {return DT_NULL;}
+};
+
+struct kankyo_t : public data_t {
+	DATATYPE get_type() const {return DT_KANKYO;}
 	p_data_t parent;
 	std::map<std::string, p_data_t> sokubaku;
 };
