@@ -75,10 +75,10 @@ p_data_t apply_proc(const p_data_t& proc, const std::vector<p_data_t>& args,p_da
 
 p_data_t evaluate(const p_data_t& data,p_data_t& kankyo) {
 	if(data->get_type()==DT_KIGOU) {
-		// –¼‘O
+		// åå‰
 		return namae_no_kisoku(((kigou_t*)&*data)->kigou,kankyo);
 	} else if(data->get_type()==DT_CONS) {
-		// ‘g‡‚¹
+		// çµ„åˆã›
 		p_data_t proc=evaluate(((cons_t*)&*data)->cons_car,kankyo);
 		p_data_t next=((cons_t*)&*data)->cons_cdr;
 		std::vector<p_data_t> args;
@@ -93,7 +93,7 @@ p_data_t evaluate(const p_data_t& data,p_data_t& kankyo) {
 		}
 		return apply_proc(proc,args,kankyo);
 	} else {
-		// ‚»‚Ì‘¼‚Ìƒf[ƒ^
+		// ãã®ä»–ã®ãƒ‡ãƒ¼ã‚¿
 		return data;
 	}
 }
@@ -105,7 +105,7 @@ p_data_t parse(stream_reader& sr) {
 	} while(isspace(in));
 	if(in==EOF)return creater_t::creater().create_eof_data();
 	if(in=='\'') {
-		// ƒNƒI[ƒg
+		// ã‚¯ã‚ªãƒ¼ãƒˆ
 		p_data_t data=parse(sr);
 		return creater_t::creater().create_cons_data(
 			creater_t::creater().create_kigou_data("quote"),
@@ -116,7 +116,7 @@ p_data_t parse(stream_reader& sr) {
 		);
 	}
 	if(in=='(') {
-		// ‘g‡‚¹
+		// çµ„åˆã›
 		std::vector<p_data_t> youso;
 		bool dot_flag=false;
 		p_data_t error_data=NULL;
@@ -175,7 +175,7 @@ p_data_t parse(stream_reader& sr) {
 	} else if(in==')') {
 		return creater_t::creater().create_error_data("extra ) found");
 	} else {
-		// –¼‘O
+		// åå‰
 		char buf[4]={(char)in,0};
 		std::string namae=buf;
 		for(;;) {
