@@ -43,7 +43,7 @@ struct eof_t : public data_t {
 };
 
 struct exit_t: public data_t {
-	DATATYPE get_type() const {return DT_EOF;}
+	DATATYPE get_type() const {return DT_EXIT;}
 	int exit_code;
 };
 

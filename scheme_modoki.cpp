@@ -290,6 +290,7 @@ int main(int argc,char *argv[]) {
 			p_data_config_t::set_do_auto_delete(false);
 		}
 	}
+	int exit_code=0;
 	p_data_t taiiki_kankyo=creater_t::creater().create_kankyo_data();
 	add_kumikomi_tetuduki_to_kankyo(taiiki_kankyo);
 	file_reader fr(stdin);
@@ -297,11 +298,15 @@ int main(int argc,char *argv[]) {
 		p_data_t data;
 		printf("input> ");
 		data=parse(fr);
-		if(data->get_type()==DT_EOF || data->get_type()==DT_EXIT)break;
+		if(data->get_type()==DT_EOF)break;
 		data=evaluate(data,taiiki_kankyo);
-		if(data->get_type()==DT_EOF || data->get_type()==DT_EXIT)break;
+		if(data->get_type()==DT_EOF)break;
+		else if(data->get_type()==DT_EXIT) {
+			exit_code=((exit_t*)&*data)->exit_code;
+			break;
+		}
 		print_data(data,do_syouryaku);
 		putchar('\n');
 	}
-	return 0;
+	return exit_code;
 }

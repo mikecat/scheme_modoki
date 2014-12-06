@@ -55,8 +55,21 @@ p_data_t apply(const std::vector<p_data_t>& args,p_data_t& kankyo) {
 }
 
 // 終了する指示を出す
-p_data_t exit_func(const std::vector<p_data_t>&,p_data_t&) {
-	return creater_t::creater().create_exit_data(0);
+p_data_t exit_func(const std::vector<p_data_t>& args,p_data_t&) {
+	if(args.size()==0) {
+		return creater_t::creater().create_exit_data(0);
+	} else if(args.size()==1) {
+		if(args[0]->get_type()!=DT_NUM) {
+			return creater_t::creater().create_error_data(
+				"first argument of exit must be a number");
+		}
+		return creater_t::creater().create_exit_data((int)((num_t*)&*args[0])->num);
+	} else {
+		char buffer[16];
+		sprintf(buffer,"%u",(unsigned int)args.size());
+		return creater_t::creater().create_error_data(
+			std::string("invalid number of arguments for exit : expected 0 or 1, got ")+buffer);
+	}
 }
 
 // 引数が#f以外なら#fを、#fなら#tを返す
