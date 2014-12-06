@@ -2,7 +2,7 @@
 #include "special_form.h"
 
 // 引数(未評価)を返す
-p_data_t quote_proc(const std::vector<p_data_t>& args,p_kankyo_t&) {
+p_data_t quote_proc(const std::vector<p_data_t>& args,p_data_t&) {
 	if(args.size()!=1) {
 		return creater_t::creater().create_argument_number_error_data(
 			"quote",1,args.size(),false);
@@ -12,7 +12,7 @@ p_data_t quote_proc(const std::vector<p_data_t>& args,p_kankyo_t&) {
 }
 
 // 新規束縛の作成
-p_data_t define_proc(const std::vector<p_data_t>& args,p_kankyo_t& kankyo) {
+p_data_t define_proc(const std::vector<p_data_t>& args,p_data_t& kankyo) {
 	if(args.size()<2) {
 		return creater_t::creater().create_argument_number_error_data(
 			"define",2,args.size(),true);
@@ -44,7 +44,7 @@ p_data_t define_proc(const std::vector<p_data_t>& args,p_kankyo_t& kankyo) {
 }
 
 // 代入
-p_data_t set_proc(const std::vector<p_data_t>& args,p_kankyo_t& kankyo) {
+p_data_t set_proc(const std::vector<p_data_t>& args,p_data_t& kankyo) {
 	if(args.size()!=2) {
 		return creater_t::creater().create_argument_number_error_data(
 			"set!",2,args.size(),false);
@@ -62,7 +62,7 @@ p_data_t set_proc(const std::vector<p_data_t>& args,p_kankyo_t& kankyo) {
 }
 
 // 新規手続きの作成
-p_data_t lambda_proc(const std::vector<p_data_t>& args,p_kankyo_t& kankyo) {
+p_data_t lambda_proc(const std::vector<p_data_t>& args,p_data_t& kankyo) {
 	if(args.size()<2) {
 		return creater_t::creater().create_argument_number_error_data(
 			"lambda",2,args.size(),true);
@@ -110,7 +110,7 @@ p_data_t lambda_proc(const std::vector<p_data_t>& args,p_kankyo_t& kankyo) {
 }
 
 // 条件分岐
-p_data_t if_proc(const std::vector<p_data_t>& args,p_kankyo_t& kankyo) {
+p_data_t if_proc(const std::vector<p_data_t>& args,p_data_t& kankyo) {
 	if(args.size()!=2 && args.size()!=3) {
 		char buf[16];
 		sprintf(buf,"%u",(unsigned int)args.size());
@@ -132,7 +132,7 @@ p_data_t if_proc(const std::vector<p_data_t>& args,p_kankyo_t& kankyo) {
 }
 
 // 途中に1個でも#fがあれば#f、無ければ最後の値を返す
-p_data_t and_proc(const std::vector<p_data_t>& args,p_kankyo_t& kankyo) {
+p_data_t and_proc(const std::vector<p_data_t>& args,p_data_t& kankyo) {
 	if(args.size()==0) {
 		return creater_t::creater().create_boolean_data(true);
 	} else {
@@ -151,7 +151,7 @@ p_data_t and_proc(const std::vector<p_data_t>& args,p_kankyo_t& kankyo) {
 }
 
 // 途中に1個でも#f以外があればその値、無ければ#fを返す
-p_data_t or_proc(const std::vector<p_data_t>& args,p_kankyo_t& kankyo) {
+p_data_t or_proc(const std::vector<p_data_t>& args,p_data_t& kankyo) {
 	for(std::vector<p_data_t>::const_iterator it=args.begin();it!=args.end();it++) {
 		p_data_t cur_data=evaluate(*it,kankyo);
 		if(cur_data->type==DT_ERROR) {

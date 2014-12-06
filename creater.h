@@ -7,17 +7,14 @@
 class creater_t {
 	private:
 		static creater_t cr;
-		std::set<kankyo_t*> kankyo_log;
 		std::set<data_t*> data_log;
 		creater_t(){}
 		~creater_t();
 		data_t* create_raw_data();
 	public:
-		// 生成した環境とデータの数を表示する
-		void print_number_of_kankyo_and_data();
+		// 生成したデータの数を表示する
+		void print_number_of_data();
 
-		// 環境データを生成する
-		p_kankyo_t create_kankyo(const p_kankyo_t& oya=NULL);
 		// 適当なデータを生成する
 		p_data_t create_data();
 		// EOFデータを生成する
@@ -36,24 +33,22 @@ class creater_t {
 		// ラムダ式データを生成する
 		p_data_t create_lambda_data(
 			const std::vector<std::string>& karihikisu,
-			const std::vector<p_data_t>& hontai,bool is_kahencho,const p_kankyo_t& kankyo);
+			const std::vector<p_data_t>& hontai,bool is_kahencho,const p_data_t& kankyo);
 		// consセルデータを生成する
 		p_data_t create_cons_data(const p_data_t& car,const p_data_t& cdr);
 		// 組込み関数データを生成する
 		p_data_t create_native_func_data(p_native_func native_func,bool tokusyu_keisiki=false);
 		// '()データを生成する
 		p_data_t create_null_data();
+		// 環境データを生成する
+		p_data_t create_kankyo_data(const p_data_t& oya=NULL);
 
-		// 環境が存在するか確認する
-		bool is_exist_kankyo(kankyo_t* kankyo);
 		// データが存在するか確認する
 		bool is_exist_data(data_t* data);
 
-		// 環境を削除する
-		void delete_kankyo(kankyo_t* kankyo);
 		// データを削除する
 		void delete_data(data_t* data);
-		// 参照カウントが0以下の環境とデータを削除する
+		// 参照カウントが0以下のデータを削除する
 		void delete_zero_sansyo();
 
 		// 生成器のインスタンスを得る

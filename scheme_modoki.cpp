@@ -23,7 +23,7 @@ bool is_tokusyu_keisiki(const p_data_t& data) {
 	return data->type==DT_NATIVE_FUNC && data->tokusyu_keisiki;
 }
 
-p_data_t* namae_no_kisoku2(const std::string& namae,p_kankyo_t& kankyo) {
+p_data_t* namae_no_kisoku2(const std::string& namae,p_data_t& kankyo) {
 	if(kankyo==NULL) {
 		return NULL;
 	} else {
@@ -36,7 +36,7 @@ p_data_t* namae_no_kisoku2(const std::string& namae,p_kankyo_t& kankyo) {
 	}
 }
 
-p_data_t namae_no_kisoku(const std::string& namae,p_kankyo_t& kankyo) {
+p_data_t namae_no_kisoku(const std::string& namae,p_data_t& kankyo) {
 	p_data_t* ret=namae_no_kisoku2(namae,kankyo);
 	if(ret==NULL) {
 		return creater_t::creater().create_error_data(
@@ -46,11 +46,11 @@ p_data_t namae_no_kisoku(const std::string& namae,p_kankyo_t& kankyo) {
 	}
 }
 
-p_data_t apply_proc(const p_data_t& proc, const std::vector<p_data_t>& args,p_kankyo_t& kankyo) {
+p_data_t apply_proc(const p_data_t& proc, const std::vector<p_data_t>& args,p_data_t& kankyo) {
 	if(proc->type==DT_NATIVE_FUNC) {
 		return (proc->native_func)(args,kankyo);
 	} else if(proc->type==DT_LAMBDA) {
-		p_kankyo_t new_kankyo=creater_t::creater().create_kankyo(proc->lambda_kankyo);
+		p_data_t new_kankyo=creater_t::creater().create_kankyo_data(proc->lambda_kankyo);
 		if(proc->is_kahencho) {
 			if(args.size()+1 < proc->karihikisu.size()) {
 				return creater_t::creater().create_argument_number_error_data(
@@ -89,7 +89,7 @@ p_data_t apply_proc(const p_data_t& proc, const std::vector<p_data_t>& args,p_ka
 	}
 }
 
-p_data_t evaluate(const p_data_t& data,p_kankyo_t& kankyo) {
+p_data_t evaluate(const p_data_t& data,p_data_t& kankyo) {
 	if(data->type==DT_KIGOU) {
 		// 名前
 		return namae_no_kisoku(data->kigou,kankyo);
@@ -270,6 +270,9 @@ void print_data(data_t& data,bool do_syouryaku,bool please_syouryaku=false) {
 		case DT_NULL:
 			if(!do_syouryaku || !please_syouryaku)printf("()");
 			break;
+		case DT_KANKYO:
+			printf("<kankyo>");
+			break;
 	}
 }
 
@@ -282,7 +285,7 @@ int main(int argc,char *argv[]) {
 			sansyo_all_t::set_do_auto_delete(false);
 		}
 	}
-	p_kankyo_t taiiki_kankyo=creater_t::creater().create_kankyo();
+	p_data_t taiiki_kankyo=creater_t::creater().create_kankyo_data();
 	add_kumikomi_tetuduki_to_kankyo(taiiki_kankyo);
 	file_reader fr(stdin);
 	for(;;) {

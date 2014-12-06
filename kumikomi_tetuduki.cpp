@@ -6,7 +6,7 @@
 #include "kumikomi_tetuduki/special_form.h"
 
 // データが等価か判定する
-p_data_t is_eq(const std::vector<p_data_t>& args,p_kankyo_t&) {
+p_data_t is_eq(const std::vector<p_data_t>& args,p_data_t&) {
 	if(args.size()!=2) {
 		return creater_t::creater().create_argument_number_error_data(
 			"eq?",2,args.size(),false);
@@ -28,7 +28,7 @@ p_data_t is_eq(const std::vector<p_data_t>& args,p_kankyo_t&) {
 }
 
 // 手続きを引数リストに適用する
-p_data_t apply(const std::vector<p_data_t>& args,p_kankyo_t& kankyo) {
+p_data_t apply(const std::vector<p_data_t>& args,p_data_t& kankyo) {
 	if(args.size()<2) {
 		return creater_t::creater().create_argument_number_error_data(
 			"apply",2,args.size(),true);
@@ -49,12 +49,12 @@ p_data_t apply(const std::vector<p_data_t>& args,p_kankyo_t& kankyo) {
 }
 
 // 終了する指示を出す
-p_data_t exit_func(const std::vector<p_data_t>&,p_kankyo_t&) {
+p_data_t exit_func(const std::vector<p_data_t>&,p_data_t&) {
 	return creater_t::creater().create_error_data("",true);
 }
 
 // 引数が#f以外なら#fを、#fなら#tを返す
-p_data_t not_func(const std::vector<p_data_t>& args,p_kankyo_t&) {
+p_data_t not_func(const std::vector<p_data_t>& args,p_data_t&) {
 	if(args.size()!=1) {
 		return creater_t::creater().create_argument_number_error_data(
 			"not",1,args.size(),false);
@@ -65,7 +65,7 @@ p_data_t not_func(const std::vector<p_data_t>& args,p_kankyo_t&) {
 }
 
 // 省略できるconsセルの表示を省略するかを設定する
-p_data_t set_enable_syouryaku(const std::vector<p_data_t>& args,p_kankyo_t&) {
+p_data_t set_enable_syouryaku(const std::vector<p_data_t>& args,p_data_t&) {
 	if(args.size()!=1) {
 		return creater_t::creater().create_argument_number_error_data(
 			"set-enable-syouryaku",1,args.size(),false);
@@ -75,7 +75,7 @@ p_data_t set_enable_syouryaku(const std::vector<p_data_t>& args,p_kankyo_t&) {
 }
 
 // 省略できるconsセルの表示を省略するかを取得する
-p_data_t get_enable_syouryaku(const std::vector<p_data_t>& args,p_kankyo_t&) {
+p_data_t get_enable_syouryaku(const std::vector<p_data_t>& args,p_data_t&) {
 	if(args.size()!=0) {
 		return creater_t::creater().create_argument_number_error_data(
 			"get-enable-syouryaku",0,args.size(),false);
@@ -84,17 +84,17 @@ p_data_t get_enable_syouryaku(const std::vector<p_data_t>& args,p_kankyo_t&) {
 }
 
 // 生成され、削除されていない環境とデータの数を表示する
-p_data_t print_number_of_kankyo_and_data(const std::vector<p_data_t>& args,p_kankyo_t&) {
+p_data_t print_number_of_data(const std::vector<p_data_t>& args,p_data_t&) {
 	if(args.size()!=0) {
 		return creater_t::creater().create_argument_number_error_data(
 			"print-number-of-kankyo-and-data",0,args.size(),false);
 	}
-	creater_t::creater().print_number_of_kankyo_and_data();
+	creater_t::creater().print_number_of_data();
 	return creater_t::creater().create_null_data();
 }
 
 // 環境とデータの自動削除の有効/無効を設定する
-p_data_t set_enable_auto_delete(const std::vector<p_data_t>& args,p_kankyo_t&) {
+p_data_t set_enable_auto_delete(const std::vector<p_data_t>& args,p_data_t&) {
 	if(args.size()!=1) {
 		return creater_t::creater().create_argument_number_error_data(
 			"set-enable-auto-delete",1,args.size(),false);
@@ -104,7 +104,7 @@ p_data_t set_enable_auto_delete(const std::vector<p_data_t>& args,p_kankyo_t&) {
 }
 
 // 環境とデータの自動削除の有効/無効を取得する
-p_data_t get_enable_auto_delete(const std::vector<p_data_t>& args,p_kankyo_t&) {
+p_data_t get_enable_auto_delete(const std::vector<p_data_t>& args,p_data_t&) {
 	if(args.size()!=0) {
 		return creater_t::creater().create_argument_number_error_data(
 			"get-enable-auto-delete",0,args.size(),false);
@@ -113,7 +113,7 @@ p_data_t get_enable_auto_delete(const std::vector<p_data_t>& args,p_kankyo_t&) {
 }
 
 // 参照カウントが0以下の環境とデータを削除する
-p_data_t delete_zero_sansyo(const std::vector<p_data_t>& args,p_kankyo_t&) {
+p_data_t delete_zero_sansyo(const std::vector<p_data_t>& args,p_data_t&) {
 	if(args.size()!=0) {
 		return creater_t::creater().create_argument_number_error_data(
 			"delete-zero-sansyo",0,args.size(),false);
@@ -123,7 +123,7 @@ p_data_t delete_zero_sansyo(const std::vector<p_data_t>& args,p_kankyo_t&) {
 }
 
 // 環境に組み込み手続きを追加する
-void add_kumikomi_tetuduki_to_kankyo(p_kankyo_t& kankyo) {
+void add_kumikomi_tetuduki_to_kankyo(p_data_t& kankyo) {
 	// 数値計算 (number_calc.cpp)
 	kankyo->sokubaku["+"]=creater_t::creater().create_native_func_data(add);
 	kankyo->sokubaku["-"]=creater_t::creater().create_native_func_data(sub);
@@ -156,8 +156,8 @@ void add_kumikomi_tetuduki_to_kankyo(p_kankyo_t& kankyo) {
 		creater_t::creater().create_native_func_data(set_enable_syouryaku);
 	kankyo->sokubaku["get-enable-syouryaku"]=
 		creater_t::creater().create_native_func_data(get_enable_syouryaku);
-	kankyo->sokubaku["print-number-of-kankyo-and-data"]=
-		creater_t::creater().create_native_func_data(print_number_of_kankyo_and_data);
+	kankyo->sokubaku["print-number-of-data"]=
+		creater_t::creater().create_native_func_data(print_number_of_data);
 	kankyo->sokubaku["set-enable-auto-delete"]=
 		creater_t::creater().create_native_func_data(set_enable_auto_delete);
 	kankyo->sokubaku["get-enable-auto-delete"]=

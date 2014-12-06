@@ -104,18 +104,12 @@ bool sansyo_t<T>::check_sansyo() const {
 }
 
 template<>
-bool sansyo_t<kankyo_t>::check_sansyo() const;
-
-template<>
 bool sansyo_t<data_t>::check_sansyo() const;
 
 template<typename T>
 void sansyo_t<T>::decrement_sansyo_count() {
 	if(sansyo!=NULL)sansyo->sansyo_count--;
 }
-
-template<>
-void sansyo_t<kankyo_t>::decrement_sansyo_count();
 
 template<>
 void sansyo_t<data_t>::decrement_sansyo_count();

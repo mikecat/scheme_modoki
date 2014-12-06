@@ -5,13 +5,7 @@
 creater_t creater_t::cr;
 
 creater_t::~creater_t() {
-	print_number_of_kankyo_and_data();
-	while(!kankyo_log.empty()) {
-		std::set<kankyo_t*>::iterator it=kankyo_log.begin();
-		kankyo_t* p=*it;
-		kankyo_log.erase(it);
-		delete p;
-	}
+	print_number_of_data();
 	while(!data_log.empty()) {
 		std::set<data_t*>::iterator it=data_log.begin();
 		data_t* p=*it;
@@ -20,15 +14,8 @@ creater_t::~creater_t() {
 	}
 }
 
-void creater_t::print_number_of_kankyo_and_data() {
-	printf("number of kankyo = %u\n",(unsigned int)kankyo_log.size());
-	printf("number of data   = %u\n",(unsigned int)data_log.size());
-}
-
-p_kankyo_t creater_t::create_kankyo(const p_kankyo_t& oya) {
-	kankyo_t* new_kankyo=new kankyo_t(oya);
-	kankyo_log.insert(new_kankyo);
-	return new_kankyo;
+void creater_t::print_number_of_data() {
+	printf("number of data = %u\n",(unsigned int)data_log.size());
 }
 
 data_t* creater_t::create_raw_data() {
@@ -93,7 +80,7 @@ p_data_t creater_t::create_boolean_data(bool is_true) {
 
 p_data_t creater_t::create_lambda_data(
 const std::vector<std::string>& karihikisu,
-const std::vector<p_data_t>& hontai,bool is_kahencho,const p_kankyo_t& kankyo) {
+const std::vector<p_data_t>& hontai,bool is_kahencho,const p_data_t& kankyo) {
 	data_t *new_data=create_raw_data();
 	new_data->type=DT_LAMBDA;
 	new_data->karihikisu=karihikisu;
@@ -124,22 +111,17 @@ p_data_t creater_t::create_null_data() {
 	new_data->type=DT_NULL;
 	return new_data;
 }
-bool creater_t::is_exist_kankyo(kankyo_t* kankyo) {
-	return kankyo_log.find(kankyo)!=kankyo_log.end();
+
+p_data_t creater_t::create_kankyo_data(const p_data_t& oya) {
+	data_t *new_data=create_raw_data();
+	new_data->type=DT_KANKYO;
+	new_data->parent=oya;
+	data_log.insert(new_data);
+	return new_data;
 }
 
 bool creater_t::is_exist_data(data_t* data) {
 	return data_log.find(data)!=data_log.end();
-}
-
-void creater_t::delete_kankyo(kankyo_t* kankyo) {
-	if(kankyo->sansyo_count<=0) {
-		std::set<kankyo_t*>::iterator it=kankyo_log.find(kankyo);
-		if(it!=kankyo_log.end()) {
-			kankyo_log.erase(it);
-		}
-		delete kankyo;
-	}
 }
 
 void creater_t::delete_data(data_t* data) {
@@ -153,18 +135,9 @@ void creater_t::delete_data(data_t* data) {
 }
 
 void creater_t::delete_zero_sansyo() {
-	std::vector<kankyo_t*> kankyo_to_delete;
 	std::vector<data_t*> data_to_delete;
-	for(std::set<kankyo_t*>::iterator it=kankyo_log.begin();it!=kankyo_log.end();it++) {
-		if((*it)->sansyo_count<=0)kankyo_to_delete.push_back(*it);
-	}
 	for(std::set<data_t*>::iterator it=data_log.begin();it!=data_log.end();it++) {
 		if((*it)->sansyo_count<=0)data_to_delete.push_back(*it);
-	}
-	for(std::vector<kankyo_t*>::iterator it=kankyo_to_delete.begin();
-	it!=kankyo_to_delete.end();it++) {
-		kankyo_log.erase(*it);
-		delete *it;
 	}
 	for(std::vector<data_t*>::iterator it=data_to_delete.begin();
 	it!=data_to_delete.end();it++) {
