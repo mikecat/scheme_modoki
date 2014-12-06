@@ -24,11 +24,17 @@ p_data_t creater_t::create_eof_data() {
 	return new_data;
 }
 
-p_data_t creater_t::create_error_data(const std::string& str,bool please_exit) {
+p_data_t creater_t::create_exit_data(int exit_code) {
+	exit_t *new_data=new exit_t;
+	data_log.insert(new_data);
+	new_data->exit_code=exit_code;
+	return new_data;
+}
+
+p_data_t creater_t::create_error_data(const std::string& str) {
 	error_t *new_data=new error_t;
 	data_log.insert(new_data);
 	new_data->error_mes=str;
-	new_data->please_exit=please_exit;
 	return new_data;
 }
 
@@ -44,7 +50,7 @@ const std::string& name,size_t min_number,size_t got_number,bool is_kahencho) {
 	message+=", got ";
 	sprintf(buffer,"%u",(unsigned int)got_number);
 	message+=buffer;
-	return create_error_data(message,false);
+	return create_error_data(message);
 }
 
 p_data_t creater_t::create_num_data(double num) {

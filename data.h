@@ -9,6 +9,7 @@
 // データの種類
 enum DATATYPE {
 	DT_EOF, // (入力の終わり)
+	DT_EXIT, // 終了指示
 	DT_ERROR, // エラー
 	DT_NUM, // 数値
 	DT_KIGOU, // 記号
@@ -41,10 +42,14 @@ struct eof_t : public data_t {
 	DATATYPE get_type() const {return DT_EOF;}
 };
 
+struct exit_t: public data_t {
+	DATATYPE get_type() const {return DT_EOF;}
+	int exit_code;
+};
+
 struct error_t : public data_t {
 	DATATYPE get_type() const {return DT_ERROR;}
 	std::string error_mes;
-	bool please_exit;
 };
 
 struct num_t : public data_t {

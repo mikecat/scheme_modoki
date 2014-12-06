@@ -16,8 +16,10 @@ class creater_t {
 
 		// EOFデータを生成する
 		p_data_t create_eof_data();
-		// エラーまたは終了指示データを生成する
-		p_data_t create_error_data(const std::string& str,bool please_exit=false);
+		// 終了指示データを生成する
+		p_data_t create_exit_data(int exit_code);
+		// エラーデータを生成する
+		p_data_t create_error_data(const std::string& str);
 		// 引数の数に関するエラーを生成する
 		p_data_t create_argument_number_error_data(
 			const std::string& name,size_t min_number,size_t got_number,bool is_kahencho);

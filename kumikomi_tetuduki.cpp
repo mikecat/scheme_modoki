@@ -56,7 +56,7 @@ p_data_t apply(const std::vector<p_data_t>& args,p_data_t& kankyo) {
 
 // 終了する指示を出す
 p_data_t exit_func(const std::vector<p_data_t>&,p_data_t&) {
-	return creater_t::creater().create_error_data("",true);
+	return creater_t::creater().create_exit_data(0);
 }
 
 // 引数が#f以外なら#fを、#fなら#tを返す

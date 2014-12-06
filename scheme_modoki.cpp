@@ -226,6 +226,9 @@ void print_data(p_data_t& data,bool do_syouryaku,bool please_syouryaku=false) {
 	switch(data->get_type()) {
 		case DT_EOF:
 			break;
+		case DT_EXIT:
+			printf("<exit code=%d>",((exit_t*)&*data)->exit_code);
+			break;
 		case DT_ERROR:
 			printf("ERROR: %s",((error_t*)&*data)->error_mes.c_str());
 			break;
@@ -293,9 +296,9 @@ int main(int argc,char *argv[]) {
 		p_data_t data;
 		printf("input> ");
 		data=parse(fr);
-		if(data->get_type()==DT_EOF || (data->get_type()==DT_ERROR && ((error_t*)&*data)->please_exit))break;
+		if(data->get_type()==DT_EOF || data->get_type()==DT_EXIT)break;
 		data=evaluate(data,taiiki_kankyo);
-		if(data->get_type()==DT_EOF || (data->get_type()==DT_ERROR && ((error_t*)&*data)->please_exit))break;
+		if(data->get_type()==DT_EOF || data->get_type()==DT_EXIT)break;
 		print_data(data,do_syouryaku);
 		putchar('\n');
 	}
