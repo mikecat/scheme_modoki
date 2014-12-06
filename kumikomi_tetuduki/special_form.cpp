@@ -1,6 +1,7 @@
 #include <cstdio>
 #include "special_form.h"
 #include "../creater.h"
+#include "../scheme_modoki.h"
 
 // 引数(未評価)を返す
 p_data_t quote_proc(const std::vector<p_data_t>& args,p_data_t&) {

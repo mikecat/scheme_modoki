@@ -1,6 +1,7 @@
 #ifndef CONS_AND_LIST_H_GUARD_5150F043_822B_45B9_BDB2_B685D8616C38
 #define CONS_AND_LIST_H_GUARD_5150F043_822B_45B9_BDB2_B685D8616C38
 
+#include <vector>
 #include "../sansyo_count.h"
 
 // consセルを作成する

@@ -1,0 +1,57 @@
+#ifndef DATA_H_GUARD_DE3BB54A_0B97_4EED_A48D_F23686EFCAA3
+#define DATA_H_GUARD_DE3BB54A_0B97_4EED_A48D_F23686EFCAA3
+
+#include <vector>
+#include <string>
+#include <map>
+#include "sansyo_count.h"
+
+// データの種類
+enum DATATYPE {
+	DT_EOF, // (入力の終わり)
+	DT_ERROR, // エラー
+	DT_NUM, // 数値
+	DT_KIGOU, // 記号
+	DT_BOOLEAN, // 真偽値
+	DT_LAMBDA, // ラムダ式
+	DT_CONS, // consセル
+	DT_NATIVE_FUNC, // 組み込み手続き
+	DT_NULL, // '()
+	DT_KANKYO
+};
+
+// 組み込み手続きの関数ポインタ型
+typedef p_data_t(*p_native_func)(const std::vector<p_data_t>& args,p_data_t& kankyo);
+
+// データを表す構造体(参照カウントを持つ)
+struct data_t {
+	int sansyo_count;
+	data_t(): sansyo_count(0) {}
+
+	DATATYPE type;
+	// DT_ERROR
+	std::string error_mes;
+	bool please_exit;
+	// DT_NUM
+	double num;
+	// DT_KIGOU
+	std::string kigou;
+	// DT_BOOLEAN
+	bool is_true;
+	// DT_LAMBDA
+	std::vector<std::string> karihikisu;
+	std::vector<p_data_t> hontai;
+	p_data_t lambda_kankyo;
+	bool is_kahencho;
+	// DT_CONS
+	p_data_t cons_car;
+	p_data_t cons_cdr;
+	// DT_NATIVE_FUNC
+	p_native_func native_func;
+	bool tokusyu_keisiki;
+	// DT_KANKYO
+	p_data_t parent;
+	std::map<std::string, p_data_t> sokubaku;
+};
+
+#endif

@@ -1,6 +1,7 @@
 #ifndef NUMBER_CALC_H_GUARD_0CC22007_3B46_4D34_AA45_6D0EF5E9777D
 #define NUMBER_CALC_H_GUARD_0CC22007_3B46_4D34_AA45_6D0EF5E9777D
 
+#include <vector>
 #include "../sansyo_count.h"
 
 // 足し算 例: (+ 1 2) => 3

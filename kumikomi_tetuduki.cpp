@@ -1,5 +1,6 @@
 #include <cstdio>
 #include <cmath>
+#include "scheme_modoki.h"
 #include "sansyo_count.h"
 #include "creater.h"
 #include "kumikomi_tetuduki/number_calc.h"

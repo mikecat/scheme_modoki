@@ -2,7 +2,7 @@
 #define CREATER_H_GUARD_85D8EF3B_8D4D_4B3A_824C_8B783B6BE20D
 
 #include <set>
-#include "scheme_modoki.h"
+#include "data.h"
 
 class creater_t {
 	private:
