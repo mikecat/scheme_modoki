@@ -225,6 +225,7 @@ p_data_t parse(stream_reader& sr) {
 void print_data(p_data_t& data,bool do_syouryaku,bool please_syouryaku=false) {
 	switch(data->get_type()) {
 		case DT_EOF:
+			printf("<EOF>");
 			break;
 		case DT_EXIT:
 			printf("<exit code=%d>",((exit_t*)&*data)->exit_code);
