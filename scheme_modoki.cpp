@@ -1,7 +1,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cctype>
-#include "sansyo_count.h"
+#include "scheme_modoki.h"
 #include "creater.h"
 #include "kumikomi_tetuduki.h"
 #include "stream_reader.h"

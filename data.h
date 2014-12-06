@@ -4,7 +4,7 @@
 #include <vector>
 #include <string>
 #include <map>
-#include "sansyo_count.h"
+#include "p_data.h"
 
 // データの種類
 enum DATATYPE {

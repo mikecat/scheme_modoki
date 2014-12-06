@@ -2,7 +2,7 @@
 #define CONS_AND_LIST_H_GUARD_5150F043_822B_45B9_BDB2_B685D8616C38
 
 #include <vector>
-#include "../sansyo_count.h"
+#include "../p_data.h"
 
 // consセルを作成する
 p_data_t cons(const std::vector<p_data_t>& args,p_data_t&);

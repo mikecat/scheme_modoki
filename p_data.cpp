@@ -1,4 +1,4 @@
-#include "sansyo_count.h"
+#include "p_data.h"
 #include "creater.h"
 
 bool p_data_config_t::do_auto_delete=true;

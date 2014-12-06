@@ -2,7 +2,7 @@
 #define SPECIAL_FORM_H_GUARD_E0BC3500_9AA0_4786_8160_0763B25B1B2C
 
 #include <vector>
-#include "../sansyo_count.h"
+#include "../p_data.h"
 
 // 引数(未評価)を返す
 p_data_t quote_proc(const std::vector<p_data_t>& args,p_data_t&);
