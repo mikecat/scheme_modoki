@@ -36,7 +36,7 @@ p_data_t define_proc(const std::vector<p_data_t>& args,p_data_t& kankyo) {
 				"define",2,args.size(),false);
 		}
 		p_data_t ret_data=evaluate(args[1],kankyo);
-		if(ret_data->get_type()==DT_ERROR)return ret_data;
+		if(ret_data->force_return_flag)return ret_data;
 		((kankyo_t*)&*kankyo)->sokubaku[((kigou_t*)&*args[0])->kigou]=ret_data;
 		return creater_t::creater().create_kigou_data(((kigou_t*)&*args[0])->kigou);
 	} else {
@@ -57,7 +57,7 @@ p_data_t set_proc(const std::vector<p_data_t>& args,p_data_t& kankyo) {
 		p_data_t* zittai=namae_no_kisoku2(((kigou_t*)&*args[0])->kigou,kankyo);
 		if(zittai==NULL)return namae_no_kisoku(((kigou_t*)&*args[0])->kigou,kankyo);
 		p_data_t value=evaluate(args[1],kankyo);
-		if(value->get_type()==DT_ERROR)return value;
+		if(value->force_return_flag)return value;
 		*zittai=value;
 		return value;
 	}
@@ -122,7 +122,7 @@ p_data_t if_proc(const std::vector<p_data_t>& args,p_data_t& kankyo) {
 			std::string("invalid number of arguments for if : expected 2 or 3, got ")+buf);
 	} else {
 		p_data_t sinriti=evaluate(args[0],kankyo);
-		if(sinriti->get_type()==DT_ERROR)return sinriti;
+		if(sinriti->force_return_flag)return sinriti;
 		if(sinriti->get_type()==DT_BOOLEAN && !((boolean_t*)&*sinriti)->is_true) {
 			if(args.size()>=3) {
 				return evaluate(args[2],kankyo);
@@ -143,7 +143,7 @@ p_data_t and_proc(const std::vector<p_data_t>& args,p_data_t& kankyo) {
 		p_data_t last_data=NULL;
 		for(std::vector<p_data_t>::const_iterator it=args.begin();it!=args.end();it++) {
 			p_data_t cur_data=evaluate(*it,kankyo);
-			if(cur_data->get_type()==DT_ERROR) {
+			if(cur_data->force_return_flag) {
 				return cur_data;
 			} else if(cur_data->get_type()==DT_BOOLEAN && !((boolean_t*)&*cur_data)->is_true) {
 				return cur_data;
@@ -158,7 +158,7 @@ p_data_t and_proc(const std::vector<p_data_t>& args,p_data_t& kankyo) {
 p_data_t or_proc(const std::vector<p_data_t>& args,p_data_t& kankyo) {
 	for(std::vector<p_data_t>::const_iterator it=args.begin();it!=args.end();it++) {
 		p_data_t cur_data=evaluate(*it,kankyo);
-		if(cur_data->get_type()==DT_ERROR) {
+		if(cur_data->force_return_flag) {
 			return cur_data;
 		} else if(cur_data->get_type()!=DT_BOOLEAN || ((boolean_t*)&*cur_data)->is_true) {
 			return cur_data;

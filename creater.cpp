@@ -21,12 +21,14 @@ void creater_t::print_number_of_data() {
 p_data_t creater_t::create_eof_data() {
 	eof_t *new_data=new eof_t;
 	data_log.insert(new_data);
+	new_data->force_return_flag=true;
 	return new_data;
 }
 
 p_data_t creater_t::create_exit_data(int exit_code) {
 	exit_t *new_data=new exit_t;
 	data_log.insert(new_data);
+	new_data->force_return_flag=true;
 	new_data->exit_code=exit_code;
 	return new_data;
 }
@@ -34,6 +36,7 @@ p_data_t creater_t::create_exit_data(int exit_code) {
 p_data_t creater_t::create_error_data(const std::string& str) {
 	error_t *new_data=new error_t;
 	data_log.insert(new_data);
+	new_data->force_return_flag=true;
 	new_data->error_mes=str;
 	return new_data;
 }

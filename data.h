@@ -31,7 +31,7 @@ struct data_t {
 	// このデータをもらったら、次の評価を中止して呼び出し元に戻るべきというフラグ
 	bool force_return_flag;
 
-	data_t(): sansyo_count(0) {}
+	data_t(): sansyo_count(0), force_return_flag(false) {}
 	virtual ~data_t() {}
 
 	// このデータの種類を返す

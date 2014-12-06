@@ -81,7 +81,7 @@ p_data_t apply_proc(const p_data_t& proc, const std::vector<p_data_t>& args,p_da
 		for(std::vector<p_data_t>::const_iterator it=((lambda_t*)&*proc)->hontai.begin();
 		it!=((lambda_t*)&*proc)->hontai.end();it++) {
 			res=evaluate(*it,new_kankyo);
-			if(res->get_type()==DT_ERROR)break;
+			if(res->force_return_flag)break;
 		}
 		return res;
 	} else {
@@ -100,11 +100,11 @@ p_data_t evaluate(const p_data_t& data,p_data_t& kankyo) {
 		p_data_t next=((cons_t*)&*data)->cons_cdr;
 		std::vector<p_data_t> args;
 		bool tokusyu_keisiki;
-		if(proc->get_type()==DT_ERROR)return proc;
+		if(proc->force_return_flag)return proc;
 		tokusyu_keisiki=is_tokusyu_keisiki(proc);
 		while(next->get_type()==DT_CONS) {
 			p_data_t next_arg=tokusyu_keisiki?((cons_t*)&*next)->cons_car:evaluate(((cons_t*)&*next)->cons_car,kankyo);
-			if(next_arg->get_type()==DT_ERROR)return next_arg;
+			if(next_arg->force_return_flag)return next_arg;
 			args.push_back(next_arg);
 			next=((cons_t*)&*next)->cons_cdr;
 		}
