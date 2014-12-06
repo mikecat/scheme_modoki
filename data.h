@@ -97,4 +97,6 @@ struct kankyo_t : public data_t {
 	std::map<std::string, p_data_t> sokubaku;
 };
 
+void print_data(p_data_t& data,bool do_syouryaku,bool please_syouryaku=false);
+
 #endif
