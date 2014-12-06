@@ -16,10 +16,6 @@ bool get_do_syouryaku() {
 	return do_syouryaku;
 }
 
-bool is_space_chars(int c) {
-	return c==' ' || c=='\t' || c=='\r' || c=='\n';
-}
-
 bool is_tokusyu_keisiki(const p_data_t& data) {
 	return data->get_type()==DT_NATIVE_FUNC && ((native_func_t*)&*data)->tokusyu_keisiki;
 }
@@ -119,7 +115,7 @@ p_data_t parse(stream_reader& sr) {
 	int in;
 	do {
 		in=sr.get_char();
-	} while(is_space_chars(in));
+	} while(isspace(in));
 	if(in==EOF)return creater_t::creater().create_eof_data();
 	if(in=='\'') {
 		// クオート
@@ -143,10 +139,10 @@ p_data_t parse(stream_reader& sr) {
 				break;
 			} else if(in==EOF) {
 				return creater_t::creater().create_error_data("EOF in the list");
-			} else if(!is_space_chars(in)) {
+			} else if(!isspace(in)) {
 				if(in=='.') {
 					in=sr.get_char();
-					if(is_space_chars(in)) {
+					if(isspace(in)) {
 						dot_flag=true;
 						continue;
 					} else {
@@ -201,7 +197,7 @@ p_data_t parse(stream_reader& sr) {
 			else if(in==')') {
 				sr.unget_char(')');
 				break;
-			} else if(is_space_chars(in)) break;
+			} else if(isspace(in)) break;
 			buf[0]=in;
 			namae+=buf;
 		}
