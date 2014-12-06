@@ -3,7 +3,7 @@
 #include "scheme_modoki_core.h"
 #include "creater.h"
 
-bool is_tokusyu_keisiki(const p_data_t& data) {
+static bool is_tokusyu_keisiki(const p_data_t& data) {
 	return data->get_type()==DT_NATIVE_FUNC && ((native_func_t*)&*data)->tokusyu_keisiki;
 }
 
