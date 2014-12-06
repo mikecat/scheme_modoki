@@ -1,6 +1,6 @@
 #include <cstdio>
 #include <vector>
-#include "sansyo_count.h"
+#include "creater.h"
 
 creater_t creater_t::cr;
 

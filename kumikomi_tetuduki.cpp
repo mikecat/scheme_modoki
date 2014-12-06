@@ -1,6 +1,7 @@
 #include <cstdio>
 #include <cmath>
 #include "sansyo_count.h"
+#include "creater.h"
 #include "kumikomi_tetuduki/number_calc.h"
 #include "kumikomi_tetuduki/cons_and_list.h"
 #include "kumikomi_tetuduki/special_form.h"
@@ -99,7 +100,7 @@ p_data_t set_enable_auto_delete(const std::vector<p_data_t>& args,p_data_t&) {
 		return creater_t::creater().create_argument_number_error_data(
 			"set-enable-auto-delete",1,args.size(),false);
 	}
-	sansyo_all_t::set_do_auto_delete(!(args[0]->type==DT_BOOLEAN && !args[0]->is_true));
+	p_data_config_t::set_do_auto_delete(!(args[0]->type==DT_BOOLEAN && !args[0]->is_true));
 	return args[0];
 }
 
@@ -109,7 +110,7 @@ p_data_t get_enable_auto_delete(const std::vector<p_data_t>& args,p_data_t&) {
 		return creater_t::creater().create_argument_number_error_data(
 			"get-enable-auto-delete",0,args.size(),false);
 	}
-	return creater_t::creater().create_boolean_data(sansyo_all_t::get_do_auto_delete());
+	return creater_t::creater().create_boolean_data(p_data_config_t::get_do_auto_delete());
 }
 
 // 参照カウントが0以下の環境とデータを削除する

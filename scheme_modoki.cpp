@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <cctype>
 #include "sansyo_count.h"
+#include "creater.h"
 #include "kumikomi_tetuduki.h"
 #include "stream_reader.h"
 
@@ -282,7 +283,7 @@ int main(int argc,char *argv[]) {
 		if(cur_arg=="--no-syouryaku") {
 			do_syouryaku=false;
 		} else if(cur_arg=="--no-auto-delete") {
-			sansyo_all_t::set_do_auto_delete(false);
+			p_data_config_t::set_do_auto_delete(false);
 		}
 	}
 	p_data_t taiiki_kankyo=creater_t::creater().create_kankyo_data();

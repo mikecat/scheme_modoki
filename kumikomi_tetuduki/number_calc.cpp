@@ -1,5 +1,6 @@
 #include <cmath>
 #include "number_calc.h"
+#include "../creater.h"
 
 // 足し算 例: (+ 1 2) => 3
 p_data_t add(const std::vector<p_data_t>& args,p_data_t&) {
