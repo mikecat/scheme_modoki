@@ -17,7 +17,7 @@ enum DATATYPE {
 	DT_CONS, // consセル
 	DT_NATIVE_FUNC, // 組み込み手続き
 	DT_NULL, // '()
-	DT_KANKYO
+	DT_KANKYO // 環境
 };
 
 // 組み込み手続きの関数ポインタ型
