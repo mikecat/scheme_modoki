@@ -6,7 +6,7 @@ LDFLAGS=-O2 -s -static -finput-charset=utf-8 -fexec-charset=cp932
 OBJS=scheme_modoki.o kumikomi_tetuduki.o stream_reader.o creater.o p_data.o data.o \
 	scheme_modoki_core.o global_config.o \
 	kumikomi_tetuduki/special_form.o kumikomi_tetuduki/number_calc.o \
-	kumikomi_tetuduki/cons_and_list.o
+	kumikomi_tetuduki/cons_and_list.o kumikomi_tetuduki/system_control.o
 BINNAME=scheme_modoki.exe
 
 $(BINNAME): $(OBJS)
