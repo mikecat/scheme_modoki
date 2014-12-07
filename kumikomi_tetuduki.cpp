@@ -85,6 +85,35 @@ p_data_t not_func(const std::vector<p_data_t>& args,p_data_t&) {
 	}
 }
 
+// データを読み込む
+p_data_t read_func(const std::vector<p_data_t>& args,p_data_t&) {
+	if(args.size()==0) {
+		return parse(global_config::get_gc().get_stdin_reader());
+	} else if(args.size()==1) {
+		return creater_t::creater().create_error_data("port for read is not supported");
+	} else {
+		char buf[16];
+		sprintf(buf,"%u",(unsigned int)args.size());
+		return creater_t::creater().create_error_data(
+			std::string("invalid number of argument for read : expected 0 or 1, got ")+buf);
+	}
+}
+
+// データを出力する
+p_data_t write_func(const std::vector<p_data_t>& args,p_data_t&) {
+	if(args.size()==1) {
+		print_data(args[0],global_config::get_gc().get_do_syouryaku());
+		return creater_t::creater().create_null_data();
+	} else if(args.size()==2) {
+		return creater_t::creater().create_error_data("port for write is not supported");
+	} else {
+		char buf[16];
+		sprintf(buf,"%u",(unsigned int)args.size());
+		return creater_t::creater().create_error_data(
+			std::string("invalid number of argument for write : expected 1 or 2, got ")+buf);
+	}
+}
+
 // 省略できるconsセルの表示を省略するかを設定する
 p_data_t set_enable_syouryaku(const std::vector<p_data_t>& args,p_data_t&) {
 	if(args.size()!=1) {
@@ -177,6 +206,8 @@ void add_kumikomi_tetuduki_to_kankyo(p_data_t& kankyo) {
 	sokubaku["apply"]=creater_t::creater().create_native_func_data(apply);
 	sokubaku["exit"]=creater_t::creater().create_native_func_data(exit_func);
 	sokubaku["not"]=creater_t::creater().create_native_func_data(not_func);
+	sokubaku["read"]=creater_t::creater().create_native_func_data(read_func);
+	sokubaku["write"]=creater_t::creater().create_native_func_data(write_func);
 	sokubaku["set-enable-syouryaku"]=
 		creater_t::creater().create_native_func_data(set_enable_syouryaku);
 	sokubaku["get-enable-syouryaku"]=
