@@ -69,5 +69,6 @@ int main(int argc,char *argv[]) {
 	}
 	// 大域環境を開放させる(自動削除が有効の場合)
 	taiiki_kankyo=NULL;
+	creater_t::creater().print_number_of_data();
 	return ret;
 }

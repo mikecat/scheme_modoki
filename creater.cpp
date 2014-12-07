@@ -5,7 +5,6 @@
 creater_t creater_t::cr;
 
 creater_t::~creater_t() {
-	print_number_of_data();
 	while(!data_log.empty()) {
 		std::set<data_t*>::iterator it=data_log.begin();
 		data_t* p=*it;
