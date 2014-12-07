@@ -102,7 +102,7 @@ p_data_t read_func(const std::vector<p_data_t>& args,p_data_t&) {
 // データを出力する
 p_data_t write_func(const std::vector<p_data_t>& args,p_data_t&) {
 	if(args.size()==1) {
-		print_data(args[0],global_config::get_gc().get_do_syouryaku());
+		print_data(args[0]);
 		return creater_t::creater().create_null_data();
 	} else if(args.size()==2) {
 		return creater_t::creater().create_error_data("port for write is not supported");

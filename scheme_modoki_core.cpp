@@ -232,11 +232,11 @@ int run_script(stream_reader& sr,bool is_interactive) {
 			break;
 		}
 		if(is_interactive) {
-			print_data(data,global_config::get_gc().get_do_syouryaku());
+			print_data(data);
 			putchar('\n');
 		} else {
 			if(data->get_type()==DT_ERROR) {
-				print_data(data,global_config::get_gc().get_do_syouryaku());
+				print_data(data);
 				putchar('\n');
 				return 1;
 			}

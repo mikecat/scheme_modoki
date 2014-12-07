@@ -1,7 +1,8 @@
 #include <cstdio>
 #include "data.h"
+#include "global_config.h"
 
-void print_data(const p_data_t& data,bool do_syouryaku,bool please_syouryaku) {
+void print_data(const p_data_t& data,bool please_syouryaku) {
 	switch(data->get_type()) {
 		case DT_EOF:
 			printf("#<EOF>");
@@ -25,14 +26,14 @@ void print_data(const p_data_t& data,bool do_syouryaku,bool please_syouryaku) {
 			printf("#<lambda-siki>");
 			break;
 		case DT_CONS:
-			if(!do_syouryaku || !please_syouryaku)printf("(");
+			if(!global_config::get_gc().get_do_syouryaku() || !please_syouryaku)printf("(");
 			if(!((cons_t*)&*data)->cons_car.is_null()) {
-				print_data(((cons_t*)&*data)->cons_car,do_syouryaku);
+				print_data(((cons_t*)&*data)->cons_car);
 			} else {
 				printf("#<NULL(bug?)>");
 			}
 			if(!((cons_t*)&*data)->cons_cdr.is_null()) {
-				if(!do_syouryaku) {
+				if(!global_config::get_gc().get_do_syouryaku()) {
 					printf(" . ");
 				} else {
 					if(((cons_t*)&*data)->cons_cdr->get_type()!=DT_NULL){
@@ -42,17 +43,17 @@ void print_data(const p_data_t& data,bool do_syouryaku,bool please_syouryaku) {
 						}
 					}
 				}
-				print_data(((cons_t*)&*data)->cons_cdr,do_syouryaku,true);
+				print_data(((cons_t*)&*data)->cons_cdr,true);
 			} else {
 				printf(" . #<NULL(bug?)>");
 			}
-			if(!do_syouryaku || !please_syouryaku)printf(")");
+			if(!global_config::get_gc().get_do_syouryaku() || !please_syouryaku)printf(")");
 			break;
 		case DT_NATIVE_FUNC:
 			printf("#<native function>");
 			break;
 		case DT_NULL:
-			if(!do_syouryaku || !please_syouryaku)printf("()");
+			if(!global_config::get_gc().get_do_syouryaku() || !please_syouryaku)printf("()");
 			break;
 		case DT_KANKYO:
 			printf("#<kankyo>");
