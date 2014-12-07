@@ -20,5 +20,7 @@ p_data_t and_proc(const std::vector<p_data_t>& args,p_data_t& kankyo);
 p_data_t or_proc(const std::vector<p_data_t>& args,p_data_t& kankyo);
 // 各引数のリストの最初の値が真なら、そのリストの式を評価し、それを返す
 p_data_t cond_proc(const std::vector<p_data_t>& args,p_data_t& kankyo);
+// 束縛を作ってから、本体を評価する
+p_data_t let_proc(const std::vector<p_data_t>& args,p_data_t& kankyo);
 
 #endif
