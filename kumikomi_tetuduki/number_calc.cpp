@@ -7,40 +7,40 @@ p_data_t add(const std::vector<p_data_t>& args,p_data_t&) {
 	double ret=0;
 	for(std::vector<p_data_t>::const_iterator it=args.begin();it!=args.end();it++) {
 		if((*it)->get_type()!=DT_NUMBER) {
-			return creater_t::creater().create_error_data(
+			return creater_t::creater().create_error(
 				"attempt to add what is not a number");
 		}
 		ret+=((number_t*)&*(*it))->number;
 	}
-	return creater_t::creater().create_number_data(ret);
+	return creater_t::creater().create_number(ret);
 }
 
 // 引き算 例: (- 1 2) => -1
 p_data_t sub(const std::vector<p_data_t>& args,p_data_t&) {
 	if(args.size()==0) {
-		return creater_t::creater().create_argument_number_error_data(
+		return creater_t::creater().create_argument_number_error(
 			"sub",1,args.size(),true);
 	} else if(args.size()==1) {
 		if(args[0]->get_type()==DT_NUMBER) {
-			return creater_t::creater().create_number_data(-((number_t*)&*args[0])->number);
+			return creater_t::creater().create_number(-((number_t*)&*args[0])->number);
 		} else {
-			return creater_t::creater().create_error_data(
+			return creater_t::creater().create_error(
 				"attempt to negate what is not a number");
 		}
 	} else {
 		if(args[0]->get_type()!=DT_NUMBER) {
-			return creater_t::creater().create_error_data(
+			return creater_t::creater().create_error(
 				"attempt to subtract what is not a number");
 		} else {
 			double ret=((number_t*)&*args[0])->number;
 			for(std::vector<p_data_t>::const_iterator it=args.begin()+1;it!=args.end();it++) {
 				if((*it)->get_type()!=DT_NUMBER) {
-					return creater_t::creater().create_error_data(
+					return creater_t::creater().create_error(
 						"attempt to subtract what is not a number");
 				}
 				ret-=((number_t*)&*(*it))->number;
 			}
-			return creater_t::creater().create_number_data(ret);
+			return creater_t::creater().create_number(ret);
 		}
 	}
 }
@@ -50,33 +50,33 @@ p_data_t mul(const std::vector<p_data_t>& args,p_data_t&) {
 	double ret=1;
 	for(std::vector<p_data_t>::const_iterator it=args.begin();it!=args.end();it++) {
 		if((*it)->get_type()!=DT_NUMBER) {
-			return creater_t::creater().create_error_data(
+			return creater_t::creater().create_error(
 				"attempt to add what is not a number");
 		}
 		ret*=((number_t*)&*(*it))->number;
 	}
-	return creater_t::creater().create_number_data(ret);
+	return creater_t::creater().create_number(ret);
 }
 
 // 割り算 例: (/ 4 2) => 2
 p_data_t div_func(const std::vector<p_data_t>& args,p_data_t&) {
 	if(args.size()==0) {
-		return creater_t::creater().create_argument_number_error_data(
+		return creater_t::creater().create_argument_number_error(
 			"div",1,args.size(),true);
 	} else {
 		if(args[0]->get_type()!=DT_NUMBER) {
-			return creater_t::creater().create_error_data(
+			return creater_t::creater().create_error(
 				"attempt to divide what is not a number");
 		} else {
 			double ret=((number_t*)&*args[0])->number;
 			for(std::vector<p_data_t>::const_iterator it=args.begin()+1;it!=args.end();it++) {
 				if((*it)->get_type()!=DT_NUMBER) {
-					return creater_t::creater().create_error_data(
+					return creater_t::creater().create_error(
 						"attempt to divide what is not a number");
 				}
 				ret/=((number_t*)&*(*it))->number;
 			}
-			return creater_t::creater().create_number_data(ret);
+			return creater_t::creater().create_number(ret);
 		}
 	}
 }
@@ -84,13 +84,13 @@ p_data_t div_func(const std::vector<p_data_t>& args,p_data_t&) {
 // 商の整数部分
 p_data_t quotient(const std::vector<p_data_t>& args,p_data_t&) {
 	if(args.size()!=2) {
-		return creater_t::creater().create_argument_number_error_data(
+		return creater_t::creater().create_argument_number_error(
 			"quotient",2,args.size(),false);
 	} else if(args[0]->get_type()!=DT_NUMBER || args[1]->get_type()!=DT_NUMBER) {
-		return creater_t::creater().create_error_data(
+		return creater_t::creater().create_error(
 			"attempt to calculate quotient of what is not a number");
 	} else {
-		return creater_t::creater().create_number_data(
+		return creater_t::creater().create_number(
 			trunc(((number_t*)&*args[0])->number/((number_t*)&*args[1])->number));
 	}
 }
@@ -99,20 +99,20 @@ p_data_t quotient(const std::vector<p_data_t>& args,p_data_t&) {
 static p_data_t number_cmp(const std::vector<p_data_t>& args,
 bool (*cmp_func)(double,double),const std::string& name) {
 	if(args.size()<2) {
-		return creater_t::creater().create_argument_number_error_data(
+		return creater_t::creater().create_argument_number_error(
 			name,2,args.size(),true);
 	} else {
 		bool ok=true;
 		for(size_t i=0;i<args.size();i++) {
 			if(args[i]->get_type()!=DT_NUMBER) {
-				return creater_t::creater().create_error_data(
+				return creater_t::creater().create_error(
 					std::string("arguments for ")+name+" must be numbers");
 			}
 			if(i>0 && !cmp_func(((number_t*)&*args[i-1])->number,((number_t*)&*args[i])->number)) {
 				ok=false;
 			}
 		}
-		return creater_t::creater().create_boolean_data(ok);
+		return creater_t::creater().create_boolean(ok);
 	}
 }
 
@@ -149,10 +149,10 @@ p_data_t number_geq(const std::vector<p_data_t>& args,p_data_t&) {
 // 引数が偶数なら#tを、偶数以外なら#fを返す
 p_data_t is_even(const std::vector<p_data_t>& args,p_data_t&) {
 	if(args.size()!=1) {
-		return creater_t::creater().create_argument_number_error_data(
+		return creater_t::creater().create_argument_number_error(
 			"even?",1,args.size(),false);
 	} else {
-		return creater_t::creater().create_boolean_data(
+		return creater_t::creater().create_boolean(
 			args[0]->get_type()==DT_NUMBER &&
 			((number_t*)&*args[0])->number==floor(((number_t*)&*args[0])->number) &&
 			(int)((number_t*)&*args[0])->number%2==0
@@ -163,10 +163,10 @@ p_data_t is_even(const std::vector<p_data_t>& args,p_data_t&) {
 // 引数が奇数なら#tを、奇数以外なら#fを返す
 p_data_t is_odd(const std::vector<p_data_t>& args,p_data_t&) {
 	if(args.size()!=1) {
-		return creater_t::creater().create_argument_number_error_data(
+		return creater_t::creater().create_argument_number_error(
 			"odd?",1,args.size(),false);
 	} else {
-		return creater_t::creater().create_boolean_data(
+		return creater_t::creater().create_boolean(
 			args[0]->get_type()==DT_NUMBER &&
 			((number_t*)&*args[0])->number==floor(((number_t*)&*args[0])->number) &&
 			(int)((number_t*)&*args[0])->number%2!=0
@@ -177,15 +177,15 @@ p_data_t is_odd(const std::vector<p_data_t>& args,p_data_t&) {
 // 引数の平方根を返す
 p_data_t sqrt_func(const std::vector<p_data_t>& args,p_data_t&) {
 	if(args.size()!=1) {
-		return creater_t::creater().create_argument_number_error_data(
+		return creater_t::creater().create_argument_number_error(
 			"sqrt",1,args.size(),false);
 	} else if(args[0]->get_type()!=DT_NUMBER) {
-		return creater_t::creater().create_error_data(
+		return creater_t::creater().create_error(
 			"attempt to calculate square root of what is not a number");
 	} else if(((number_t*)&*args[0])->number<0.0) {
-		return creater_t::creater().create_error_data(
+		return creater_t::creater().create_error(
 			"sqrt of negative value is not supported");
 	} else {
-		return creater_t::creater().create_number_data(sqrt(((number_t*)&*args[0])->number));
+		return creater_t::creater().create_number(sqrt(((number_t*)&*args[0])->number));
 	}
 }

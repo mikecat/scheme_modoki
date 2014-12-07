@@ -27,7 +27,7 @@ p_data_t* namae_no_kisoku2(const std::string& namae,p_data_t& kankyo) {
 p_data_t namae_no_kisoku(const std::string& namae,p_data_t& kankyo) {
 	p_data_t* ret=namae_no_kisoku2(namae,kankyo);
 	if(ret==NULL) {
-		return creater_t::creater().create_error_data(
+		return creater_t::creater().create_error(
 			std::string("unbound variable: ")+namae);
 	} else {
 		return *ret;
@@ -38,10 +38,10 @@ p_data_t apply_proc(const p_data_t& proc, const std::vector<p_data_t>& args,p_da
 	if(proc->get_type()==DT_NATIVE_FUNC) {
 		return (((native_func_t*)&*proc)->native_func)(args,kankyo);
 	} else if(proc->get_type()==DT_LAMBDA) {
-		p_data_t new_kankyo=creater_t::creater().create_kankyo_data(((lambda_t*)&*proc)->lambda_kankyo);
+		p_data_t new_kankyo=creater_t::creater().create_kankyo(((lambda_t*)&*proc)->lambda_kankyo);
 		if(((lambda_t*)&*proc)->is_kahencho) {
 			if(args.size()+1 < ((lambda_t*)&*proc)->karihikisu.size()) {
-				return creater_t::creater().create_argument_number_error_data(
+				return creater_t::creater().create_argument_number_error(
 					"lambda-siki",((lambda_t*)&*proc)->karihikisu.size()-1,args.size(),true);
 			}
 			for(size_t i=0;i<((lambda_t*)&*proc)->karihikisu.size()-1;i++) {
@@ -50,14 +50,14 @@ p_data_t apply_proc(const p_data_t& proc, const std::vector<p_data_t>& args,p_da
 			p_data_t args_list;
 			p_data_t* args_buf=&args_list;
 			for(size_t i=((lambda_t*)&*proc)->karihikisu.size()-1;i<args.size();i++) {
-				*args_buf=creater_t::creater().create_cons_data(args[i],NULL);
+				*args_buf=creater_t::creater().create_cons(args[i],NULL);
 				args_buf=&((cons_t*)&*(*args_buf))->cons_cdr;
 			}
-			*args_buf=creater_t::creater().create_null_data();
+			*args_buf=creater_t::creater().create_null();
 			((kankyo_t*)&*new_kankyo)->sokubaku[((lambda_t*)&*proc)->karihikisu.back()]=args_list;
 		} else {
 			if(((lambda_t*)&*proc)->karihikisu.size()!=args.size()) {
-				return creater_t::creater().create_argument_number_error_data(
+				return creater_t::creater().create_argument_number_error(
 					"lambda-siki",((lambda_t*)&*proc)->karihikisu.size(),args.size(),false);
 			}
 			for(size_t i=0;i<args.size();i++) {
@@ -72,7 +72,7 @@ p_data_t apply_proc(const p_data_t& proc, const std::vector<p_data_t>& args,p_da
 		}
 		return res;
 	} else {
-		return creater_t::creater().create_error_data(
+		return creater_t::creater().create_error(
 			"attempt to apply a data that is unavailable for applying");
 	}
 }
@@ -107,15 +107,15 @@ p_data_t parse(stream_reader& sr) {
 	do {
 		in=sr.get_char();
 	} while(isspace(in));
-	if(in==EOF)return creater_t::creater().create_eof_data();
+	if(in==EOF)return creater_t::creater().create_eof();
 	if(in=='\'') {
 		// クオート
 		p_data_t data=parse(sr);
-		return creater_t::creater().create_cons_data(
-			creater_t::creater().create_kigou_data("quote"),
-			creater_t::creater().create_cons_data(
+		return creater_t::creater().create_cons(
+			creater_t::creater().create_kigou("quote"),
+			creater_t::creater().create_cons(
 				data,
-				creater_t::creater().create_null_data()
+				creater_t::creater().create_null()
 			)
 		);
 	}
@@ -129,7 +129,7 @@ p_data_t parse(stream_reader& sr) {
 			if(in==')') {
 				break;
 			} else if(in==EOF) {
-				return creater_t::creater().create_error_data("EOF in the list");
+				return creater_t::creater().create_error("EOF in the list");
 			} else if(!isspace(in)) {
 				if(in=='.') {
 					in=sr.get_char();
@@ -160,24 +160,24 @@ p_data_t parse(stream_reader& sr) {
 		if(!error_data.is_null()) {
 			return error_data;
 		} else if(youso.empty()) {
-			return creater_t::creater().create_null_data();
+			return creater_t::creater().create_null();
 		} else {
 			p_data_t ret;
 			if(dot_flag) {
 				ret=youso.back();
 				for(std::vector<p_data_t>::reverse_iterator rit=youso.rbegin()+1;rit!=youso.rend();rit++) {
-					ret=creater_t::creater().create_cons_data(*rit,ret);
+					ret=creater_t::creater().create_cons(*rit,ret);
 				}
 			} else {
-				ret=creater_t::creater().create_null_data();
+				ret=creater_t::creater().create_null();
 				for(std::vector<p_data_t>::reverse_iterator rit=youso.rbegin();rit!=youso.rend();rit++) {
-					ret=creater_t::creater().create_cons_data(*rit,ret);
+					ret=creater_t::creater().create_cons(*rit,ret);
 				}
 			}
 			return ret;
 		}
 	} else if(in==')') {
-		return creater_t::creater().create_error_data("extra ) found");
+		return creater_t::creater().create_error("extra ) found");
 	} else {
 		// 名前
 		char buf[4]={(char)in,0};
@@ -196,21 +196,21 @@ p_data_t parse(stream_reader& sr) {
 		((namae[0]=='-' && (namae.length()>1 && (isdigit(namae[1]) || namae[1]=='.'))) ||
 		isdigit(namae[0]) ||
 		(namae[0]=='.' && (namae.length()>1 && isdigit(namae[1]))))) {
-			return creater_t::creater().create_number_data(atof(namae.c_str()));
+			return creater_t::creater().create_number(atof(namae.c_str()));
 		} else if(!namae.empty() && namae[0]=='#') {
-			if(namae=="#t")return creater_t::creater().create_boolean_data(true);
-			else if(namae=="#f")return creater_t::creater().create_boolean_data(false);
-			else return creater_t::creater().create_error_data(
+			if(namae=="#t")return creater_t::creater().create_boolean(true);
+			else if(namae=="#f")return creater_t::creater().create_boolean(false);
+			else return creater_t::creater().create_error(
 				"invalid name with sharp : "+namae);
 		} else {
-			return creater_t::creater().create_kigou_data(namae);
+			return creater_t::creater().create_kigou(namae);
 		}
 	}
-	return creater_t::creater().create_error_data("reached end of parse(bug!)");
+	return creater_t::creater().create_error("reached end of parse(bug!)");
 }
 
 void make_taiiki_kankyo() {
-	taiiki_kankyo=creater_t::creater().create_kankyo_data();
+	taiiki_kankyo=creater_t::creater().create_kankyo();
 	add_kumikomi_tetuduki_to_kankyo(taiiki_kankyo);
 }
 

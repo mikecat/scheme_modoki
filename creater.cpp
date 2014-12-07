@@ -34,14 +34,14 @@ size_t creater_t::get_number_of_data() {
 	return data_log.size();
 }
 
-p_data_t creater_t::create_eof_data() {
+p_data_t creater_t::create_eof() {
 	eof_t *new_data=new eof_t;
 	data_log.insert(new_data);
 	new_data->force_return_flag=true;
 	return new_data;
 }
 
-p_data_t creater_t::create_exit_data(int exit_code) {
+p_data_t creater_t::create_exit(int exit_code) {
 	exit_t *new_data=new exit_t;
 	data_log.insert(new_data);
 	new_data->force_return_flag=true;
@@ -49,7 +49,7 @@ p_data_t creater_t::create_exit_data(int exit_code) {
 	return new_data;
 }
 
-p_data_t creater_t::create_error_data(const std::string& str) {
+p_data_t creater_t::create_error(const std::string& str) {
 	error_t *new_data=new error_t;
 	data_log.insert(new_data);
 	new_data->force_return_flag=true;
@@ -57,7 +57,7 @@ p_data_t creater_t::create_error_data(const std::string& str) {
 	return new_data;
 }
 
-p_data_t creater_t::create_argument_number_error_data(
+p_data_t creater_t::create_argument_number_error(
 const std::string& name,size_t min_number,size_t got_number,bool is_kahencho) {
 	std::string message="invalid number of arguments for "+name+" : expected ";
 	char buffer[16];
@@ -69,31 +69,31 @@ const std::string& name,size_t min_number,size_t got_number,bool is_kahencho) {
 	message+=", got ";
 	sprintf(buffer,"%u",(unsigned int)got_number);
 	message+=buffer;
-	return create_error_data(message);
+	return create_error(message);
 }
 
-p_data_t creater_t::create_number_data(double number) {
+p_data_t creater_t::create_number(double number) {
 	number_t *new_data=new number_t;
 	data_log.insert(new_data);
 	new_data->number=number;
 	return new_data;
 }
 
-p_data_t creater_t::create_kigou_data(const std::string& str) {
+p_data_t creater_t::create_kigou(const std::string& str) {
 	kigou_t *new_data=new kigou_t;
 	data_log.insert(new_data);
 	new_data->kigou=str;
 	return new_data;
 }
 
-p_data_t creater_t::create_boolean_data(bool is_true) {
+p_data_t creater_t::create_boolean(bool is_true) {
 	boolean_t *new_data=new boolean_t;
 	data_log.insert(new_data);
 	new_data->is_true=is_true;
 	return new_data;
 }
 
-p_data_t creater_t::create_lambda_data(
+p_data_t creater_t::create_lambda(
 const std::vector<std::string>& karihikisu,
 const std::vector<p_data_t>& hontai,bool is_kahencho,const p_data_t& kankyo) {
 	lambda_t *new_data=new lambda_t;
@@ -105,7 +105,7 @@ const std::vector<p_data_t>& hontai,bool is_kahencho,const p_data_t& kankyo) {
 	return new_data;
 }
 
-p_data_t creater_t::create_cons_data(const p_data_t& car,const p_data_t& cdr) {
+p_data_t creater_t::create_cons(const p_data_t& car,const p_data_t& cdr) {
 	cons_t *new_data=new cons_t;
 	data_log.insert(new_data);
 	new_data->cons_car=car;
@@ -113,7 +113,7 @@ p_data_t creater_t::create_cons_data(const p_data_t& car,const p_data_t& cdr) {
 	return new_data;
 }
 
-p_data_t creater_t::create_native_func_data(p_native_func native_func,bool tokusyu_keisiki) {
+p_data_t creater_t::create_native_func(p_native_func native_func,bool tokusyu_keisiki) {
 	native_func_t* new_data=new native_func_t;
 	data_log.insert(new_data);
 	new_data->native_func=native_func;
@@ -121,13 +121,13 @@ p_data_t creater_t::create_native_func_data(p_native_func native_func,bool tokus
 	return new_data;
 }
 
-p_data_t creater_t::create_null_data() {
+p_data_t creater_t::create_null() {
 	null_t *new_data=new null_t;
 	data_log.insert(new_data);
 	return new_data;
 }
 
-p_data_t creater_t::create_kankyo_data(const p_data_t& oya) {
+p_data_t creater_t::create_kankyo(const p_data_t& oya) {
 	kankyo_t *new_data=new kankyo_t;
 	data_log.insert(new_data);
 	new_data->parent=oya;

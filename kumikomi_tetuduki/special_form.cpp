@@ -6,7 +6,7 @@
 // 引数(未評価)を返す
 p_data_t quote_proc(const std::vector<p_data_t>& args,p_data_t&) {
 	if(args.size()!=1) {
-		return creater_t::creater().create_argument_number_error_data(
+		return creater_t::creater().create_argument_number_error(
 			"quote",1,args.size(),false);
 	} else {
 		return args[0];
@@ -16,31 +16,31 @@ p_data_t quote_proc(const std::vector<p_data_t>& args,p_data_t&) {
 // 新規束縛の作成
 p_data_t define_proc(const std::vector<p_data_t>& args,p_data_t& kankyo) {
 	if(args.size()<2) {
-		return creater_t::creater().create_argument_number_error_data(
+		return creater_t::creater().create_argument_number_error(
 			"define",2,args.size(),true);
 	} else if(args[0]->get_type()==DT_CONS) {
 		p_data_t name=((cons_t*)&*args[0])->cons_car;
 		if(name->get_type()!=DT_KIGOU) {
-			return creater_t::creater().create_error_data(
+			return creater_t::creater().create_error(
 				"you must specify kigou for first argument of define");
 		} else {
 			std::vector<p_data_t> lambda_args=args;
 			lambda_args[0]=((cons_t*)&*args[0])->cons_cdr;
 			p_data_t lambda_data=lambda_proc(lambda_args,kankyo);
 			((kankyo_t*)&*kankyo)->sokubaku[((kigou_t*)&*name)->kigou]=lambda_data;
-			return creater_t::creater().create_kigou_data(((kigou_t*)&*name)->kigou);
+			return creater_t::creater().create_kigou(((kigou_t*)&*name)->kigou);
 		}
 	} else if(args[0]->get_type()==DT_KIGOU) {
 		if(args.size()!=2) {
-			return creater_t::creater().create_argument_number_error_data(
+			return creater_t::creater().create_argument_number_error(
 				"define",2,args.size(),false);
 		}
 		p_data_t ret_data=evaluate(args[1],kankyo);
 		if(ret_data->force_return_flag)return ret_data;
 		((kankyo_t*)&*kankyo)->sokubaku[((kigou_t*)&*args[0])->kigou]=ret_data;
-		return creater_t::creater().create_kigou_data(((kigou_t*)&*args[0])->kigou);
+		return creater_t::creater().create_kigou(((kigou_t*)&*args[0])->kigou);
 	} else {
-		return creater_t::creater().create_error_data(
+		return creater_t::creater().create_error(
 			"you must specify kigou for first argument of define");
 	}
 }
@@ -48,10 +48,10 @@ p_data_t define_proc(const std::vector<p_data_t>& args,p_data_t& kankyo) {
 // 代入
 p_data_t set_proc(const std::vector<p_data_t>& args,p_data_t& kankyo) {
 	if(args.size()!=2) {
-		return creater_t::creater().create_argument_number_error_data(
+		return creater_t::creater().create_argument_number_error(
 			"set!",2,args.size(),false);
 	} else if(args[0]->get_type()!=DT_KIGOU) {
-		return creater_t::creater().create_error_data(
+		return creater_t::creater().create_error(
 			"you must specify kigou for first argument of set!");
 	} else {
 		p_data_t* zittai=namae_no_kisoku2(((kigou_t*)&*args[0])->kigou,kankyo);
@@ -66,7 +66,7 @@ p_data_t set_proc(const std::vector<p_data_t>& args,p_data_t& kankyo) {
 // 新規手続きの作成
 p_data_t lambda_proc(const std::vector<p_data_t>& args,p_data_t& kankyo) {
 	if(args.size()<2) {
-		return creater_t::creater().create_argument_number_error_data(
+		return creater_t::creater().create_argument_number_error(
 			"lambda",2,args.size(),true);
 	} else {
 		std::vector<std::string> karihikisu_list;
@@ -102,13 +102,13 @@ p_data_t lambda_proc(const std::vector<p_data_t>& args,p_data_t& kankyo) {
 			}
 		}
 		if(!karihikisu_valid_flag) {
-			return creater_t::creater().create_error_data("invalid karihikisu for lambda");
+			return creater_t::creater().create_error("invalid karihikisu for lambda");
 		}
 		// 本体の格納
 		for(std::vector<p_data_t>::const_iterator it=args.begin()+1;it!=args.end();it++) {
 			hontai_list.push_back(*it);
 		}
-		return creater_t::creater().create_lambda_data(
+		return creater_t::creater().create_lambda(
 			karihikisu_list,hontai_list,is_kahencho,kankyo);
 	}
 }
@@ -118,7 +118,7 @@ p_data_t if_proc(const std::vector<p_data_t>& args,p_data_t& kankyo) {
 	if(args.size()!=2 && args.size()!=3) {
 		char buf[16];
 		sprintf(buf,"%u",(unsigned int)args.size());
-		return creater_t::creater().create_error_data(
+		return creater_t::creater().create_error(
 			std::string("invalid number of arguments for if : expected 2 or 3, got ")+buf);
 	} else {
 		p_data_t sinriti=evaluate(args[0],kankyo);
@@ -127,7 +127,7 @@ p_data_t if_proc(const std::vector<p_data_t>& args,p_data_t& kankyo) {
 			if(args.size()>=3) {
 				return evaluate(args[2],kankyo);
 			} else {
-				return creater_t::creater().create_null_data();
+				return creater_t::creater().create_null();
 			}
 		} else {
 			return evaluate(args[1],kankyo);
@@ -138,7 +138,7 @@ p_data_t if_proc(const std::vector<p_data_t>& args,p_data_t& kankyo) {
 // 途中に1個でも#fがあれば#f、無ければ最後の値を返す
 p_data_t and_proc(const std::vector<p_data_t>& args,p_data_t& kankyo) {
 	if(args.size()==0) {
-		return creater_t::creater().create_boolean_data(true);
+		return creater_t::creater().create_boolean(true);
 	} else {
 		p_data_t last_data=NULL;
 		for(std::vector<p_data_t>::const_iterator it=args.begin();it!=args.end();it++) {
@@ -164,5 +164,5 @@ p_data_t or_proc(const std::vector<p_data_t>& args,p_data_t& kankyo) {
 			return cur_data;
 		}
 	}
-	return creater_t::creater().create_boolean_data(false);
+	return creater_t::creater().create_boolean(false);
 }
