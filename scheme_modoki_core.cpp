@@ -95,6 +95,9 @@ p_data_t evaluate(const p_data_t& data,p_data_t& kankyo) {
 			args.push_back(next_arg);
 			next=((cons_t*)&*next)->cons_cdr;
 		}
+		if(next->get_type()!=DT_NULL) {
+			return creater_t::creater().create_error("list required for applying a function");
+		}
 		return apply_proc(proc,args,kankyo);
 	} else {
 		// その他のデータ
