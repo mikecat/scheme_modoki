@@ -16,5 +16,7 @@ p_data_t set_car(const std::vector<p_data_t>& args,p_data_t&);
 p_data_t set_cdr(const std::vector<p_data_t>& args,p_data_t&);
 // 引数が'()かを判定する
 p_data_t is_null(const std::vector<p_data_t>& args,p_data_t&);
+// 引数のリストを作成する
+p_data_t list(const std::vector<p_data_t>& args,p_data_t&);
 
 #endif

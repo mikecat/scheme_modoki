@@ -78,3 +78,12 @@ p_data_t is_null(const std::vector<p_data_t>& args,p_data_t&) {
 		return creater_t::creater().create_boolean(args[0]->get_type()==DT_NULL);
 	}
 }
+
+// 引数のリストを作成する
+p_data_t list(const std::vector<p_data_t>& args,p_data_t&) {
+	p_data_t cur=creater_t::creater().create_null();
+	for(std::vector<p_data_t>::const_reverse_iterator it=args.rbegin();it!=args.rend();it++) {
+		cur=creater_t::creater().create_cons(*it,cur);
+	}
+	return cur;
+}
