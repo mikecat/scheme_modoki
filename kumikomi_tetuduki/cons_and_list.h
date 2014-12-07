@@ -22,5 +22,7 @@ p_data_t list(const std::vector<p_data_t>& args,p_data_t&);
 p_data_t length(const std::vector<p_data_t>& args,p_data_t&);
 // 連番リストを作成する
 p_data_t iota(const std::vector<p_data_t>& args,p_data_t&);
+// リストを連結する
+p_data_t append(const std::vector<p_data_t>& args,p_data_t&);
 
 #endif

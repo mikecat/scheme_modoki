@@ -147,3 +147,26 @@ p_data_t iota(const std::vector<p_data_t>& args,p_data_t&) {
 		return ret;
 	}
 }
+
+// リストを連結する
+p_data_t append(const std::vector<p_data_t>& args,p_data_t&) {
+	if(args.size()==0) {
+		return creater_t::creater().create_null();
+	} else {
+		p_data_t ret;
+		p_data_t* ret_ptr=&ret;
+		for(std::vector<p_data_t>::const_iterator it=args.begin();it+1!=args.end();it++) {
+			p_data_t cur_data;
+			for(cur_data=*it;cur_data->get_type()==DT_CONS;cur_data=((cons_t*)&*cur_data)->cons_cdr) {
+				*ret_ptr=creater_t::creater().create_cons(((cons_t*)&*cur_data)->cons_car,NULL);
+				ret_ptr=&((cons_t*)&*(*ret_ptr))->cons_cdr;
+			}
+			if(cur_data->get_type()!=DT_NULL) {
+				return creater_t::creater().create_error(
+					"the arguments of append except the last one must be lists");
+			}
+		}
+		*ret_ptr=args.back();
+		return ret;
+	}
+}
