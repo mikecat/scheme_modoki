@@ -4,10 +4,10 @@
 void print_data(const p_data_t& data,bool do_syouryaku,bool please_syouryaku) {
 	switch(data->get_type()) {
 		case DT_EOF:
-			printf("<EOF>");
+			printf("#<EOF>");
 			break;
 		case DT_EXIT:
-			printf("<exit code=%d>",((exit_t*)&*data)->exit_code);
+			printf("#<exit code=%d>",((exit_t*)&*data)->exit_code);
 			break;
 		case DT_ERROR:
 			printf("ERROR: %s",((error_t*)&*data)->error_mes.c_str());
@@ -22,14 +22,14 @@ void print_data(const p_data_t& data,bool do_syouryaku,bool please_syouryaku) {
 			printf("#%c",((boolean_t*)&*data)->is_true?'t':'f');
 			break;
 		case DT_LAMBDA:
-			printf("<lambda-siki>");
+			printf("#<lambda-siki>");
 			break;
 		case DT_CONS:
 			if(!do_syouryaku || !please_syouryaku)printf("(");
 			if(!((cons_t*)&*data)->cons_car.is_null()) {
 				print_data(((cons_t*)&*data)->cons_car,do_syouryaku);
 			} else {
-				printf("<NULL(bug?)>");
+				printf("#<NULL(bug?)>");
 			}
 			if(!((cons_t*)&*data)->cons_cdr.is_null()) {
 				if(!do_syouryaku) {
@@ -44,18 +44,18 @@ void print_data(const p_data_t& data,bool do_syouryaku,bool please_syouryaku) {
 				}
 				print_data(((cons_t*)&*data)->cons_cdr,do_syouryaku,true);
 			} else {
-				printf(" . <NULL(bug?)>");
+				printf(" . #<NULL(bug?)>");
 			}
 			if(!do_syouryaku || !please_syouryaku)printf(")");
 			break;
 		case DT_NATIVE_FUNC:
-			printf("<native function>");
+			printf("#<native function>");
 			break;
 		case DT_NULL:
 			if(!do_syouryaku || !please_syouryaku)printf("()");
 			break;
 		case DT_KANKYO:
-			printf("<kankyo>");
+			printf("#<kankyo>");
 			break;
 	}
 }
