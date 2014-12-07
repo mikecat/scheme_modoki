@@ -166,3 +166,36 @@ p_data_t or_proc(const std::vector<p_data_t>& args,p_data_t& kankyo) {
 	}
 	return creater_t::creater().create_boolean(false);
 }
+
+// 各引数のリストの最初の値が真なら、そのリストの式を評価し、それを返す
+p_data_t cond_proc(const std::vector<p_data_t>& args,p_data_t& kankyo) {
+	if(args.size()==0) {
+		return creater_t::creater().create_argument_number_error(
+			"cond",1,args.size(),true);
+	} else {
+		// 引数をチェックする
+		for(std::vector<p_data_t>::const_iterator it=args.begin();it!=args.end();it++) {
+			p_data_t cur=*it;
+			while(cur->get_type()==DT_CONS)cur=((cons_t*)&*cur)->cons_cdr;
+			if((*it)->get_type()==DT_NULL || cur->get_type()!=DT_NULL) {
+				return creater_t::creater().create_error("arguments of cond must be non-empty lists");
+			}
+		}
+		// 引数を順番に評価する
+		for(std::vector<p_data_t>::const_iterator it=args.begin();it!=args.end();it++) {
+			p_data_t cur=*it;
+			p_data_t cur_val=evaluate(((cons_t*)&*cur)->cons_car,kankyo);
+			if(cur_val->force_return_flag)return cur_val;
+			if(cur_val->get_type()!=DT_BOOLEAN || ((boolean_t*)&*cur_val)->is_true) {
+				for(;;) {
+					cur=((cons_t*)&*cur)->cons_cdr;
+					if(cur->get_type()!=DT_CONS)break;
+					cur_val=evaluate(((cons_t*)&*cur)->cons_car,kankyo);
+					if(cur_val->force_return_flag)break;
+				}
+				return cur_val;
+			}
+		}
+		return creater_t::creater().create_null();
+	}
+}

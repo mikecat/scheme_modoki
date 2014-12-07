@@ -18,5 +18,7 @@ p_data_t if_proc(const std::vector<p_data_t>& args,p_data_t& kankyo);
 p_data_t and_proc(const std::vector<p_data_t>& args,p_data_t& kankyo);
 // 途中に1個でも#f以外があればその値、無ければ#fを返す
 p_data_t or_proc(const std::vector<p_data_t>& args,p_data_t& kankyo);
+// 各引数のリストの最初の値が真なら、そのリストの式を評価し、それを返す
+p_data_t cond_proc(const std::vector<p_data_t>& args,p_data_t& kankyo);
 
 #endif

@@ -173,6 +173,7 @@ void add_kumikomi_tetuduki_to_kankyo(p_data_t& kankyo) {
 	sokubaku["if"]=creater_t::creater().create_native_func(if_proc,true);
 	sokubaku["and"]=creater_t::creater().create_native_func(and_proc,true);
 	sokubaku["or"]=creater_t::creater().create_native_func(or_proc,true);
+	sokubaku["cond"]=creater_t::creater().create_native_func(cond_proc,true);
 
 	// その他
 	sokubaku["else"]=creater_t::creater().create_boolean(true);
