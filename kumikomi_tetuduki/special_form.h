@@ -22,5 +22,7 @@ p_data_t or_proc(const std::vector<p_data_t>& args,p_data_t& kankyo);
 p_data_t cond_proc(const std::vector<p_data_t>& args,p_data_t& kankyo);
 // 束縛を作ってから、本体を評価する
 p_data_t let_proc(const std::vector<p_data_t>& args,p_data_t& kankyo);
+// 束縛を順番に作ってから、本体を評価する
+p_data_t let_star_proc(const std::vector<p_data_t>& args,p_data_t& kankyo);
 
 #endif
