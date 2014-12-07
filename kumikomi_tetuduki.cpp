@@ -1,6 +1,5 @@
 #include <cstdio>
 #include <cmath>
-#include "scheme_modoki.h"
 #include "scheme_modoki_core.h"
 #include "global_config.h"
 #include "creater.h"

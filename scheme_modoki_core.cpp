@@ -2,6 +2,10 @@
 #include <cctype>
 #include "scheme_modoki_core.h"
 #include "creater.h"
+#include "global_config.h"
+#include "kumikomi_tetuduki.h"
+
+static p_data_t taiiki_kankyo;
 
 static bool is_tokusyu_keisiki(const p_data_t& data) {
 	return data->get_type()==DT_NATIVE_FUNC && ((native_func_t*)&*data)->tokusyu_keisiki;
@@ -203,4 +207,40 @@ p_data_t parse(stream_reader& sr) {
 		}
 	}
 	return creater_t::creater().create_error_data("reached end of parse(bug!)");
+}
+
+void make_taiiki_kankyo() {
+	taiiki_kankyo=creater_t::creater().create_kankyo_data();
+	add_kumikomi_tetuduki_to_kankyo(taiiki_kankyo);
+}
+
+void delete_taiiki_kankyo() {
+	taiiki_kankyo=NULL;
+}
+
+int run_script(stream_reader& sr,bool is_interactive) {
+	int exit_code=0;
+	for(;;) {
+		p_data_t data;
+		if(is_interactive)printf("input> ");
+		data=parse(sr);
+		if(data->get_type()==DT_EOF)break;
+		data=evaluate(data,taiiki_kankyo);
+		if(data->get_type()==DT_EOF)break;
+		else if(data->get_type()==DT_EXIT) {
+			exit_code=((exit_t*)&*data)->exit_code;
+			break;
+		}
+		if(is_interactive) {
+			print_data(data,global_config::get_gc().get_do_syouryaku());
+			putchar('\n');
+		} else {
+			if(data->get_type()==DT_ERROR) {
+				print_data(data,global_config::get_gc().get_do_syouryaku());
+				putchar('\n');
+				return 1;
+			}
+		}
+	}
+	return exit_code;
 }

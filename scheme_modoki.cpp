@@ -1,38 +1,7 @@
 #include <cstdio>
-#include "scheme_modoki.h"
 #include "scheme_modoki_core.h"
 #include "global_config.h"
 #include "creater.h"
-#include "kumikomi_tetuduki.h"
-
-static p_data_t taiiki_kankyo;
-
-int run_script(stream_reader& sr,bool is_interactive) {
-	int exit_code=0;
-	for(;;) {
-		p_data_t data;
-		if(is_interactive)printf("input> ");
-		data=parse(sr);
-		if(data->get_type()==DT_EOF)break;
-		data=evaluate(data,taiiki_kankyo);
-		if(data->get_type()==DT_EOF)break;
-		else if(data->get_type()==DT_EXIT) {
-			exit_code=((exit_t*)&*data)->exit_code;
-			break;
-		}
-		if(is_interactive) {
-			print_data(data,global_config::get_gc().get_do_syouryaku());
-			putchar('\n');
-		} else {
-			if(data->get_type()==DT_ERROR) {
-				print_data(data,global_config::get_gc().get_do_syouryaku());
-				putchar('\n');
-				return 1;
-			}
-		}
-	}
-	return exit_code;
-}
 
 int main(int argc,char *argv[]) {
 	std::string file_name;
@@ -53,8 +22,7 @@ int main(int argc,char *argv[]) {
 		}
 	}
 	// 大域環境を作成する
-	taiiki_kankyo=creater_t::creater().create_kankyo_data();
-	add_kumikomi_tetuduki_to_kankyo(taiiki_kankyo);
+	make_taiiki_kankyo();
 	// スクリプトを実行する
 	int ret;
 	if(use_file) {
@@ -71,7 +39,7 @@ int main(int argc,char *argv[]) {
 		ret=run_script(global_config::get_gc().get_stdin_reader(),true);
 	}
 	// 大域環境を開放させる(自動削除が有効の場合)
-	taiiki_kankyo=NULL;
+	delete_taiiki_kankyo();
 	if(print_statistics_on_end)creater_t::creater().print_number_of_data();
 	return ret;
 }

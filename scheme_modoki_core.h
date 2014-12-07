@@ -17,4 +17,11 @@ p_data_t evaluate(const p_data_t& data,p_data_t& kankyo);
 // 入力をパースしてquoteされた状態のリストを得る
 p_data_t parse(stream_reader& sr);
 
+// 大域環境を生成する
+void make_taiiki_kankyo();
+// 大域環境の開放を許可する
+void delete_taiiki_kankyo();
+// 大域環境でスクリプトを実行する
+int run_script(stream_reader& sr,bool is_interactive);
+
 #endif

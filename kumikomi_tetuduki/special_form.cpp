@@ -1,7 +1,6 @@
 #include <cstdio>
 #include "special_form.h"
 #include "../creater.h"
-#include "../scheme_modoki.h"
 #include "../scheme_modoki_core.h"
 
 // 引数(未評価)を返す
