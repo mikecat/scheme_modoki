@@ -18,6 +18,7 @@ enum DATATYPE {
 	DT_CONS, // consセル
 	DT_NATIVE_FUNC, // 組み込み手続き
 	DT_NULL, // '()
+	DT_DELAY, // 遅延オブジェクト
 	DT_KANKYO // 環境
 };
 
@@ -101,6 +102,13 @@ struct native_func_t : public data_t {
 struct null_t : public data_t {
 	DATATYPE get_type() const {return DT_NULL;}
 	const char* get_name() const {return "null";}
+};
+
+struct delay_t : public data_t {
+	DATATYPE get_type() const {return DT_DELAY;}
+	const char* get_name() const {return "delay";}
+	p_data_t expr;
+	p_data_t kankyo;
 };
 
 struct kankyo_t : public data_t {

@@ -41,6 +41,8 @@ class creater_t {
 		p_data_t create_native_func(p_native_func native_func,bool tokusyu_keisiki=false);
 		// '()データを生成する
 		p_data_t create_null();
+		// 遅延オブジェクトデータを生成する
+		p_data_t create_delay(const p_data_t& expr,const p_data_t kankyo);
 		// 環境データを生成する
 		p_data_t create_kankyo(const p_data_t& oya=NULL);
 

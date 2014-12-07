@@ -55,6 +55,9 @@ void print_data(const p_data_t& data,bool please_syouryaku) {
 		case DT_NULL:
 			if(!global_config::get_gc().get_do_syouryaku() || !please_syouryaku)printf("()");
 			break;
+		case DT_DELAY:
+			printf("#<promise>");
+			break;
 		case DT_KANKYO:
 			printf("#<kankyo>");
 			break;

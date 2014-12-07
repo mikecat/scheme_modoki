@@ -127,6 +127,14 @@ p_data_t creater_t::create_null() {
 	return new_data;
 }
 
+p_data_t creater_t::create_delay(const p_data_t& expr,const p_data_t kankyo) {
+	delay_t *new_data=new delay_t;
+	data_log.insert(new_data);
+	new_data->expr=expr;
+	new_data->kankyo=kankyo;
+	return new_data;
+}
+
 p_data_t creater_t::create_kankyo(const p_data_t& oya) {
 	kankyo_t *new_data=new kankyo_t;
 	data_log.insert(new_data);
