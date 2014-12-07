@@ -26,5 +26,7 @@ p_data_t let_proc(const std::vector<p_data_t>& args,p_data_t& kankyo);
 p_data_t let_star_proc(const std::vector<p_data_t>& args,p_data_t& kankyo);
 // 引数を順に評価する
 p_data_t begin_proc(const std::vector<p_data_t>& args,p_data_t& kankyo);
+// 遅延オブジェクトを生成する
+p_data_t delay_proc(const std::vector<p_data_t>& args,p_data_t& kankyo);
 
 #endif

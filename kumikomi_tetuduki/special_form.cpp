@@ -276,3 +276,13 @@ p_data_t begin_proc(const std::vector<p_data_t>& args,p_data_t& kankyo) {
 		return ret;
 	}
 }
+
+// 遅延オブジェクトを生成する
+p_data_t delay_proc(const std::vector<p_data_t>& args,p_data_t& kankyo) {
+	if(args.size()!=1) {
+		return creater_t::creater().create_argument_number_error(
+			"delay",1,args.size(),false);
+	} else {
+		return creater_t::creater().create_delay(args[0],kankyo);
+	}
+}

@@ -114,6 +114,18 @@ p_data_t write_func(const std::vector<p_data_t>& args,p_data_t&) {
 	}
 }
 
+// 遅延オブジェクトを評価する
+p_data_t force(const std::vector<p_data_t>& args,p_data_t&) {
+	if(args.size()!=1) {
+		return creater_t::creater().create_argument_number_error(
+			"force",1,args.size(),false);
+	} else if(args[0]->get_type()!=DT_DELAY) {
+		return args[0];
+	} else {
+		return evaluate(((delay_t*)&*args[0])->expr,((delay_t*)&*args[0])->kankyo);
+	}
+}
+
 // 環境に組み込み手続きを追加する
 void add_kumikomi_tetuduki_to_kankyo(p_data_t& kankyo) {
 	std::map<std::string, p_data_t>& sokubaku=((kankyo_t*)&*kankyo)->sokubaku;
@@ -167,6 +179,7 @@ void add_kumikomi_tetuduki_to_kankyo(p_data_t& kankyo) {
 	sokubaku["not"]=creater_t::creater().create_native_func(not_func);
 	sokubaku["read"]=creater_t::creater().create_native_func(read_func);
 	sokubaku["write"]=creater_t::creater().create_native_func(write_func);
+	sokubaku["force"]=creater_t::creater().create_native_func(force);
 
 	// 特殊形式 (special_form.cpp)
 	sokubaku["quote"]=creater_t::creater().create_native_func(quote_proc,true);
@@ -180,6 +193,7 @@ void add_kumikomi_tetuduki_to_kankyo(p_data_t& kankyo) {
 	sokubaku["let"]=creater_t::creater().create_native_func(let_proc,true);
 	sokubaku["let*"]=creater_t::creater().create_native_func(let_star_proc,true);
 	sokubaku["begin"]=creater_t::creater().create_native_func(begin_proc,true);
+	sokubaku["delay"]=creater_t::creater().create_native_func(delay_proc,true);
 
 	// その他
 	sokubaku["else"]=creater_t::creater().create_boolean(true);
