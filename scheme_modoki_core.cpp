@@ -251,7 +251,6 @@ void delete_taiiki_kankyo() {
 }
 
 int run_script(stream_reader& sr,bool is_interactive) {
-	int exit_code=0;
 	for(;;) {
 		p_data_t data;
 		if(is_interactive)printf("input> ");
@@ -260,8 +259,7 @@ int run_script(stream_reader& sr,bool is_interactive) {
 		data=evaluate(data,taiiki_kankyo);
 		if(data->get_type()==DT_EOF)break;
 		else if(data->get_type()==DT_EXIT) {
-			exit_code=((exit_t*)&*data)->exit_code;
-			break;
+			return ((exit_t*)&*data)->exit_code;
 		}
 		if(is_interactive) {
 			print_data(data);
@@ -274,5 +272,5 @@ int run_script(stream_reader& sr,bool is_interactive) {
 			}
 		}
 	}
-	return exit_code;
+	return 0;
 }
