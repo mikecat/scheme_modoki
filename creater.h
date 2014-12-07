@@ -11,8 +11,10 @@ class creater_t {
 		creater_t(){}
 		~creater_t();
 	public:
-		// 生成したデータの数を表示する
+		// 生成し、削除されていないデータの種類ごとの数を表示する
 		void print_statistics();
+		// 生成し、削除されていないデータの数を取得する
+		size_t get_number_of_data();
 
 		// EOFデータを生成する
 		p_data_t create_eof_data();

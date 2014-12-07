@@ -23,7 +23,7 @@ p_data_t get_enable_syouryaku(const std::vector<p_data_t>& args,p_data_t&) {
 	return creater_t::creater().create_boolean_data(global_config::get_gc().get_do_syouryaku());
 }
 
-// 生成され、削除されていない環境とデータの数を表示する
+// 生成され、削除されていない環境とデータの種類ごとの数を表示する
 p_data_t print_statistics(const std::vector<p_data_t>& args,p_data_t&) {
 	if(args.size()!=0) {
 		return creater_t::creater().create_argument_number_error_data(
@@ -31,6 +31,15 @@ p_data_t print_statistics(const std::vector<p_data_t>& args,p_data_t&) {
 	}
 	creater_t::creater().print_statistics();
 	return creater_t::creater().create_null_data();
+}
+
+// 生成され、削除されていない環境とデータの数を取得する
+p_data_t get_number_of_data(const std::vector<p_data_t>& args,p_data_t&) {
+	if(args.size()!=0) {
+		return creater_t::creater().create_argument_number_error_data(
+			"get-number-of-data",0,args.size(),false);
+	}
+	return creater_t::creater().create_num_data((double)creater_t::creater().get_number_of_data());
 }
 
 // 環境とデータの自動削除の有効/無効を設定する

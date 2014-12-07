@@ -22,8 +22,10 @@ Schemeっぽい言語のインタプリタです。
 	(set-enable-syouryaku 真理値)
 	; 省略できるconsセルの表示を省略するかを取得する
 	(get-enable-syouryaku)
-	; 現在登録されているデータの数を表示する
+	; 現在登録されているデータの種類ごとの数を表示する
 	(print-statistics)
+	; 現在登録されているデータの数を取得する
+	(get-number-of-data)
 	; 参照カウントが0以下になったデータを自動で削除するかを設定する
 	(set-enable-auto-delete 真理値)
 	; 参照カウントが0以下になったデータを自動で削除するかの設定を取得する

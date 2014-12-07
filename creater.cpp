@@ -30,6 +30,10 @@ void creater_t::print_statistics() {
 	}
 }
 
+size_t creater_t::get_number_of_data() {
+	return data_log.size();
+}
+
 p_data_t creater_t::create_eof_data() {
 	eof_t *new_data=new eof_t;
 	data_log.insert(new_data);
