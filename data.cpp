@@ -1,7 +1,7 @@
 #include <cstdio>
 #include "data.h"
 
-void print_data(p_data_t& data,bool do_syouryaku,bool please_syouryaku) {
+void print_data(const p_data_t& data,bool do_syouryaku,bool please_syouryaku) {
 	switch(data->get_type()) {
 		case DT_EOF:
 			printf("<EOF>");
