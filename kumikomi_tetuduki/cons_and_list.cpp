@@ -1,3 +1,4 @@
+#include <cstdio>
 #include "cons_and_list.h"
 #include "../creater.h"
 
@@ -102,5 +103,47 @@ p_data_t length(const std::vector<p_data_t>& args,p_data_t&) {
 		} else {
 			return creater_t::creater().create_number(count);
 		}
+	}
+}
+
+// 連番リストを作成する
+p_data_t iota(const std::vector<p_data_t>& args,p_data_t&) {
+	if(args.size()<1 || 3<args.size()) {
+		char buf[16];
+		sprintf(buf,"%u",(unsigned int)args.size());
+		return creater_t::creater().create_error(
+			std::string("invalid number of arguments for iota : expected 1, 2 or 3, got ")+buf);
+	} else {
+		unsigned int count=0;
+		double start=0,delta=1;
+		bool is_error=false;
+		if(args[0]->get_type()!=DT_NUMBER) {
+			is_error=true;
+		} else {
+			count=(unsigned int)((number_t*)&*args[0])->number;
+		}
+		if(args.size()>=2) {
+			if(args[1]->get_type()!=DT_NUMBER) {
+				is_error=true;
+			} else {
+				start=((number_t*)&*args[1])->number;
+			}
+		}
+		if(args.size()>=3) {
+			if(args[2]->get_type()!=DT_NUMBER) {
+				is_error=true;
+			} else {
+				delta=((number_t*)&*args[2])->number;
+			}
+		}
+		if(is_error) {
+			return creater_t::creater().create_error("arguments of iota must be numbers");
+		}
+		p_data_t ret=creater_t::creater().create_null();
+		for(unsigned int i=count;i>0;i--) {
+			ret=creater_t::creater().create_cons(
+				creater_t::creater().create_number(start+delta*(i-1)),ret);
+		}
+		return ret;
 	}
 }

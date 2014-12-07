@@ -20,5 +20,7 @@ p_data_t is_null(const std::vector<p_data_t>& args,p_data_t&);
 p_data_t list(const std::vector<p_data_t>& args,p_data_t&);
 // リストの長さを取得する
 p_data_t length(const std::vector<p_data_t>& args,p_data_t&);
+// 連番リストを作成する
+p_data_t iota(const std::vector<p_data_t>& args,p_data_t&);
 
 #endif

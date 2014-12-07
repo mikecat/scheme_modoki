@@ -141,6 +141,7 @@ void add_kumikomi_tetuduki_to_kankyo(p_data_t& kankyo) {
 	sokubaku["null?"]=creater_t::creater().create_native_func(is_null);
 	sokubaku["list"]=creater_t::creater().create_native_func(list);
 	sokubaku["length"]=creater_t::creater().create_native_func(length);
+	sokubaku["iota"]=creater_t::creater().create_native_func(iota);
 
 	// システム操作 (system_control.cpp)
 	sokubaku["set-enable-syouryaku"]=
