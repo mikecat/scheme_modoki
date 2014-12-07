@@ -24,12 +24,12 @@ p_data_t get_enable_syouryaku(const std::vector<p_data_t>& args,p_data_t&) {
 }
 
 // 生成され、削除されていない環境とデータの数を表示する
-p_data_t print_number_of_data(const std::vector<p_data_t>& args,p_data_t&) {
+p_data_t print_statistics(const std::vector<p_data_t>& args,p_data_t&) {
 	if(args.size()!=0) {
 		return creater_t::creater().create_argument_number_error_data(
-			"print-number-of-kankyo-and-data",0,args.size(),false);
+			"print-statistics",0,args.size(),false);
 	}
-	creater_t::creater().print_number_of_data();
+	creater_t::creater().print_statistics();
 	return creater_t::creater().create_null_data();
 }
 

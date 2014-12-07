@@ -13,8 +13,21 @@ creater_t::~creater_t() {
 	}
 }
 
-void creater_t::print_number_of_data() {
-	printf("number of data = %u\n",(unsigned int)data_log.size());
+void creater_t::print_statistics() {
+	std::map<DATATYPE, std::pair<const char*, unsigned int> > data_counter;
+	for(std::set<data_t*>::iterator it=data_log.begin();it!=data_log.end();it++) {
+		if(data_counter.find((*it)->get_type())==data_counter.end()) {
+			data_counter[(*it)->get_type()]=
+				std::make_pair<const char*, unsigned int>((*it)->get_name(),1);
+		} else {
+			data_counter[(*it)->get_type()].second++;
+		}
+	}
+	printf("total number of data = %u\n",(unsigned int)data_log.size());
+	for(std::map<DATATYPE, std::pair<const char*, unsigned int> >::iterator it=data_counter.begin();
+	it!=data_counter.end();it++) {
+		printf("number of %s = %u\n",it->second.first,it->second.second);
+	}
 }
 
 p_data_t creater_t::create_eof_data() {

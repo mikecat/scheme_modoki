@@ -145,8 +145,8 @@ void add_kumikomi_tetuduki_to_kankyo(p_data_t& kankyo) {
 		creater_t::creater().create_native_func_data(set_enable_syouryaku);
 	sokubaku["get-enable-syouryaku"]=
 		creater_t::creater().create_native_func_data(get_enable_syouryaku);
-	sokubaku["print-number-of-data"]=
-		creater_t::creater().create_native_func_data(print_number_of_data);
+	sokubaku["print-statistics"]=
+		creater_t::creater().create_native_func_data(print_statistics);
 	sokubaku["set-enable-auto-delete"]=
 		creater_t::creater().create_native_func_data(set_enable_auto_delete);
 	sokubaku["get-enable-auto-delete"]=

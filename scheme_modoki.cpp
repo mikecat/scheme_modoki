@@ -40,6 +40,6 @@ int main(int argc,char *argv[]) {
 	}
 	// 大域環境を開放させる(自動削除が有効の場合)
 	delete_taiiki_kankyo();
-	if(print_statistics_on_end)creater_t::creater().print_number_of_data();
+	if(print_statistics_on_end)creater_t::creater().print_statistics();
 	return ret;
 }

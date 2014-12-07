@@ -12,7 +12,7 @@ class creater_t {
 		~creater_t();
 	public:
 		// 生成したデータの数を表示する
-		void print_number_of_data();
+		void print_statistics();
 
 		// EOFデータを生成する
 		p_data_t create_eof_data();

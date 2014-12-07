@@ -9,7 +9,7 @@ p_data_t set_enable_syouryaku(const std::vector<p_data_t>& args,p_data_t&);
 // 省略できるconsセルの表示を省略するかを取得する
 p_data_t get_enable_syouryaku(const std::vector<p_data_t>& args,p_data_t&);
 // 生成され、削除されていない環境とデータの数を表示する
-p_data_t print_number_of_data(const std::vector<p_data_t>& args,p_data_t&);
+p_data_t print_statistics(const std::vector<p_data_t>& args,p_data_t&);
 // 環境とデータの自動削除の有効/無効を設定する
 p_data_t set_enable_auto_delete(const std::vector<p_data_t>& args,p_data_t&);
 // 環境とデータの自動削除の有効/無効を取得する

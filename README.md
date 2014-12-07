@@ -23,7 +23,7 @@ Schemeっぽい言語のインタプリタです。
 	; 省略できるconsセルの表示を省略するかを取得する
 	(get-enable-syouryaku)
 	; 現在登録されているデータの数を表示する
-	(print-number-of-data)
+	(print-statistics)
 	; 参照カウントが0以下になったデータを自動で削除するかを設定する
 	(set-enable-auto-delete 真理値)
 	; 参照カウントが0以下になったデータを自動で削除するかの設定を取得する
