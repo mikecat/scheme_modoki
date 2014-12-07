@@ -262,3 +262,17 @@ p_data_t let_proc(const std::vector<p_data_t>& args,p_data_t& kankyo) {
 p_data_t let_star_proc(const std::vector<p_data_t>& args,p_data_t& kankyo) {
 	return let_common_proc(args,kankyo,true);
 }
+
+// 引数を順に評価する
+p_data_t begin_proc(const std::vector<p_data_t>& args,p_data_t& kankyo) {
+	if(args.size()==0) {
+		return creater_t::creater().create_number(0);
+	} else {
+		p_data_t ret;
+		for(std::vector<p_data_t>::const_iterator it=args.begin();it!=args.end();it++) {
+			ret=evaluate(*it,kankyo);
+			if(ret->force_return_flag)break;
+		}
+		return ret;
+	}
+}
