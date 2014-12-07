@@ -26,7 +26,7 @@ class creater_t {
 		p_data_t create_argument_number_error_data(
 			const std::string& name,size_t min_number,size_t got_number,bool is_kahencho);
 		// 数値データを生成する
-		p_data_t create_num_data(double num);
+		p_data_t create_number_data(double number);
 		// 記号データを生成する
 		p_data_t create_kigou_data(const std::string& str);
 		// 真偽値データを生成する

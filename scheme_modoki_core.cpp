@@ -196,7 +196,7 @@ p_data_t parse(stream_reader& sr) {
 		((namae[0]=='-' && (namae.length()>1 && (isdigit(namae[1]) || namae[1]=='.'))) ||
 		isdigit(namae[0]) ||
 		(namae[0]=='.' && (namae.length()>1 && isdigit(namae[1]))))) {
-			return creater_t::creater().create_num_data(atof(namae.c_str()));
+			return creater_t::creater().create_number_data(atof(namae.c_str()));
 		} else if(!namae.empty() && namae[0]=='#') {
 			if(namae=="#t")return creater_t::creater().create_boolean_data(true);
 			else if(namae=="#f")return creater_t::creater().create_boolean_data(false);

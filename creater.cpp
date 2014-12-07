@@ -72,10 +72,10 @@ const std::string& name,size_t min_number,size_t got_number,bool is_kahencho) {
 	return create_error_data(message);
 }
 
-p_data_t creater_t::create_num_data(double num) {
-	num_t *new_data=new num_t;
+p_data_t creater_t::create_number_data(double number) {
+	number_t *new_data=new number_t;
 	data_log.insert(new_data);
-	new_data->num=num;
+	new_data->number=number;
 	return new_data;
 }
 

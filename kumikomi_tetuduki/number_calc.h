@@ -15,15 +15,15 @@ p_data_t div_func(const std::vector<p_data_t>& args,p_data_t&);
 // 商の整数部分
 p_data_t quotient(const std::vector<p_data_t>& args,p_data_t&);
 // 比較「同じ」
-p_data_t num_eq(const std::vector<p_data_t>& args,p_data_t&);
+p_data_t number_eq(const std::vector<p_data_t>& args,p_data_t&);
 // 比較「小さい」
-p_data_t num_lt(const std::vector<p_data_t>& args,p_data_t&);
+p_data_t number_lt(const std::vector<p_data_t>& args,p_data_t&);
 // 比較「以下」
-p_data_t num_leq(const std::vector<p_data_t>& args,p_data_t&);
+p_data_t number_leq(const std::vector<p_data_t>& args,p_data_t&);
 // 比較「大きい」
-p_data_t num_gt(const std::vector<p_data_t>& args,p_data_t&);
+p_data_t number_gt(const std::vector<p_data_t>& args,p_data_t&);
 // 比較「以上」
-p_data_t num_geq(const std::vector<p_data_t>& args,p_data_t&);
+p_data_t number_geq(const std::vector<p_data_t>& args,p_data_t&);
 // 引数が偶数なら#tを、偶数以外なら#fを返す
 p_data_t is_even(const std::vector<p_data_t>& args,p_data_t&);
 // 引数が奇数なら#tを、奇数以外なら#fを返す

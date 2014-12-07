@@ -39,7 +39,8 @@ p_data_t get_number_of_data(const std::vector<p_data_t>& args,p_data_t&) {
 		return creater_t::creater().create_argument_number_error_data(
 			"get-number-of-data",0,args.size(),false);
 	}
-	return creater_t::creater().create_num_data((double)creater_t::creater().get_number_of_data());
+	return creater_t::creater().create_number_data(
+		(double)creater_t::creater().get_number_of_data());
 }
 
 // 環境とデータの自動削除の有効/無効を設定する

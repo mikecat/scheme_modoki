@@ -18,9 +18,9 @@ p_data_t is_eq(const std::vector<p_data_t>& args,p_data_t&) {
 			return creater_t::creater().create_boolean_data(false);
 		} else if(args[0]->get_type()==DT_EOF || args[0]->get_type()==DT_NULL) {
 			return creater_t::creater().create_boolean_data(true);
-		} else if(args[0]->get_type()==DT_NUM) {
+		} else if(args[0]->get_type()==DT_NUMBER) {
 			return creater_t::creater().create_boolean_data(
-				((num_t*)&*args[0])->num==((num_t*)&*args[1])->num);
+				((number_t*)&*args[0])->number==((number_t*)&*args[1])->number);
 		} else if(args[0]->get_type()==DT_KIGOU) {
 			return creater_t::creater().create_boolean_data(
 				((kigou_t*)&*args[0])->kigou==((kigou_t*)&*args[1])->kigou);
@@ -60,11 +60,11 @@ p_data_t exit_func(const std::vector<p_data_t>& args,p_data_t&) {
 	if(args.size()==0) {
 		return creater_t::creater().create_exit_data(0);
 	} else if(args.size()==1) {
-		if(args[0]->get_type()!=DT_NUM) {
+		if(args[0]->get_type()!=DT_NUMBER) {
 			return creater_t::creater().create_error_data(
 				"first argument of exit must be a number");
 		}
-		return creater_t::creater().create_exit_data((int)((num_t*)&*args[0])->num);
+		return creater_t::creater().create_exit_data((int)((number_t*)&*args[0])->number);
 	} else {
 		char buffer[16];
 		sprintf(buffer,"%u",(unsigned int)args.size());
@@ -123,11 +123,11 @@ void add_kumikomi_tetuduki_to_kankyo(p_data_t& kankyo) {
 	sokubaku["*"]=creater_t::creater().create_native_func_data(mul);
 	sokubaku["/"]=creater_t::creater().create_native_func_data(div_func);
 	sokubaku["quotient"]=creater_t::creater().create_native_func_data(quotient);
-	sokubaku["="]=creater_t::creater().create_native_func_data(num_eq);
-	sokubaku["<"]=creater_t::creater().create_native_func_data(num_lt);
-	sokubaku["<="]=creater_t::creater().create_native_func_data(num_leq);
-	sokubaku[">"]=creater_t::creater().create_native_func_data(num_gt);
-	sokubaku[">="]=creater_t::creater().create_native_func_data(num_geq);
+	sokubaku["="]=creater_t::creater().create_native_func_data(number_eq);
+	sokubaku["<"]=creater_t::creater().create_native_func_data(number_lt);
+	sokubaku["<="]=creater_t::creater().create_native_func_data(number_leq);
+	sokubaku[">"]=creater_t::creater().create_native_func_data(number_gt);
+	sokubaku[">="]=creater_t::creater().create_native_func_data(number_geq);
 	sokubaku["even?"]=creater_t::creater().create_native_func_data(is_even);
 	sokubaku["odd?"]=creater_t::creater().create_native_func_data(is_odd);
 	sokubaku["sqrt"]=creater_t::creater().create_native_func_data(sqrt_func);

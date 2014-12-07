@@ -11,7 +11,7 @@ enum DATATYPE {
 	DT_EOF, // (入力の終わり)
 	DT_EXIT, // 終了指示
 	DT_ERROR, // エラー
-	DT_NUM, // 数値
+	DT_NUMBER, // 数値
 	DT_KIGOU, // 記号
 	DT_BOOLEAN, // 真偽値
 	DT_LAMBDA, // ラムダ式
@@ -57,10 +57,10 @@ struct error_t : public data_t {
 	std::string error_mes;
 };
 
-struct num_t : public data_t {
-	DATATYPE get_type() const {return DT_NUM;}
+struct number_t : public data_t {
+	DATATYPE get_type() const {return DT_NUMBER;}
 	const char* get_name() const {return "number";}
-	double num;
+	double number;
 };
 
 struct kigou_t : public data_t {

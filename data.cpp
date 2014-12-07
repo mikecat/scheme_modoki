@@ -13,8 +13,8 @@ void print_data(const p_data_t& data,bool please_syouryaku) {
 		case DT_ERROR:
 			printf("ERROR: %s",((error_t*)&*data)->error_mes.c_str());
 			break;
-		case DT_NUM:
-			printf("%.15g",((num_t*)&*data)->num);
+		case DT_NUMBER:
+			printf("%.15g",((number_t*)&*data)->number);
 			break;
 		case DT_KIGOU:
 			printf("%s",((kigou_t*)&*data)->kigou.c_str());
