@@ -37,6 +37,7 @@ int run_script(stream_reader& sr,bool is_interactive) {
 int main(int argc,char *argv[]) {
 	std::string file_name;
 	bool use_file=false;
+	bool print_statistics_on_end=false;
 	// コマンドライン引数を読み込む
 	for(int i=1;i<argc;i++) {
 		std::string cur_arg=argv[i];
@@ -44,6 +45,8 @@ int main(int argc,char *argv[]) {
 			global_config::get_gc().set_do_syouryaku(false);
 		} else if(cur_arg=="--no-auto-delete") {
 			p_data_config_t::set_do_auto_delete(false);
+		} else if(cur_arg=="--print-statistics-on-end") {
+			print_statistics_on_end=true;
 		} else if(!use_file) {
 			file_name=cur_arg;
 			use_file=true;
@@ -69,6 +72,6 @@ int main(int argc,char *argv[]) {
 	}
 	// 大域環境を開放させる(自動削除が有効の場合)
 	taiiki_kankyo=NULL;
-	creater_t::creater().print_number_of_data();
+	if(print_statistics_on_end)creater_t::creater().print_number_of_data();
 	return ret;
 }
