@@ -1,6 +1,8 @@
 #include <cstdio>
 #include <cmath>
 #include "scheme_modoki.h"
+#include "scheme_modoki_core.h"
+#include "global_config.h"
 #include "creater.h"
 #include "kumikomi_tetuduki/number_calc.h"
 #include "kumikomi_tetuduki/cons_and_list.h"
@@ -89,7 +91,9 @@ p_data_t set_enable_syouryaku(const std::vector<p_data_t>& args,p_data_t&) {
 		return creater_t::creater().create_argument_number_error_data(
 			"set-enable-syouryaku",1,args.size(),false);
 	}
-	set_do_syouryaku(!(args[0]->get_type()==DT_BOOLEAN && !((boolean_t*)&*args[0])->is_true));
+	global_config::get_gc().set_do_syouryaku(
+		!(args[0]->get_type()==DT_BOOLEAN && !((boolean_t*)&*args[0])->is_true)
+	);
 	return args[0];
 }
 
@@ -99,7 +103,7 @@ p_data_t get_enable_syouryaku(const std::vector<p_data_t>& args,p_data_t&) {
 		return creater_t::creater().create_argument_number_error_data(
 			"get-enable-syouryaku",0,args.size(),false);
 	}
-	return creater_t::creater().create_boolean_data(get_do_syouryaku());
+	return creater_t::creater().create_boolean_data(global_config::get_gc().get_do_syouryaku());
 }
 
 // 生成され、削除されていない環境とデータの数を表示する
