@@ -9,7 +9,7 @@
 #include "kumikomi_tetuduki/system_control.h"
 
 // データが等価か判定する
-p_data_t is_eq(const std::vector<p_data_t>& args,p_data_t&) {
+p_data_t is_eq(const std::vector<p_data_t>& args,p_data_t&,p_data_t&) {
 	if(args.size()!=2) {
 		return creater_t::creater().create_argument_number_error(
 			"eq?",2,args.size(),false);
@@ -34,7 +34,7 @@ p_data_t is_eq(const std::vector<p_data_t>& args,p_data_t&) {
 }
 
 // 手続きを引数リストに適用する
-p_data_t apply(const std::vector<p_data_t>& args,p_data_t& kankyo) {
+p_data_t apply(const std::vector<p_data_t>& args,p_data_t& kankyo,p_data_t& cont) {
 	if(args.size()<2) {
 		return creater_t::creater().create_argument_number_error(
 			"apply",2,args.size(),true);
@@ -51,12 +51,12 @@ p_data_t apply(const std::vector<p_data_t>& args,p_data_t& kankyo) {
 		cur_data->get_type()==DT_CONS;cur_data=((cons_t*)&*cur_data)->cons_cdr) {
 			args_list.push_back(((cons_t*)&*cur_data)->cons_car);
 		}
-		return apply_proc(args[0],args_list,kankyo);
+		return apply_proc(args[0],args_list,kankyo,cont);
 	}
 }
 
 // 終了する指示を出す
-p_data_t exit_func(const std::vector<p_data_t>& args,p_data_t&) {
+p_data_t exit_func(const std::vector<p_data_t>& args,p_data_t&,p_data_t&) {
 	if(args.size()==0) {
 		return creater_t::creater().create_exit(0);
 	} else if(args.size()==1) {
@@ -74,7 +74,7 @@ p_data_t exit_func(const std::vector<p_data_t>& args,p_data_t&) {
 }
 
 // 引数が#f以外なら#fを、#fなら#tを返す
-p_data_t not_func(const std::vector<p_data_t>& args,p_data_t&) {
+p_data_t not_func(const std::vector<p_data_t>& args,p_data_t&,p_data_t&) {
 	if(args.size()!=1) {
 		return creater_t::creater().create_argument_number_error(
 			"not",1,args.size(),false);
@@ -86,7 +86,7 @@ p_data_t not_func(const std::vector<p_data_t>& args,p_data_t&) {
 }
 
 // データを読み込む
-p_data_t read_func(const std::vector<p_data_t>& args,p_data_t&) {
+p_data_t read_func(const std::vector<p_data_t>& args,p_data_t&,p_data_t&) {
 	if(args.size()==0) {
 		return parse(global_config::get_gc().get_stdin_reader());
 	} else if(args.size()==1) {
@@ -100,7 +100,7 @@ p_data_t read_func(const std::vector<p_data_t>& args,p_data_t&) {
 }
 
 // データを出力する
-p_data_t write_func(const std::vector<p_data_t>& args,p_data_t&) {
+p_data_t write_func(const std::vector<p_data_t>& args,p_data_t&,p_data_t&) {
 	if(args.size()==1) {
 		print_data(args[0]);
 		return creater_t::creater().create_null();
@@ -115,14 +115,14 @@ p_data_t write_func(const std::vector<p_data_t>& args,p_data_t&) {
 }
 
 // 遅延オブジェクトを評価する
-p_data_t force(const std::vector<p_data_t>& args,p_data_t&) {
+p_data_t force(const std::vector<p_data_t>& args,p_data_t&,p_data_t& cont) {
 	if(args.size()!=1) {
 		return creater_t::creater().create_argument_number_error(
 			"force",1,args.size(),false);
 	} else if(args[0]->get_type()!=DT_DELAY) {
 		return args[0];
 	} else {
-		return evaluate(((delay_t*)&*args[0])->expr,((delay_t*)&*args[0])->kankyo);
+		return evaluate(((delay_t*)&*args[0])->expr,((delay_t*)&*args[0])->kankyo,cont);
 	}
 }
 

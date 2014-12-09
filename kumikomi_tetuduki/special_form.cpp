@@ -4,7 +4,7 @@
 #include "../scheme_modoki_core.h"
 
 // 引数(未評価)を返す
-p_data_t quote_proc(const std::vector<p_data_t>& args,p_data_t&) {
+p_data_t quote_proc(const std::vector<p_data_t>& args,p_data_t&,p_data_t&) {
 	if(args.size()!=1) {
 		return creater_t::creater().create_argument_number_error(
 			"quote",1,args.size(),false);
@@ -14,7 +14,7 @@ p_data_t quote_proc(const std::vector<p_data_t>& args,p_data_t&) {
 }
 
 // 新規束縛の作成
-p_data_t define_proc(const std::vector<p_data_t>& args,p_data_t& kankyo) {
+p_data_t define_proc(const std::vector<p_data_t>& args,p_data_t& kankyo,p_data_t& cont) {
 	if(args.size()<2) {
 		return creater_t::creater().create_argument_number_error(
 			"define",2,args.size(),true);
@@ -26,7 +26,7 @@ p_data_t define_proc(const std::vector<p_data_t>& args,p_data_t& kankyo) {
 		} else {
 			std::vector<p_data_t> lambda_args=args;
 			lambda_args[0]=((cons_t*)&*args[0])->cons_cdr;
-			p_data_t lambda_data=lambda_proc(lambda_args,kankyo);
+			p_data_t lambda_data=lambda_proc(lambda_args,kankyo,cont);
 			((kankyo_t*)&*kankyo)->sokubaku[((kigou_t*)&*name)->kigou]=lambda_data;
 			return creater_t::creater().create_kigou(((kigou_t*)&*name)->kigou);
 		}
@@ -35,7 +35,7 @@ p_data_t define_proc(const std::vector<p_data_t>& args,p_data_t& kankyo) {
 			return creater_t::creater().create_argument_number_error(
 				"define",2,args.size(),false);
 		}
-		p_data_t ret_data=evaluate(args[1],kankyo);
+		p_data_t ret_data=evaluate(args[1],kankyo,cont);
 		if(ret_data->force_return_flag)return ret_data;
 		((kankyo_t*)&*kankyo)->sokubaku[((kigou_t*)&*args[0])->kigou]=ret_data;
 		return creater_t::creater().create_kigou(((kigou_t*)&*args[0])->kigou);
@@ -46,7 +46,7 @@ p_data_t define_proc(const std::vector<p_data_t>& args,p_data_t& kankyo) {
 }
 
 // 代入
-p_data_t set_proc(const std::vector<p_data_t>& args,p_data_t& kankyo) {
+p_data_t set_proc(const std::vector<p_data_t>& args,p_data_t& kankyo,p_data_t& cont) {
 	if(args.size()!=2) {
 		return creater_t::creater().create_argument_number_error(
 			"set!",2,args.size(),false);
@@ -56,7 +56,7 @@ p_data_t set_proc(const std::vector<p_data_t>& args,p_data_t& kankyo) {
 	} else {
 		p_data_t* zittai=namae_no_kisoku2(((kigou_t*)&*args[0])->kigou,kankyo);
 		if(zittai==NULL)return namae_no_kisoku(((kigou_t*)&*args[0])->kigou,kankyo);
-		p_data_t value=evaluate(args[1],kankyo);
+		p_data_t value=evaluate(args[1],kankyo,cont);
 		if(value->force_return_flag)return value;
 		*zittai=value;
 		return value;
@@ -64,7 +64,7 @@ p_data_t set_proc(const std::vector<p_data_t>& args,p_data_t& kankyo) {
 }
 
 // 新規手続きの作成
-p_data_t lambda_proc(const std::vector<p_data_t>& args,p_data_t& kankyo) {
+p_data_t lambda_proc(const std::vector<p_data_t>& args,p_data_t& kankyo,p_data_t&) {
 	if(args.size()<2) {
 		return creater_t::creater().create_argument_number_error(
 			"lambda",2,args.size(),true);
@@ -114,35 +114,35 @@ p_data_t lambda_proc(const std::vector<p_data_t>& args,p_data_t& kankyo) {
 }
 
 // 条件分岐
-p_data_t if_proc(const std::vector<p_data_t>& args,p_data_t& kankyo) {
+p_data_t if_proc(const std::vector<p_data_t>& args,p_data_t& kankyo,p_data_t& cont) {
 	if(args.size()!=2 && args.size()!=3) {
 		char buf[16];
 		sprintf(buf,"%u",(unsigned int)args.size());
 		return creater_t::creater().create_error(
 			std::string("invalid number of arguments for if : expected 2 or 3, got ")+buf);
 	} else {
-		p_data_t sinriti=evaluate(args[0],kankyo);
+		p_data_t sinriti=evaluate(args[0],kankyo,cont);
 		if(sinriti->force_return_flag)return sinriti;
 		if(sinriti->get_type()==DT_BOOLEAN && !((boolean_t*)&*sinriti)->is_true) {
 			if(args.size()>=3) {
-				return evaluate(args[2],kankyo);
+				return evaluate(args[2],kankyo,cont);
 			} else {
 				return creater_t::creater().create_null();
 			}
 		} else {
-			return evaluate(args[1],kankyo);
+			return evaluate(args[1],kankyo,cont);
 		}
 	}
 }
 
 // 途中に1個でも#fがあれば#f、無ければ最後の値を返す
-p_data_t and_proc(const std::vector<p_data_t>& args,p_data_t& kankyo) {
+p_data_t and_proc(const std::vector<p_data_t>& args,p_data_t& kankyo,p_data_t& cont) {
 	if(args.size()==0) {
 		return creater_t::creater().create_boolean(true);
 	} else {
 		p_data_t last_data=NULL;
 		for(std::vector<p_data_t>::const_iterator it=args.begin();it!=args.end();it++) {
-			p_data_t cur_data=evaluate(*it,kankyo);
+			p_data_t cur_data=evaluate(*it,kankyo,cont);
 			if(cur_data->force_return_flag) {
 				return cur_data;
 			} else if(cur_data->get_type()==DT_BOOLEAN && !((boolean_t*)&*cur_data)->is_true) {
@@ -155,9 +155,9 @@ p_data_t and_proc(const std::vector<p_data_t>& args,p_data_t& kankyo) {
 }
 
 // 途中に1個でも#f以外があればその値、無ければ#fを返す
-p_data_t or_proc(const std::vector<p_data_t>& args,p_data_t& kankyo) {
+p_data_t or_proc(const std::vector<p_data_t>& args,p_data_t& kankyo,p_data_t& cont) {
 	for(std::vector<p_data_t>::const_iterator it=args.begin();it!=args.end();it++) {
-		p_data_t cur_data=evaluate(*it,kankyo);
+		p_data_t cur_data=evaluate(*it,kankyo,cont);
 		if(cur_data->force_return_flag) {
 			return cur_data;
 		} else if(cur_data->get_type()!=DT_BOOLEAN || ((boolean_t*)&*cur_data)->is_true) {
@@ -168,7 +168,7 @@ p_data_t or_proc(const std::vector<p_data_t>& args,p_data_t& kankyo) {
 }
 
 // 各引数のリストの最初の値が真なら、そのリストの式を評価し、それを返す
-p_data_t cond_proc(const std::vector<p_data_t>& args,p_data_t& kankyo) {
+p_data_t cond_proc(const std::vector<p_data_t>& args,p_data_t& kankyo,p_data_t& cont) {
 	if(args.size()==0) {
 		return creater_t::creater().create_argument_number_error(
 			"cond",1,args.size(),true);
@@ -184,13 +184,13 @@ p_data_t cond_proc(const std::vector<p_data_t>& args,p_data_t& kankyo) {
 		// 引数を順番に評価する
 		for(std::vector<p_data_t>::const_iterator it=args.begin();it!=args.end();it++) {
 			p_data_t cur=*it;
-			p_data_t cur_val=evaluate(((cons_t*)&*cur)->cons_car,kankyo);
+			p_data_t cur_val=evaluate(((cons_t*)&*cur)->cons_car,kankyo,cont);
 			if(cur_val->force_return_flag)return cur_val;
 			if(cur_val->get_type()!=DT_BOOLEAN || ((boolean_t*)&*cur_val)->is_true) {
 				for(;;) {
 					cur=((cons_t*)&*cur)->cons_cdr;
 					if(cur->get_type()!=DT_CONS)break;
-					cur_val=evaluate(((cons_t*)&*cur)->cons_car,kankyo);
+					cur_val=evaluate(((cons_t*)&*cur)->cons_car,kankyo,cont);
 					if(cur_val->force_return_flag)break;
 				}
 				return cur_val;
@@ -201,7 +201,8 @@ p_data_t cond_proc(const std::vector<p_data_t>& args,p_data_t& kankyo) {
 }
 
 // letとlet*の共通の処理を行う関数
-static p_data_t let_common_proc(const std::vector<p_data_t>& args,p_data_t& kankyo,bool star_mode) {
+static p_data_t let_common_proc(
+const std::vector<p_data_t>& args,p_data_t& kankyo,p_data_t& cont,bool star_mode) {
 	if(args.size()==0) {
 		return creater_t::creater().create_argument_number_error(
 			star_mode?"let*":"let",1,args.size(),true);
@@ -234,7 +235,7 @@ static p_data_t let_common_proc(const std::vector<p_data_t>& args,p_data_t& kank
 			p_data_t current_data=((cons_t*)&*cur)->cons_car;
 			p_data_t current_name=((cons_t*)&*current_data)->cons_car;
 			p_data_t current_value=evaluate(
-				((cons_t*)&*((cons_t*)&*current_data)->cons_cdr)->cons_car,current_kankyo);
+				((cons_t*)&*((cons_t*)&*current_data)->cons_cdr)->cons_car,current_kankyo,cont);
 			if(current_value->force_return_flag)return current_value;
 			// 束縛を実行する
 			((kankyo_t*)&*new_kankyo)->sokubaku[((kigou_t*)&*current_name)->kigou]=current_value;
@@ -246,7 +247,7 @@ static p_data_t let_common_proc(const std::vector<p_data_t>& args,p_data_t& kank
 		// 評価を実行する
 		cur=creater_t::creater().create_number(0);
 		for(std::vector<p_data_t>::const_iterator it=args.begin()+1;it!=args.end();it++) {
-			cur=evaluate(*it,current_kankyo);
+			cur=evaluate(*it,current_kankyo,cont);
 			if(cur->force_return_flag)break;
 		}
 		return cur;
@@ -254,23 +255,23 @@ static p_data_t let_common_proc(const std::vector<p_data_t>& args,p_data_t& kank
 }
 
 // 束縛を作ってから、本体を評価する
-p_data_t let_proc(const std::vector<p_data_t>& args,p_data_t& kankyo) {
-	return let_common_proc(args,kankyo,false);
+p_data_t let_proc(const std::vector<p_data_t>& args,p_data_t& kankyo,p_data_t& cont) {
+	return let_common_proc(args,kankyo,cont,false);
 }
 
 // 束縛を順番に作ってから、本体を評価する
-p_data_t let_star_proc(const std::vector<p_data_t>& args,p_data_t& kankyo) {
-	return let_common_proc(args,kankyo,true);
+p_data_t let_star_proc(const std::vector<p_data_t>& args,p_data_t& kankyo,p_data_t& cont) {
+	return let_common_proc(args,kankyo,cont,true);
 }
 
 // 引数を順に評価する
-p_data_t begin_proc(const std::vector<p_data_t>& args,p_data_t& kankyo) {
+p_data_t begin_proc(const std::vector<p_data_t>& args,p_data_t& kankyo,p_data_t& cont) {
 	if(args.size()==0) {
 		return creater_t::creater().create_number(0);
 	} else {
 		p_data_t ret;
 		for(std::vector<p_data_t>::const_iterator it=args.begin();it!=args.end();it++) {
-			ret=evaluate(*it,kankyo);
+			ret=evaluate(*it,kankyo,cont);
 			if(ret->force_return_flag)break;
 		}
 		return ret;
@@ -278,7 +279,7 @@ p_data_t begin_proc(const std::vector<p_data_t>& args,p_data_t& kankyo) {
 }
 
 // 遅延オブジェクトを生成する
-p_data_t delay_proc(const std::vector<p_data_t>& args,p_data_t& kankyo) {
+p_data_t delay_proc(const std::vector<p_data_t>& args,p_data_t& kankyo,p_data_t&) {
 	if(args.size()!=1) {
 		return creater_t::creater().create_argument_number_error(
 			"delay",1,args.size(),false);

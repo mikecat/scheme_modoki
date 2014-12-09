@@ -37,10 +37,11 @@ p_data_t namae_no_kisoku(const std::string& namae,p_data_t& kankyo) {
 	}
 }
 
-p_data_t apply_proc(const p_data_t& proc, const std::vector<p_data_t>& args,p_data_t& kankyo) {
+p_data_t apply_proc(
+const p_data_t& proc, const std::vector<p_data_t>& args,p_data_t& kankyo,p_data_t& cont) {
 	if(proc->get_type()==DT_NATIVE_FUNC) {
 		// 組み込み手続きの場合、そのまま関数として呼び出し、結果を返す
-		return (((native_func_t*)&*proc)->native_func)(args,kankyo);
+		return (((native_func_t*)&*proc)->native_func)(args,kankyo,cont);
 	} else if(proc->get_type()==DT_LAMBDA) {
 		// ラムダ式の適用
 		p_data_t new_kankyo=creater_t::creater().create_kankyo(((lambda_t*)&*proc)->lambda_kankyo);
@@ -79,7 +80,7 @@ p_data_t apply_proc(const p_data_t& proc, const std::vector<p_data_t>& args,p_da
 		p_data_t res=NULL;
 		for(std::vector<p_data_t>::const_iterator it=((lambda_t*)&*proc)->hontai.begin();
 		it!=((lambda_t*)&*proc)->hontai.end();it++) {
-			res=evaluate(*it,new_kankyo);
+			res=evaluate(*it,new_kankyo,cont);
 			if(res->force_return_flag)break;
 		}
 		return res;
@@ -89,12 +90,12 @@ p_data_t apply_proc(const p_data_t& proc, const std::vector<p_data_t>& args,p_da
 	}
 }
 
-p_data_t evaluate(const p_data_t& data,p_data_t& kankyo) {
+p_data_t evaluate(const p_data_t& data,p_data_t& kankyo,p_data_t& cont) {
 	if(data->get_type()==DT_KIGOU) { // 名前
 		return namae_no_kisoku(((kigou_t*)&*data)->kigou,kankyo);
 	} else if(data->get_type()==DT_CONS) { // 組合せ
 		// 適用する関数を評価する
-		p_data_t proc=evaluate(((cons_t*)&*data)->cons_car,kankyo);
+		p_data_t proc=evaluate(((cons_t*)&*data)->cons_car,kankyo,cont);
 		// 関数の引数のリストの要素を評価する
 		p_data_t next=((cons_t*)&*data)->cons_cdr;
 		std::vector<p_data_t> args;
@@ -104,7 +105,7 @@ p_data_t evaluate(const p_data_t& data,p_data_t& kankyo) {
 		// リストが続いている間、引数を取る
 		while(next->get_type()==DT_CONS) {
 			p_data_t next_arg=tokusyu_keisiki?
-				((cons_t*)&*next)->cons_car : evaluate(((cons_t*)&*next)->cons_car,kankyo);
+				((cons_t*)&*next)->cons_car : evaluate(((cons_t*)&*next)->cons_car,kankyo,cont);
 			if(next_arg->force_return_flag)return next_arg;
 			args.push_back(next_arg);
 			next=((cons_t*)&*next)->cons_cdr;
@@ -114,7 +115,7 @@ p_data_t evaluate(const p_data_t& data,p_data_t& kankyo) {
 			return creater_t::creater().create_error("list required for applying a function");
 		}
 		// 適用した結果を返す
-		return apply_proc(proc,args,kankyo);
+		return apply_proc(proc,args,kankyo,cont);
 	} else { // その他のデータ
 		return data;
 	}
@@ -253,10 +254,11 @@ void delete_taiiki_kankyo() {
 int run_script(stream_reader& sr,bool is_interactive) {
 	for(;;) {
 		p_data_t data;
+		p_data_t null_cont=NULL;
 		if(is_interactive)printf("input> ");
 		data=parse(sr);
 		if(data->get_type()==DT_EOF)break;
-		data=evaluate(data,taiiki_kankyo);
+		data=evaluate(data,taiiki_kankyo,null_cont);
 		if(data->get_type()==DT_EOF)break;
 		else if(data->get_type()==DT_EXIT) {
 			return ((exit_t*)&*data)->exit_code;
