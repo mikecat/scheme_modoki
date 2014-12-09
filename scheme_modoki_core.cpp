@@ -84,6 +84,9 @@ const p_data_t& proc, const std::vector<p_data_t>& args,p_data_t& kankyo,p_data_
 			if(res->force_return_flag)break;
 		}
 		return res;
+	} else if(proc->get_type()==DT_CONTINUATION) {
+		return creater_t::creater().create_error(
+			"continuation not supported yet");
 	} else {
 		return creater_t::creater().create_error(
 			"attempt to apply a data that is unavailable for applying");
