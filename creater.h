@@ -48,6 +48,8 @@ class creater_t {
 			bool need_apply,const p_data_t& kankyo,
 			const std::vector<p_data_t>& evaluated_elements,
 			const std::vector<p_data_t>& elements_to_evaluate);
+		// 空の継続データを生成する
+		p_data_t create_empty_continuation();
 		// 環境データを生成する
 		p_data_t create_kankyo(const p_data_t& oya=NULL);
 

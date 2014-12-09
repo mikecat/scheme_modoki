@@ -257,11 +257,11 @@ void delete_taiiki_kankyo() {
 int run_script(stream_reader& sr,bool is_interactive) {
 	for(;;) {
 		p_data_t data;
-		p_data_t null_cont=NULL;
+		p_data_t empty_cont=creater_t::creater().create_empty_continuation();
 		if(is_interactive)printf("input> ");
 		data=parse(sr);
 		if(data->get_type()==DT_EOF)break;
-		data=evaluate(data,taiiki_kankyo,null_cont);
+		data=evaluate(data,taiiki_kankyo,empty_cont);
 		if(data->get_type()==DT_EOF)break;
 		else if(data->get_type()==DT_EXIT) {
 			return ((exit_t*)&*data)->exit_code;

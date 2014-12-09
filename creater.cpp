@@ -149,6 +149,15 @@ const std::vector<p_data_t>& elements_to_evaluate) {
 	return new_data;
 }
 
+p_data_t creater_t::create_empty_continuation() {
+	continuation_t *new_data=new continuation_t;
+	data_log.insert(new_data);
+	new_data->next_continuation=NULL;
+	new_data->need_apply=false;
+	new_data->kankyo=NULL;
+	return new_data;
+}
+
 p_data_t creater_t::create_kankyo(const p_data_t& oya) {
 	kankyo_t *new_data=new kankyo_t;
 	data_log.insert(new_data);
