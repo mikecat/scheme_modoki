@@ -90,8 +90,41 @@ const p_data_t& proc, const std::vector<p_data_t>& args,p_data_t& kankyo,const p
 		}
 		return res;
 	} else if(proc->get_type()==DT_CONTINUATION) {
-		return creater_t::creater().create_error(
-			"continuation not supported yet");
+		if(args.size()!=1) {
+			return creater_t::creater().create_argument_number_error(
+				"#<continuation>",1,args.size(),false);
+		}
+		p_data_t next_cont=((continuation_t*)&*proc)->next_continuation;
+		p_data_t cont_kankyo=((continuation_t*)&*proc)->kankyo;
+		bool need_apply=((continuation_t*)&*proc)->need_apply;
+		std::vector<p_data_t> evaluated=((continuation_t*)&*proc)->evaluated_elements;
+		std::vector<p_data_t> to_evaluate=((continuation_t*)&*proc)->evaluated_elements;
+		evaluated.push_back(args[0]);
+		while(!to_evaluate.empty()) {
+			p_data_t res;
+			p_data_t next_to_evaluate=*to_evaluate.begin();
+			to_evaluate.erase(to_evaluate.begin());
+			res=evaluate(next_to_evaluate,cont_kankyo,creater_t::creater().create_continuation(
+				next_cont,need_apply,cont_kankyo,evaluated,to_evaluate));
+			if(res->force_return_flag)return res;
+		}
+		p_data_t cont_ret;
+		if(need_apply) {
+			p_data_t proc=*evaluated.begin();
+			evaluated.erase(evaluated.begin());
+			cont_ret=apply_proc(proc,evaluated,cont_kankyo,next_cont);
+			if(cont_ret->force_return_flag)return cont_ret;
+		} else {
+			cont_ret=evaluated.back();
+		}
+		if(next_cont==NULL) {
+			cont_ret->force_return_flag=true;
+			return cont_ret;
+		} else {
+			std::vector<p_data_t> next_args;
+			next_args.push_back(cont_ret);
+			return apply_proc(next_cont,next_args,kankyo,cont);
+		}
 	} else {
 		return creater_t::creater().create_error(
 			"attempt to apply a data that is unavailable for applying");
