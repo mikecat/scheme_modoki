@@ -79,9 +79,13 @@ const p_data_t& proc, const std::vector<p_data_t>& args,p_data_t& kankyo,const p
 		}
 		// 本体を順に評価する
 		p_data_t res=NULL;
-		for(std::vector<p_data_t>::const_iterator it=((lambda_t*)&*proc)->hontai.begin();
-		it!=((lambda_t*)&*proc)->hontai.end();it++) {
-			res=evaluate(*it,new_kankyo,cont);
+		std::vector<p_data_t> evaluated; // dummy
+		std::vector<p_data_t> to_evaluate=((lambda_t*)&*proc)->hontai;
+		while(!to_evaluate.empty()) {
+			p_data_t next_to_evaluate=*to_evaluate.begin();
+			to_evaluate.erase(to_evaluate.begin());
+			res=evaluate(next_to_evaluate,new_kankyo,creater_t::creater().create_continuation(
+				cont,false,new_kankyo,evaluated,to_evaluate));
 			if(res->force_return_flag)break;
 		}
 		return res;
