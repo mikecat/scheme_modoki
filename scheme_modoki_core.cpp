@@ -151,6 +151,7 @@ p_data_t evaluate(const p_data_t& data,p_data_t& kankyo,const p_data_t& cont) {
 		to_evaluate.erase(to_evaluate.begin());
 		proc=evaluate(proc,kankyo,creater_t::creater().create_continuation(
 			cont,true,kankyo,evaluated,to_evaluate));
+		if(proc->force_return_flag)return proc;
 		if(is_tokusyu_keisiki(proc)) {
 			// 未評価の引数を直接特殊形式に渡す
 			return apply_proc(proc,to_evaluate,kankyo,cont);
@@ -162,6 +163,7 @@ p_data_t evaluate(const p_data_t& data,p_data_t& kankyo,const p_data_t& cont) {
 				to_evaluate.erase(to_evaluate.begin());
 				cur_data=evaluate(cur_data,kankyo,creater_t::creater().create_continuation(
 					cont,true,kankyo,evaluated,to_evaluate));
+				if(cur_data->force_return_flag)return cur_data;
 				evaluated.push_back(cur_data);
 			}
 			// 適用した結果を返す
