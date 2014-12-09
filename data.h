@@ -19,6 +19,7 @@ enum DATATYPE {
 	DT_NATIVE_FUNC, // 組み込み手続き
 	DT_NULL, // '()
 	DT_DELAY, // 遅延オブジェクト
+	DT_CONTINUATION, // 継続
 	DT_KANKYO // 環境
 };
 
@@ -109,6 +110,17 @@ struct delay_t : public data_t {
 	const char* get_name() const {return "delay";}
 	p_data_t expr;
 	p_data_t kankyo;
+};
+
+struct continuation_t : public data_t {
+	DATATYPE get_type() const {return DT_CONTINUATION;}
+	const char* get_name() const {return "continuation";}
+	p_data_t next_cont; // 次に実行する継続(無い場合NULL)
+	p_data_t kankyo; // 評価に使用する環境
+	p_data_t kankyo_for_args; // 引数を束縛する環境(無い場合NULL)
+	p_data_t proc_to_apply; // 適用する手続き(無い場合NULL)
+	std::vector<p_data_t> evaluated_args; // 既に評価した引数
+	std::vector<p_data_t> args_to_evaluate; // 未評価の引数
 };
 
 struct kankyo_t : public data_t {
