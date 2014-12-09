@@ -38,10 +38,11 @@ p_data_t namae_no_kisoku(const std::string& namae,p_data_t& kankyo) {
 }
 
 p_data_t apply_proc(
-const p_data_t& proc, const std::vector<p_data_t>& args,p_data_t& kankyo,p_data_t& cont) {
+const p_data_t& proc, const std::vector<p_data_t>& args,p_data_t& kankyo,const p_data_t& cont) {
 	if(proc->get_type()==DT_NATIVE_FUNC) {
 		// 組み込み手続きの場合、そのまま関数として呼び出し、結果を返す
-		return (((native_func_t*)&*proc)->native_func)(args,kankyo,cont);
+		p_data_t cont_pass=cont;
+		return (((native_func_t*)&*proc)->native_func)(args,kankyo,cont_pass);
 	} else if(proc->get_type()==DT_LAMBDA) {
 		// ラムダ式の適用
 		p_data_t new_kankyo=creater_t::creater().create_kankyo(((lambda_t*)&*proc)->lambda_kankyo);
@@ -93,32 +94,43 @@ const p_data_t& proc, const std::vector<p_data_t>& args,p_data_t& kankyo,p_data_
 	}
 }
 
-p_data_t evaluate(const p_data_t& data,p_data_t& kankyo,p_data_t& cont) {
+p_data_t evaluate(const p_data_t& data,p_data_t& kankyo,const p_data_t& cont) {
 	if(data->get_type()==DT_KIGOU) { // 名前
 		return namae_no_kisoku(((kigou_t*)&*data)->kigou,kankyo);
 	} else if(data->get_type()==DT_CONS) { // 組合せ
-		// 適用する関数を評価する
-		p_data_t proc=evaluate(((cons_t*)&*data)->cons_car,kankyo,cont);
-		// 関数の引数のリストの要素を評価する
-		p_data_t next=((cons_t*)&*data)->cons_cdr;
-		std::vector<p_data_t> args;
-		bool tokusyu_keisiki;
-		if(proc->force_return_flag)return proc;
-		tokusyu_keisiki=is_tokusyu_keisiki(proc);
-		// リストが続いている間、引数を取る
-		while(next->get_type()==DT_CONS) {
-			p_data_t next_arg=tokusyu_keisiki?
-				((cons_t*)&*next)->cons_car : evaluate(((cons_t*)&*next)->cons_car,kankyo,cont);
-			if(next_arg->force_return_flag)return next_arg;
-			args.push_back(next_arg);
-			next=((cons_t*)&*next)->cons_cdr;
+		std::vector<p_data_t> evaluated;
+		std::vector<p_data_t> to_evaluate;
+		// リストの要素を全て「未評価」のリストに入れる
+		p_data_t cur=data;
+		while(cur->get_type()==DT_CONS) {
+			to_evaluate.push_back(((cons_t*)&*cur)->cons_car);
+			cur=((cons_t*)&*cur)->cons_cdr;
 		}
-		// リストが'()で終わっているかをチェックする
-		if(next->get_type()!=DT_NULL) {
+		if(cur->get_type()!=DT_NULL) {
 			return creater_t::creater().create_error("list required for applying a function");
 		}
-		// 適用した結果を返す
-		return apply_proc(proc,args,kankyo,cont);
+		// 適用する関数を評価する
+		p_data_t proc=*to_evaluate.begin();
+		to_evaluate.erase(to_evaluate.begin());
+		proc=evaluate(proc,kankyo,creater_t::creater().create_continuation(
+			cont,true,kankyo,evaluated,to_evaluate));
+		if(is_tokusyu_keisiki(proc)) {
+			// 未評価の引数を直接特殊形式に渡す
+			return apply_proc(proc,to_evaluate,kankyo,cont);
+		} else {
+			evaluated.push_back(proc);
+			// 関数の引数のリストの要素を評価する
+			while(!to_evaluate.empty()) {
+				p_data_t cur_data=*to_evaluate.begin();
+				to_evaluate.erase(to_evaluate.begin());
+				cur_data=evaluate(cur_data,kankyo,creater_t::creater().create_continuation(
+					cont,true,kankyo,evaluated,to_evaluate));
+				evaluated.push_back(cur_data);
+			}
+			// 適用した結果を返す
+			evaluated.erase(evaluated.begin()); // 引数から先頭の手続きを消す
+			return apply_proc(proc,evaluated,kankyo,cont);
+		}
 	} else { // その他のデータ
 		return data;
 	}
@@ -257,11 +269,10 @@ void delete_taiiki_kankyo() {
 int run_script(stream_reader& sr,bool is_interactive) {
 	for(;;) {
 		p_data_t data;
-		p_data_t empty_cont=creater_t::creater().create_empty_continuation();
 		if(is_interactive)printf("input> ");
 		data=parse(sr);
 		if(data->get_type()==DT_EOF)break;
-		data=evaluate(data,taiiki_kankyo,empty_cont);
+		data=evaluate(data,taiiki_kankyo,creater_t::creater().create_empty_continuation());
 		if(data->get_type()==DT_EOF)break;
 		else if(data->get_type()==DT_EXIT) {
 			return ((exit_t*)&*data)->exit_code;
