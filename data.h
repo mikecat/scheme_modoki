@@ -24,7 +24,7 @@ enum DATATYPE {
 };
 
 // 組み込み手続きの関数ポインタ型
-typedef p_data_t(*p_native_func)(const std::vector<p_data_t>& args,p_data_t& kankyo);
+typedef p_data_t(*p_native_func)(const std::vector<p_data_t>& args,p_data_t& kankyo,p_data_t& cont);
 
 // データを表す構造体(参照カウントを持つ)
 struct data_t {
