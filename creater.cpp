@@ -135,18 +135,17 @@ p_data_t creater_t::create_delay(const p_data_t& expr,const p_data_t kankyo) {
 	return new_data;
 }
 
-p_data_t creater_t::create_continuation(const p_data_t& next_cont,const p_data_t& kankyo,
-const p_data_t& kankyo_for_args, const p_data_t& proc_to_apply,
-const std::vector<p_data_t>& evaluated_args,
-const std::vector<p_data_t>& args_to_evaluate) {
+p_data_t creater_t::create_continuation(const p_data_t& next_continuation,
+bool need_apply,const p_data_t& kankyo,
+const std::vector<p_data_t>& evaluated_elements,
+const std::vector<p_data_t>& elements_to_evaluate) {
 	continuation_t *new_data=new continuation_t;
 	data_log.insert(new_data);
-	new_data->next_cont=next_cont;
+	new_data->next_continuation=next_continuation;
+	new_data->need_apply=need_apply;
 	new_data->kankyo=kankyo;
-	new_data->kankyo_for_args=kankyo_for_args;
-	new_data->proc_to_apply=proc_to_apply;
-	new_data->evaluated_args=evaluated_args;
-	new_data->args_to_evaluate=args_to_evaluate;
+	new_data->evaluated_elements=evaluated_elements;
+	new_data->elements_to_evaluate=elements_to_evaluate;
 	return new_data;
 }
 

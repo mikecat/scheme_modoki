@@ -115,12 +115,11 @@ struct delay_t : public data_t {
 struct continuation_t : public data_t {
 	DATATYPE get_type() const {return DT_CONTINUATION;}
 	const char* get_name() const {return "continuation";}
-	p_data_t next_cont; // 次に実行する継続(無い場合NULL)
+	p_data_t next_continuation; // 次に実行する継続(無い場合NULL)
+	bool need_apply; // 適用を行うか
 	p_data_t kankyo; // 評価に使用する環境
-	p_data_t kankyo_for_args; // 引数を束縛する環境(無い場合NULL)
-	p_data_t proc_to_apply; // 適用する手続き(無い場合NULL)
-	std::vector<p_data_t> evaluated_args; // 既に評価した引数
-	std::vector<p_data_t> args_to_evaluate; // 未評価の引数
+	std::vector<p_data_t> evaluated_elements; // 既に評価した要素
+	std::vector<p_data_t> elements_to_evaluate; // 未評価の要素
 };
 
 struct kankyo_t : public data_t {

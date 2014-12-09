@@ -44,10 +44,10 @@ class creater_t {
 		// 遅延オブジェクトデータを生成する
 		p_data_t create_delay(const p_data_t& expr,const p_data_t kankyo);
 		// 継続データを生成する
-		p_data_t create_continuation(const p_data_t& next_cont,const p_data_t& kankyo,
-			const p_data_t& kankyo_for_args, const p_data_t& proc_to_apply,
-			const std::vector<p_data_t>& evaluated_args,
-			const std::vector<p_data_t>& args_to_evaluate);
+		p_data_t create_continuation(const p_data_t& next_continuation,
+			bool need_apply,const p_data_t& kankyo,
+			const std::vector<p_data_t>& evaluated_elements,
+			const std::vector<p_data_t>& elements_to_evaluate);
 		// 環境データを生成する
 		p_data_t create_kankyo(const p_data_t& oya=NULL);
 
