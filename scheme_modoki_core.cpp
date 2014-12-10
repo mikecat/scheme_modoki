@@ -98,7 +98,7 @@ const p_data_t& proc, const std::vector<p_data_t>& args,p_data_t& kankyo,const p
 		p_data_t cont_kankyo=((continuation_t*)&*proc)->kankyo;
 		bool need_apply=((continuation_t*)&*proc)->need_apply;
 		std::vector<p_data_t> evaluated=((continuation_t*)&*proc)->evaluated_elements;
-		std::vector<p_data_t> to_evaluate=((continuation_t*)&*proc)->evaluated_elements;
+		std::vector<p_data_t> to_evaluate=((continuation_t*)&*proc)->elements_to_evaluate;
 		evaluated.push_back(args[0]);
 		while(!to_evaluate.empty()) {
 			p_data_t res;
@@ -107,6 +107,7 @@ const p_data_t& proc, const std::vector<p_data_t>& args,p_data_t& kankyo,const p
 			res=evaluate(next_to_evaluate,cont_kankyo,creater_t::creater().create_continuation(
 				next_cont,need_apply,cont_kankyo,evaluated,to_evaluate));
 			if(res->force_return_flag)return res;
+			evaluated.push_back(res);
 		}
 		p_data_t cont_ret;
 		if(need_apply) {
