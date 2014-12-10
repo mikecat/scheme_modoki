@@ -156,9 +156,15 @@ p_data_t and_proc(const std::vector<p_data_t>& args,p_data_t& kankyo,p_data_t& c
 	if(args.size()==0) {
 		return creater_t::creater().create_boolean(true);
 	} else {
+		std::vector<p_data_t> evaluated;
+		std::vector<p_data_t> to_evaluate=args;
+		evaluated.push_back(creater_t::creater().create_native_func(and_proc,true));
 		p_data_t last_data=NULL;
-		for(std::vector<p_data_t>::const_iterator it=args.begin();it!=args.end();it++) {
-			p_data_t cur_data=evaluate(*it,kankyo,cont);
+		while(!to_evaluate.empty()) {
+			p_data_t cur_expr=*to_evaluate.begin();
+			to_evaluate.erase(to_evaluate.begin());
+			p_data_t cur_data=evaluate(cur_expr,kankyo,creater_t::creater().create_continuation(
+				cont,true,kankyo,evaluated,to_evaluate));
 			if(cur_data->force_return_flag) {
 				return cur_data;
 			} else if(cur_data->get_type()==DT_BOOLEAN && !((boolean_t*)&*cur_data)->is_true) {
@@ -172,8 +178,14 @@ p_data_t and_proc(const std::vector<p_data_t>& args,p_data_t& kankyo,p_data_t& c
 
 // 途中に1個でも#f以外があればその値、無ければ#fを返す
 p_data_t or_proc(const std::vector<p_data_t>& args,p_data_t& kankyo,p_data_t& cont) {
-	for(std::vector<p_data_t>::const_iterator it=args.begin();it!=args.end();it++) {
-		p_data_t cur_data=evaluate(*it,kankyo,cont);
+	std::vector<p_data_t> evaluated;
+	std::vector<p_data_t> to_evaluate=args;
+	evaluated.push_back(creater_t::creater().create_native_func(or_proc,true));
+	while(!to_evaluate.empty()) {
+		p_data_t cur_expr=*to_evaluate.begin();
+		to_evaluate.erase(to_evaluate.begin());
+		p_data_t cur_data=evaluate(cur_expr,kankyo,creater_t::creater().create_continuation(
+			cont,true,kankyo,evaluated,to_evaluate));
 		if(cur_data->force_return_flag) {
 			return cur_data;
 		} else if(cur_data->get_type()!=DT_BOOLEAN || ((boolean_t*)&*cur_data)->is_true) {
