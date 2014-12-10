@@ -100,14 +100,19 @@ const p_data_t& proc, const std::vector<p_data_t>& args,p_data_t& kankyo,const p
 		std::vector<p_data_t> evaluated=((continuation_t*)&*proc)->evaluated_elements;
 		std::vector<p_data_t> to_evaluate=((continuation_t*)&*proc)->elements_to_evaluate;
 		evaluated.push_back(args[0]);
-		while(!to_evaluate.empty()) {
-			p_data_t res;
-			p_data_t next_to_evaluate=*to_evaluate.begin();
-			to_evaluate.erase(to_evaluate.begin());
-			res=evaluate(next_to_evaluate,cont_kankyo,creater_t::creater().create_continuation(
-				next_cont,need_apply,cont_kankyo,evaluated,to_evaluate));
-			if(res->force_return_flag)return res;
-			evaluated.push_back(res);
+		if(need_apply && is_tokusyu_keisiki(*evaluated.begin())) {
+			// 特殊形式なので、残りの引数をとりあえず評価せずに渡す
+			evaluated.insert(evaluated.end(),to_evaluate.begin(),to_evaluate.end());
+		} else {
+			while(!to_evaluate.empty()) {
+				p_data_t res;
+				p_data_t next_to_evaluate=*to_evaluate.begin();
+				to_evaluate.erase(to_evaluate.begin());
+				res=evaluate(next_to_evaluate,cont_kankyo,creater_t::creater().create_continuation(
+					next_cont,need_apply,cont_kankyo,evaluated,to_evaluate));
+				if(res->force_return_flag)return res;
+				evaluated.push_back(res);
+			}
 		}
 		p_data_t cont_ret;
 		if(need_apply) {
