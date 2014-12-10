@@ -131,7 +131,13 @@ p_data_t if_proc(const std::vector<p_data_t>& args,p_data_t& kankyo,p_data_t& co
 		return creater_t::creater().create_error(
 			std::string("invalid number of arguments for if : expected 2 or 3, got ")+buf);
 	} else {
-		p_data_t sinriti=evaluate(args[0],kankyo,cont);
+		std::vector<p_data_t> evaluated;
+		std::vector<p_data_t> to_evaluate;
+		evaluated.push_back(creater_t::creater().create_native_func(if_proc,true));
+		to_evaluate.push_back(args[1]);
+		if(args.size()>=3)to_evaluate.push_back(args[2]);
+		p_data_t sinriti=evaluate(args[0],kankyo,creater_t::creater().create_continuation(
+			cont,true,kankyo,evaluated,to_evaluate));
 		if(sinriti->force_return_flag)return sinriti;
 		if(sinriti->get_type()==DT_BOOLEAN && !((boolean_t*)&*sinriti)->is_true) {
 			if(args.size()>=3) {
