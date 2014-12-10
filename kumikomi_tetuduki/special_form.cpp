@@ -35,7 +35,12 @@ p_data_t define_proc(const std::vector<p_data_t>& args,p_data_t& kankyo,p_data_t
 			return creater_t::creater().create_argument_number_error(
 				"define",2,args.size(),false);
 		}
-		p_data_t ret_data=evaluate(args[1],kankyo,cont);
+		std::vector<p_data_t> evaluated;
+		std::vector<p_data_t> to_evaluate;
+		evaluated.push_back(creater_t::creater().create_native_func(define_proc,true));
+		evaluated.push_back(args[0]);
+		p_data_t ret_data=evaluate(args[1],kankyo,creater_t::creater().create_continuation(
+			cont,true,kankyo,evaluated,to_evaluate));
 		if(ret_data->force_return_flag)return ret_data;
 		((kankyo_t*)&*kankyo)->sokubaku[((kigou_t*)&*args[0])->kigou]=ret_data;
 		return creater_t::creater().create_kigou(((kigou_t*)&*args[0])->kigou);
@@ -56,7 +61,12 @@ p_data_t set_proc(const std::vector<p_data_t>& args,p_data_t& kankyo,p_data_t& c
 	} else {
 		p_data_t* zittai=namae_no_kisoku2(((kigou_t*)&*args[0])->kigou,kankyo);
 		if(zittai==NULL)return namae_no_kisoku(((kigou_t*)&*args[0])->kigou,kankyo);
-		p_data_t value=evaluate(args[1],kankyo,cont);
+		std::vector<p_data_t> evaluated;
+		std::vector<p_data_t> to_evaluate;
+		evaluated.push_back(creater_t::creater().create_native_func(set_proc,true));
+		evaluated.push_back(args[0]);
+		p_data_t value=evaluate(args[1],kankyo,creater_t::creater().create_continuation(
+			cont,true,kankyo,evaluated,to_evaluate));
 		if(value->force_return_flag)return value;
 		*zittai=value;
 		return value;
