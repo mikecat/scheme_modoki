@@ -124,8 +124,9 @@ const p_data_t& proc, const std::vector<p_data_t>& args,p_data_t& kankyo,const p
 			cont_ret=evaluated.back();
 		}
 		if(next_cont==NULL) {
-			cont_ret->force_return_flag=true;
-			return cont_ret;
+			p_data_t ret=creater_t::creater().copy_data(cont_ret);
+			ret->force_return_flag=true;
+			return ret;
 		} else {
 			std::vector<p_data_t> next_args;
 			next_args.push_back(cont_ret);

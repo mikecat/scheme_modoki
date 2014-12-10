@@ -34,6 +34,64 @@ size_t creater_t::get_number_of_data() {
 	return data_log.size();
 }
 
+p_data_t creater_t::copy_data(const p_data_t& data) {
+	data_t *new_data;
+	switch(data->get_type()) {
+		case DT_EOF:
+			new_data=new eof_t;
+			*((eof_t*)&*new_data)=*((eof_t*)&*data);
+			break;
+		case DT_EXIT:
+			new_data=new exit_t;
+			*((exit_t*)&*new_data)=*((exit_t*)&*data);
+			break;
+		case DT_ERROR:
+			new_data=new error_t;
+			*((error_t*)&*new_data)=*((error_t*)&*data);
+			break;
+		case DT_NUMBER:
+			new_data=new number_t;
+			*((number_t*)&*new_data)=*((number_t*)&*data);
+			break;
+		case DT_KIGOU:
+			new_data=new kigou_t;
+			*((kigou_t*)&*new_data)=*((kigou_t*)&*data);
+			break;
+		case DT_BOOLEAN:
+			new_data=new boolean_t;
+			*((boolean_t*)&*new_data)=*((boolean_t*)&*data);
+			break;
+		case DT_CONS:
+			new_data=new cons_t;
+			*((cons_t*)&*new_data)=*((cons_t*)&*data);
+			break;
+		case DT_NATIVE_FUNC:
+			new_data=new native_func_t;
+			*((native_func_t*)&*new_data)=*((native_func_t*)&*data);
+			break;
+		case DT_NULL:
+			new_data=new null_t;
+			*((null_t*)&*new_data)=*((null_t*)&*data);
+			break;
+		case DT_DELAY:
+			new_data=new delay_t;
+			*((delay_t*)&*new_data)=*((delay_t*)&*data);
+			break;
+		case DT_CONTINUATION:
+			new_data=new continuation_t;
+			*((continuation_t*)&*new_data)=*((continuation_t*)&*data);
+			break;
+		case DT_KANKYO:
+			new_data=new kankyo_t;
+			*((kankyo_t*)&*new_data)=*((kankyo_t*)&*data);
+			break;
+		default:
+			return NULL;
+	}
+	data_log.insert(new_data);
+	return new_data;
+}
+
 p_data_t creater_t::create_eof() {
 	eof_t *new_data=new eof_t;
 	data_log.insert(new_data);

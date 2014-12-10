@@ -16,6 +16,8 @@ class creater_t {
 		// 生成し、削除されていないデータの数を取得する
 		size_t get_number_of_data();
 
+		// データをコピーする
+		p_data_t copy_data(const p_data_t& data);
 		// EOFデータを生成する
 		p_data_t create_eof();
 		// 終了指示データを生成する
