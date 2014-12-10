@@ -269,9 +269,14 @@ p_data_t begin_proc(const std::vector<p_data_t>& args,p_data_t& kankyo,p_data_t&
 	if(args.size()==0) {
 		return creater_t::creater().create_number(0);
 	} else {
+		std::vector<p_data_t> evaluated; // dummy
+		std::vector<p_data_t> to_evaluate=args;
 		p_data_t ret;
-		for(std::vector<p_data_t>::const_iterator it=args.begin();it!=args.end();it++) {
-			ret=evaluate(*it,kankyo,cont);
+		while(!to_evaluate.empty()) {
+			p_data_t cur_expr=*to_evaluate.begin();
+			to_evaluate.erase(to_evaluate.begin());
+			ret=evaluate(cur_expr,kankyo,creater_t::creater().create_continuation(
+				cont,false,kankyo,evaluated,to_evaluate));
 			if(ret->force_return_flag)break;
 		}
 		return ret;
