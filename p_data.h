@@ -20,6 +20,9 @@ struct data_t;
 class p_data_t: public p_data_config_t {
 	private:
 		data_t* sansyo;
+		bool check_sansyo(data_t *p) const;
+		void increment_sansyo_count(data_t *p);
+		void decrement_sansyo_count(data_t *p);
 		bool check_sansyo() const;
 		void increment_sansyo_count();
 		void decrement_sansyo_count();
