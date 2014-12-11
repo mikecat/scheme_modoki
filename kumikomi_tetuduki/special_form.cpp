@@ -209,16 +209,46 @@ p_data_t cond_proc(const std::vector<p_data_t>& args,p_data_t& kankyo,p_data_t& 
 				return creater_t::creater().create_error("arguments of cond must be non-empty lists");
 			}
 		}
+		// 継続用のリストを作成する
+		p_data_t args_list=creater_t::creater().create_null();
+		for(std::vector<p_data_t>::const_reverse_iterator it=args.rbegin();it!=args.rend();it++) {
+			args_list=creater_t::creater().create_cons(*it,args_list);
+		}
 		// 引数を順番に評価する
 		for(std::vector<p_data_t>::const_iterator it=args.begin();it!=args.end();it++) {
+			std::vector<p_data_t> evaluated;
+			std::vector<p_data_t> to_evaluate;
+			evaluated.push_back(creater_t::creater().create_native_func(if_proc,true));
+			// (cond (x a b) (c d) (e f)) -> (if x (begin a b) (cond (c d) (e f)))
 			p_data_t cur=*it;
-			p_data_t cur_val=evaluate(((cons_t*)&*cur)->cons_car,kankyo,cont);
+			args_list=((cons_t*)&*args_list)->cons_cdr;
+			// 継続用begin
+			to_evaluate.push_back(creater_t::creater().create_cons(
+				creater_t::creater().create_native_func(begin_proc,true),
+				((cons_t*)&*cur)->cons_cdr));
+			// 継続用cond
+			if(args_list->get_type()==DT_CONS) {
+				to_evaluate.push_back(creater_t::creater().create_cons(
+					creater_t::creater().create_native_func(cond_proc,true),
+					args_list));
+			}
+			p_data_t cur_val=evaluate(((cons_t*)&*cur)->cons_car,kankyo,
+				creater_t::creater().create_continuation(
+					cont,true,kankyo,evaluated,to_evaluate));
 			if(cur_val->force_return_flag)return cur_val;
 			if(cur_val->get_type()!=DT_BOOLEAN || ((boolean_t*)&*cur_val)->is_true) {
+				evaluated.clear();
+				to_evaluate.clear();
 				for(;;) {
 					cur=((cons_t*)&*cur)->cons_cdr;
 					if(cur->get_type()!=DT_CONS)break;
-					cur_val=evaluate(((cons_t*)&*cur)->cons_car,kankyo,cont);
+					to_evaluate.push_back(((cons_t*)&*cur)->cons_car);
+				}
+				while(!to_evaluate.empty()) {
+					p_data_t cur_expr=*to_evaluate.begin();
+					to_evaluate.erase(to_evaluate.begin());
+					cur_val=evaluate(cur_expr,kankyo,creater_t::creater().create_continuation(
+						cont,false,kankyo,evaluated,to_evaluate));
 					if(cur_val->force_return_flag)break;
 				}
 				return cur_val;
