@@ -320,35 +320,67 @@ p_data_t let_proc(const std::vector<p_data_t>& args,p_data_t& kankyo,p_data_t& c
 	return apply_proc(lambda_siki,evaluated,kankyo,cont);
 }
 
+struct karizitu_t {
+	p_data_t kari;
+	p_data_t zitu;
+	karizitu_t(){}
+	karizitu_t(const p_data_t& k,const p_data_t& z):kari(k),zitu(z){}
+};
+
 // 束縛を順番に作ってから、本体を評価する
 p_data_t let_star_proc(const std::vector<p_data_t>& args,p_data_t& kankyo,p_data_t& cont) {
 	p_data_t check=let_check_arguments(args,"let*");
 	if(check->get_type()==DT_ERROR)return check;
-	// 環境を作成して束縛を実行する
-	p_data_t current_kankyo=kankyo;
-	p_data_t new_kankyo;
-	p_data_t cur;
-	for(cur=args[0];cur->get_type()==DT_CONS;cur=((cons_t*)&*cur)->cons_cdr) {
-		// 個別に環境を作成する
-		new_kankyo=creater_t::creater().create_kankyo(current_kankyo);
-		// 次に作成する束縛の情報を得る
-		p_data_t current_data=((cons_t*)&*cur)->cons_car;
-		p_data_t current_name=((cons_t*)&*current_data)->cons_car;
-		p_data_t current_value=evaluate(
-			((cons_t*)&*((cons_t*)&*current_data)->cons_cdr)->cons_car,current_kankyo,cont);
-		if(current_value->force_return_flag)return current_value;
-		// 束縛を実行する
-		((kankyo_t*)&*new_kankyo)->sokubaku[((kigou_t*)&*current_name)->kigou]=current_value;
-		// 環境を移動する
-		current_kankyo=new_kankyo;
+	if(args[0]->get_type()==DT_NULL) {
+		// 引数が無いので、そのまま評価する
+		std::vector<p_data_t> evaluated;
+		std::vector<p_data_t> to_evaluate;
+		p_data_t new_kankyo=creater_t::creater().create_kankyo(kankyo);
+		to_evaluate.insert(to_evaluate.end(),args.begin()+1,args.end());
+		p_data_t ret=args[0];
+		while(!to_evaluate.empty()) {
+			p_data_t cur_expr=*to_evaluate.begin();
+			to_evaluate.erase(to_evaluate.begin());
+			p_data_t cur_res=evaluate(cur_expr,new_kankyo,creater_t::creater().create_continuation(
+				cont,false,new_kankyo,evaluated,to_evaluate));
+			if(cur_res->force_return_flag)return cur_res;
+			ret=cur_res;
+		}
+		return ret;
+	} else {
+		// lambdaで書きなおす
+		p_data_t lambda_hyogen=creater_t::creater().create_null();
+		for(std::vector<p_data_t>::const_reverse_iterator it=args.rbegin();it!=args.rend()-1;it++) {
+			lambda_hyogen=creater_t::creater().create_cons(*it,lambda_hyogen);
+		}
+		std::vector<karizitu_t> lambda_arguments;
+		for(p_data_t cur=args[0];cur->get_type()==DT_CONS;cur=((cons_t*)&*cur)->cons_cdr) {
+			// 次に作成する束縛の情報を得る
+			p_data_t current_data=((cons_t*)&*cur)->cons_car;
+			p_data_t current_name=((cons_t*)&*current_data)->cons_car;
+			p_data_t current_value=((cons_t*)&*((cons_t*)&*current_data)->cons_cdr)->cons_car;
+			// 情報を格納する
+			lambda_arguments.push_back(karizitu_t(current_name,current_value));
+		}
+		// 仮引数と実引数を追加する
+		bool first_flag=true;
+		for(std::vector<karizitu_t>::reverse_iterator it=lambda_arguments.rbegin();
+		it!=lambda_arguments.rend();it++) {
+			// lambda式を作成する
+			lambda_hyogen=creater_t::creater().create_cons(
+				creater_t::creater().create_native_func(lambda_proc,true),
+				creater_t::creater().create_cons(
+					creater_t::creater().create_cons(it->kari,creater_t::creater().create_null()),
+					first_flag?lambda_hyogen:creater_t::creater().create_cons(
+						lambda_hyogen,creater_t::creater().create_null())));
+			first_flag=false;
+			// 実引数を追加して評価させる
+			lambda_hyogen=creater_t::creater().create_cons(lambda_hyogen,
+				creater_t::creater().create_cons(it->zitu,creater_t::creater().create_null()));
+		}
+		// 評価させる
+		return evaluate(lambda_hyogen,kankyo,cont);
 	}
-	// 評価を実行する
-	cur=creater_t::creater().create_number(0);
-	for(std::vector<p_data_t>::const_iterator it=args.begin()+1;it!=args.end();it++) {
-		cur=evaluate(*it,current_kankyo,cont);
-		if(cur->force_return_flag)break;
-	}
-	return cur;
 }
 
 // 引数を順に評価する
