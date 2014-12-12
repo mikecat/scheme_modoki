@@ -288,29 +288,36 @@ static p_data_t let_check_arguments(const std::vector<p_data_t>& args,const std:
 p_data_t let_proc(const std::vector<p_data_t>& args,p_data_t& kankyo,p_data_t& cont) {
 	p_data_t check=let_check_arguments(args,"let");
 	if(check->get_type()==DT_ERROR)return check;
-	// 環境を作成して束縛を実行する
-	p_data_t current_kankyo=kankyo;
-	p_data_t new_kankyo;
-	// 最初に環境を作成する
-	p_data_t cur;
-	new_kankyo=creater_t::creater().create_kankyo(current_kankyo);
-	for(cur=args[0];cur->get_type()==DT_CONS;cur=((cons_t*)&*cur)->cons_cdr) {
+	// ラムダ式を作成する
+	std::vector<p_data_t> evaluated;
+	std::vector<p_data_t> to_evaluate;
+	std::vector<std::string> lambda_args;
+	std::vector<p_data_t> lambda_expr;
+	for(p_data_t cur=args[0];cur->get_type()==DT_CONS;cur=((cons_t*)&*cur)->cons_cdr) {
 		// 次に作成する束縛の情報を得る
 		p_data_t current_data=((cons_t*)&*cur)->cons_car;
 		p_data_t current_name=((cons_t*)&*current_data)->cons_car;
-		p_data_t current_value=evaluate(
-			((cons_t*)&*((cons_t*)&*current_data)->cons_cdr)->cons_car,current_kankyo,cont);
-		if(current_value->force_return_flag)return current_value;
-		// 束縛を実行する
-		((kankyo_t*)&*new_kankyo)->sokubaku[((kigou_t*)&*current_name)->kigou]=current_value;
+		p_data_t current_value=((cons_t*)&*((cons_t*)&*current_data)->cons_cdr)->cons_car;
+		// 情報を格納する
+		lambda_args.push_back(((kigou_t*)&*current_name)->kigou);
+		to_evaluate.push_back(current_value);
 	}
-	// 評価を実行する
-	cur=creater_t::creater().create_number(0);
-	for(std::vector<p_data_t>::const_iterator it=args.begin()+1;it!=args.end();it++) {
-		cur=evaluate(*it,new_kankyo,cont);
-		if(cur->force_return_flag)break;
+	// ラムダ式を作成する
+	lambda_expr.insert(lambda_expr.end(),args.begin()+1,args.end());
+	evaluated.push_back(creater_t::creater().create_lambda(lambda_args,lambda_expr,false,kankyo));
+	// 引数の評価を実行する
+	while(!to_evaluate.empty()) {
+		p_data_t cur_expr=*to_evaluate.begin();
+		to_evaluate.erase(to_evaluate.begin());
+		p_data_t cur_res=evaluate(cur_expr,kankyo,creater_t::creater().create_continuation(
+			cont,true,kankyo,evaluated,to_evaluate));
+		if(cur_res->force_return_flag)return cur_res;
+		evaluated.push_back(cur_res);
 	}
-	return cur;
+	// ラムダ式を適用する
+	p_data_t lambda_siki=*evaluated.begin();
+	evaluated.erase(evaluated.begin());
+	return apply_proc(lambda_siki,evaluated,kankyo,cont);
 }
 
 // 束縛を順番に作ってから、本体を評価する
