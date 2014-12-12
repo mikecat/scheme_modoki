@@ -259,11 +259,10 @@ p_data_t cond_proc(const std::vector<p_data_t>& args,p_data_t& kankyo,p_data_t& 
 }
 
 // letとlet*の共通の処理を行う関数
-static p_data_t let_common_proc(
-const std::vector<p_data_t>& args,p_data_t& kankyo,p_data_t& cont,bool star_mode) {
+static p_data_t let_check_arguments(const std::vector<p_data_t>& args,const std::string& name) {
 	if(args.size()==0) {
 		return creater_t::creater().create_argument_number_error(
-			star_mode?"let*":"let",1,args.size(),true);
+			name,1,args.size(),true);
 	} else {
 		// 引数をチェックする
 		p_data_t cur;
@@ -274,52 +273,75 @@ const std::vector<p_data_t>& args,p_data_t& kankyo,p_data_t& cont,bool star_mode
 			((cons_t*)&*current_data)->cons_cdr->get_type()!=DT_CONS ||
 			((cons_t*)&*((cons_t*)&*current_data)->cons_cdr)->cons_cdr->get_type()!=DT_NULL) {
 				return creater_t::creater().create_error(
-					std::string("invalid argument(s) for ")+(star_mode?"let*":"let"));
+					std::string("invalid argument(s) for ")+name);
 			}
 		}
 		if(cur->get_type()!=DT_NULL) {
 			return creater_t::creater().create_error(
-				std::string("first argument of ")+(star_mode?"let*":"let")+" must be a list");
+				std::string("first argument of ")+name+" must be a list");
 		}
-		// 環境を作成して束縛を実行する
-		p_data_t current_kankyo=kankyo;
-		p_data_t new_kankyo;
-		// letの場合は、最初に環境を作成する
-		if(!star_mode)new_kankyo=creater_t::creater().create_kankyo(current_kankyo);
-		for(cur=args[0];cur->get_type()==DT_CONS;cur=((cons_t*)&*cur)->cons_cdr) {
-			// let*の場合は、個別に環境を作成する
-			if(star_mode)new_kankyo=creater_t::creater().create_kankyo(current_kankyo);
-			// 次に作成する束縛の情報を得る
-			p_data_t current_data=((cons_t*)&*cur)->cons_car;
-			p_data_t current_name=((cons_t*)&*current_data)->cons_car;
-			p_data_t current_value=evaluate(
-				((cons_t*)&*((cons_t*)&*current_data)->cons_cdr)->cons_car,current_kankyo,cont);
-			if(current_value->force_return_flag)return current_value;
-			// 束縛を実行する
-			((kankyo_t*)&*new_kankyo)->sokubaku[((kigou_t*)&*current_name)->kigou]=current_value;
-			// let*の場合は、環境を移動する
-			if(star_mode)current_kankyo=new_kankyo;
-		}
-		// letの場合は、環境を移動する
-		if(!star_mode)current_kankyo=new_kankyo;
-		// 評価を実行する
-		cur=creater_t::creater().create_number(0);
-		for(std::vector<p_data_t>::const_iterator it=args.begin()+1;it!=args.end();it++) {
-			cur=evaluate(*it,current_kankyo,cont);
-			if(cur->force_return_flag)break;
-		}
-		return cur;
+		return creater_t::creater().create_null(); // dummy
 	}
 }
 
 // 束縛を作ってから、本体を評価する
 p_data_t let_proc(const std::vector<p_data_t>& args,p_data_t& kankyo,p_data_t& cont) {
-	return let_common_proc(args,kankyo,cont,false);
+	p_data_t check=let_check_arguments(args,"let");
+	if(check->get_type()==DT_ERROR)return check;
+	// 環境を作成して束縛を実行する
+	p_data_t current_kankyo=kankyo;
+	p_data_t new_kankyo;
+	// 最初に環境を作成する
+	p_data_t cur;
+	new_kankyo=creater_t::creater().create_kankyo(current_kankyo);
+	for(cur=args[0];cur->get_type()==DT_CONS;cur=((cons_t*)&*cur)->cons_cdr) {
+		// 次に作成する束縛の情報を得る
+		p_data_t current_data=((cons_t*)&*cur)->cons_car;
+		p_data_t current_name=((cons_t*)&*current_data)->cons_car;
+		p_data_t current_value=evaluate(
+			((cons_t*)&*((cons_t*)&*current_data)->cons_cdr)->cons_car,current_kankyo,cont);
+		if(current_value->force_return_flag)return current_value;
+		// 束縛を実行する
+		((kankyo_t*)&*new_kankyo)->sokubaku[((kigou_t*)&*current_name)->kigou]=current_value;
+	}
+	// 評価を実行する
+	cur=creater_t::creater().create_number(0);
+	for(std::vector<p_data_t>::const_iterator it=args.begin()+1;it!=args.end();it++) {
+		cur=evaluate(*it,new_kankyo,cont);
+		if(cur->force_return_flag)break;
+	}
+	return cur;
 }
 
 // 束縛を順番に作ってから、本体を評価する
 p_data_t let_star_proc(const std::vector<p_data_t>& args,p_data_t& kankyo,p_data_t& cont) {
-	return let_common_proc(args,kankyo,cont,true);
+	p_data_t check=let_check_arguments(args,"let*");
+	if(check->get_type()==DT_ERROR)return check;
+	// 環境を作成して束縛を実行する
+	p_data_t current_kankyo=kankyo;
+	p_data_t new_kankyo;
+	p_data_t cur;
+	for(cur=args[0];cur->get_type()==DT_CONS;cur=((cons_t*)&*cur)->cons_cdr) {
+		// 個別に環境を作成する
+		new_kankyo=creater_t::creater().create_kankyo(current_kankyo);
+		// 次に作成する束縛の情報を得る
+		p_data_t current_data=((cons_t*)&*cur)->cons_car;
+		p_data_t current_name=((cons_t*)&*current_data)->cons_car;
+		p_data_t current_value=evaluate(
+			((cons_t*)&*((cons_t*)&*current_data)->cons_cdr)->cons_car,current_kankyo,cont);
+		if(current_value->force_return_flag)return current_value;
+		// 束縛を実行する
+		((kankyo_t*)&*new_kankyo)->sokubaku[((kigou_t*)&*current_name)->kigou]=current_value;
+		// 環境を移動する
+		current_kankyo=new_kankyo;
+	}
+	// 評価を実行する
+	cur=creater_t::creater().create_number(0);
+	for(std::vector<p_data_t>::const_iterator it=args.begin()+1;it!=args.end();it++) {
+		cur=evaluate(*it,current_kankyo,cont);
+		if(cur->force_return_flag)break;
+	}
+	return cur;
 }
 
 // 引数を順に評価する
