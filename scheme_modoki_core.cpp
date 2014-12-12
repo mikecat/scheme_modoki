@@ -90,16 +90,16 @@ const p_data_t& proc, const std::vector<p_data_t>& args,p_data_t& kankyo,const p
 		}
 		return res;
 	} else if(proc->get_type()==DT_CONTINUATION) {
-		if(args.size()!=1) {
-			return creater_t::creater().create_argument_number_error(
-				"#<continuation>",1,args.size(),false);
-		}
 		p_data_t next_cont=((continuation_t*)&*proc)->next_continuation;
 		p_data_t cont_kankyo=((continuation_t*)&*proc)->kankyo;
 		bool need_apply=((continuation_t*)&*proc)->need_apply;
 		std::vector<p_data_t> evaluated=((continuation_t*)&*proc)->evaluated_elements;
 		std::vector<p_data_t> to_evaluate=((continuation_t*)&*proc)->elements_to_evaluate;
-		evaluated.push_back(args[0]);
+		if(args.size()>=1) {
+			evaluated.push_back(args[0]);
+		} else {
+			evaluated.push_back(creater_t::creater().create_null());
+		}
 		if(need_apply && is_tokusyu_keisiki(*evaluated.begin())) {
 			// 特殊形式なので、残りの引数をとりあえず評価せずに渡す
 			evaluated.insert(evaluated.end(),to_evaluate.begin(),to_evaluate.end());
