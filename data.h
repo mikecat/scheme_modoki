@@ -19,11 +19,12 @@ enum DATATYPE {
 	DT_NATIVE_FUNC, // 組み込み手続き
 	DT_NULL, // '()
 	DT_DELAY, // 遅延オブジェクト
+	DT_CONTINUATION, // 継続
 	DT_KANKYO // 環境
 };
 
 // 組み込み手続きの関数ポインタ型
-typedef p_data_t(*p_native_func)(const std::vector<p_data_t>& args,p_data_t& kankyo);
+typedef p_data_t(*p_native_func)(const std::vector<p_data_t>& args,p_data_t& kankyo,p_data_t& cont);
 
 // データを表す構造体(参照カウントを持つ)
 struct data_t {
@@ -109,6 +110,16 @@ struct delay_t : public data_t {
 	const char* get_name() const {return "delay";}
 	p_data_t expr;
 	p_data_t kankyo;
+};
+
+struct continuation_t : public data_t {
+	DATATYPE get_type() const {return DT_CONTINUATION;}
+	const char* get_name() const {return "continuation";}
+	p_data_t next_continuation; // 次に実行する継続(無い場合NULL)
+	bool need_apply; // 適用を行うか
+	p_data_t kankyo; // 評価に使用する環境
+	std::vector<p_data_t> evaluated_elements; // 既に評価した要素
+	std::vector<p_data_t> elements_to_evaluate; // 未評価の要素
 };
 
 struct kankyo_t : public data_t {

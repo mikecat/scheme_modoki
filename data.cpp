@@ -58,6 +58,9 @@ void print_data(const p_data_t& data,bool please_syouryaku) {
 		case DT_DELAY:
 			printf("#<promise>");
 			break;
+		case DT_CONTINUATION:
+			printf("#<continuation>");
+			break;
 		case DT_KANKYO:
 			printf("#<kankyo>");
 			break;

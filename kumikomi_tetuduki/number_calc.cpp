@@ -3,7 +3,7 @@
 #include "../creater.h"
 
 // 足し算 例: (+ 1 2) => 3
-p_data_t add(const std::vector<p_data_t>& args,p_data_t&) {
+p_data_t add(const std::vector<p_data_t>& args,p_data_t&,p_data_t&) {
 	double ret=0;
 	for(std::vector<p_data_t>::const_iterator it=args.begin();it!=args.end();it++) {
 		if((*it)->get_type()!=DT_NUMBER) {
@@ -16,7 +16,7 @@ p_data_t add(const std::vector<p_data_t>& args,p_data_t&) {
 }
 
 // 引き算 例: (- 1 2) => -1
-p_data_t sub(const std::vector<p_data_t>& args,p_data_t&) {
+p_data_t sub(const std::vector<p_data_t>& args,p_data_t&,p_data_t&) {
 	if(args.size()==0) {
 		return creater_t::creater().create_argument_number_error(
 			"sub",1,args.size(),true);
@@ -46,7 +46,7 @@ p_data_t sub(const std::vector<p_data_t>& args,p_data_t&) {
 }
 
 // 掛け算 例: (* 2 3) => 6
-p_data_t mul(const std::vector<p_data_t>& args,p_data_t&) {
+p_data_t mul(const std::vector<p_data_t>& args,p_data_t&,p_data_t&) {
 	double ret=1;
 	for(std::vector<p_data_t>::const_iterator it=args.begin();it!=args.end();it++) {
 		if((*it)->get_type()!=DT_NUMBER) {
@@ -59,7 +59,7 @@ p_data_t mul(const std::vector<p_data_t>& args,p_data_t&) {
 }
 
 // 割り算 例: (/ 4 2) => 2
-p_data_t div_func(const std::vector<p_data_t>& args,p_data_t&) {
+p_data_t div_func(const std::vector<p_data_t>& args,p_data_t&,p_data_t&) {
 	if(args.size()==0) {
 		return creater_t::creater().create_argument_number_error(
 			"div",1,args.size(),true);
@@ -82,7 +82,7 @@ p_data_t div_func(const std::vector<p_data_t>& args,p_data_t&) {
 }
 
 // 商の整数部分
-p_data_t quotient(const std::vector<p_data_t>& args,p_data_t&) {
+p_data_t quotient(const std::vector<p_data_t>& args,p_data_t&,p_data_t&) {
 	if(args.size()!=2) {
 		return creater_t::creater().create_argument_number_error(
 			"quotient",2,args.size(),false);
@@ -118,36 +118,36 @@ bool (*cmp_func)(double,double),const std::string& name) {
 
 // 比較「同じ」
 static bool cmp_eq(double a,double b){return a==b;}
-p_data_t number_eq(const std::vector<p_data_t>& args,p_data_t&) {
+p_data_t number_eq(const std::vector<p_data_t>& args,p_data_t&,p_data_t&) {
 	return number_cmp(args,cmp_eq,"=");
 }
 
 // 比較「小さい」
 static bool cmp_lt(double a,double b){return a<b;}
-p_data_t number_lt(const std::vector<p_data_t>& args,p_data_t&) {
+p_data_t number_lt(const std::vector<p_data_t>& args,p_data_t&,p_data_t&) {
 	return number_cmp(args,cmp_lt,"<");
 }
 
 // 比較「以下」
 static bool cmp_leq(double a,double b){return a<=b;}
-p_data_t number_leq(const std::vector<p_data_t>& args,p_data_t&) {
+p_data_t number_leq(const std::vector<p_data_t>& args,p_data_t&,p_data_t&) {
 	return number_cmp(args,cmp_leq,"<=");
 }
 
 // 比較「大きい」
 static bool cmp_gt(double a,double b){return a>b;}
-p_data_t number_gt(const std::vector<p_data_t>& args,p_data_t&) {
+p_data_t number_gt(const std::vector<p_data_t>& args,p_data_t&,p_data_t&) {
 	return number_cmp(args,cmp_gt,">");
 }
 
 // 比較「以上」
 static bool cmp_geq(double a,double b){return a>=b;}
-p_data_t number_geq(const std::vector<p_data_t>& args,p_data_t&) {
+p_data_t number_geq(const std::vector<p_data_t>& args,p_data_t&,p_data_t&) {
 	return number_cmp(args,cmp_geq,">=");
 }
 
 // 引数が偶数なら#tを、偶数以外なら#fを返す
-p_data_t is_even(const std::vector<p_data_t>& args,p_data_t&) {
+p_data_t is_even(const std::vector<p_data_t>& args,p_data_t&,p_data_t&) {
 	if(args.size()!=1) {
 		return creater_t::creater().create_argument_number_error(
 			"even?",1,args.size(),false);
@@ -161,7 +161,7 @@ p_data_t is_even(const std::vector<p_data_t>& args,p_data_t&) {
 }
 
 // 引数が奇数なら#tを、奇数以外なら#fを返す
-p_data_t is_odd(const std::vector<p_data_t>& args,p_data_t&) {
+p_data_t is_odd(const std::vector<p_data_t>& args,p_data_t&,p_data_t&) {
 	if(args.size()!=1) {
 		return creater_t::creater().create_argument_number_error(
 			"odd?",1,args.size(),false);
@@ -175,7 +175,7 @@ p_data_t is_odd(const std::vector<p_data_t>& args,p_data_t&) {
 }
 
 // 引数の平方根を返す
-p_data_t sqrt_func(const std::vector<p_data_t>& args,p_data_t&) {
+p_data_t sqrt_func(const std::vector<p_data_t>& args,p_data_t&,p_data_t&) {
 	if(args.size()!=1) {
 		return creater_t::creater().create_argument_number_error(
 			"sqrt",1,args.size(),false);

@@ -16,6 +16,8 @@ class creater_t {
 		// 生成し、削除されていないデータの数を取得する
 		size_t get_number_of_data();
 
+		// データをコピーする
+		p_data_t copy_data(const p_data_t& data);
 		// EOFデータを生成する
 		p_data_t create_eof();
 		// 終了指示データを生成する
@@ -43,6 +45,13 @@ class creater_t {
 		p_data_t create_null();
 		// 遅延オブジェクトデータを生成する
 		p_data_t create_delay(const p_data_t& expr,const p_data_t kankyo);
+		// 継続データを生成する
+		p_data_t create_continuation(const p_data_t& next_continuation,
+			bool need_apply,const p_data_t& kankyo,
+			const std::vector<p_data_t>& evaluated_elements,
+			const std::vector<p_data_t>& elements_to_evaluate);
+		// 空の継続データを生成する
+		p_data_t create_empty_continuation();
 		// 環境データを生成する
 		p_data_t create_kankyo(const p_data_t& oya=NULL);
 

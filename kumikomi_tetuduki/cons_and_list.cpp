@@ -3,7 +3,7 @@
 #include "../creater.h"
 
 // consセルを作成する
-p_data_t cons(const std::vector<p_data_t>& args,p_data_t&) {
+p_data_t cons(const std::vector<p_data_t>& args,p_data_t&,p_data_t&) {
 	if(args.size()!=2) {
 		return creater_t::creater().create_argument_number_error(
 			"cons",2,args.size(),false);
@@ -13,7 +13,7 @@ p_data_t cons(const std::vector<p_data_t>& args,p_data_t&) {
 }
 
 // consセルの前の要素
-p_data_t car(const std::vector<p_data_t>& args,p_data_t&) {
+p_data_t car(const std::vector<p_data_t>& args,p_data_t&,p_data_t&) {
 	if(args.size()!=1) {
 		return creater_t::creater().create_argument_number_error(
 			"car",1,args.size(),false);
@@ -28,7 +28,7 @@ p_data_t car(const std::vector<p_data_t>& args,p_data_t&) {
 }
 
 // consセルの後ろの要素
-p_data_t cdr(const std::vector<p_data_t>& args,p_data_t&) {
+p_data_t cdr(const std::vector<p_data_t>& args,p_data_t&,p_data_t&) {
 	if(args.size()!=1) {
 		return creater_t::creater().create_argument_number_error(
 			"cdr",1,args.size(),false);
@@ -43,7 +43,7 @@ p_data_t cdr(const std::vector<p_data_t>& args,p_data_t&) {
 }
 
 // consセルの前の要素を設定する
-p_data_t set_car(const std::vector<p_data_t>& args,p_data_t&) {
+p_data_t set_car(const std::vector<p_data_t>& args,p_data_t&,p_data_t&) {
 	if(args.size()!=2) {
 		return creater_t::creater().create_argument_number_error(
 			"set-car!",2,args.size(),false);
@@ -57,7 +57,7 @@ p_data_t set_car(const std::vector<p_data_t>& args,p_data_t&) {
 }
 
 // consセルの後ろの要素を設定する
-p_data_t set_cdr(const std::vector<p_data_t>& args,p_data_t&) {
+p_data_t set_cdr(const std::vector<p_data_t>& args,p_data_t&,p_data_t&) {
 	if(args.size()!=2) {
 		return creater_t::creater().create_argument_number_error(
 			"set-cdr!",2,args.size(),false);
@@ -71,7 +71,7 @@ p_data_t set_cdr(const std::vector<p_data_t>& args,p_data_t&) {
 }
 
 // 引数が'()かを判定する
-p_data_t is_null(const std::vector<p_data_t>& args,p_data_t&) {
+p_data_t is_null(const std::vector<p_data_t>& args,p_data_t&,p_data_t&) {
 	if(args.size()!=1) {
 		return creater_t::creater().create_argument_number_error(
 			"null?",1,args.size(),false);
@@ -81,7 +81,7 @@ p_data_t is_null(const std::vector<p_data_t>& args,p_data_t&) {
 }
 
 // 引数のリストを作成する
-p_data_t list(const std::vector<p_data_t>& args,p_data_t&) {
+p_data_t list(const std::vector<p_data_t>& args,p_data_t&,p_data_t&) {
 	p_data_t cur=creater_t::creater().create_null();
 	for(std::vector<p_data_t>::const_reverse_iterator it=args.rbegin();it!=args.rend();it++) {
 		cur=creater_t::creater().create_cons(*it,cur);
@@ -90,7 +90,7 @@ p_data_t list(const std::vector<p_data_t>& args,p_data_t&) {
 }
 
 // リストの長さを取得する
-p_data_t length(const std::vector<p_data_t>& args,p_data_t&) {
+p_data_t length(const std::vector<p_data_t>& args,p_data_t&,p_data_t&) {
 	if(args.size()!=1) {
 		return creater_t::creater().create_argument_number_error(
 			"length",1,args.size(),false);
@@ -107,7 +107,7 @@ p_data_t length(const std::vector<p_data_t>& args,p_data_t&) {
 }
 
 // 連番リストを作成する
-p_data_t iota(const std::vector<p_data_t>& args,p_data_t&) {
+p_data_t iota(const std::vector<p_data_t>& args,p_data_t&,p_data_t&) {
 	if(args.size()<1 || 3<args.size()) {
 		char buf[16];
 		sprintf(buf,"%u",(unsigned int)args.size());
@@ -149,7 +149,7 @@ p_data_t iota(const std::vector<p_data_t>& args,p_data_t&) {
 }
 
 // リストを連結する
-p_data_t append(const std::vector<p_data_t>& args,p_data_t&) {
+p_data_t append(const std::vector<p_data_t>& args,p_data_t&,p_data_t&) {
 	if(args.size()==0) {
 		return creater_t::creater().create_null();
 	} else {

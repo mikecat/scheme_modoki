@@ -3,7 +3,7 @@
 #include "../global_config.h"
 
 // 省略できるconsセルの表示を省略するかを設定する
-p_data_t set_enable_syouryaku(const std::vector<p_data_t>& args,p_data_t&) {
+p_data_t set_enable_syouryaku(const std::vector<p_data_t>& args,p_data_t&,p_data_t&) {
 	if(args.size()!=1) {
 		return creater_t::creater().create_argument_number_error(
 			"set-enable-syouryaku",1,args.size(),false);
@@ -15,7 +15,7 @@ p_data_t set_enable_syouryaku(const std::vector<p_data_t>& args,p_data_t&) {
 }
 
 // 省略できるconsセルの表示を省略するかを取得する
-p_data_t get_enable_syouryaku(const std::vector<p_data_t>& args,p_data_t&) {
+p_data_t get_enable_syouryaku(const std::vector<p_data_t>& args,p_data_t&,p_data_t&) {
 	if(args.size()!=0) {
 		return creater_t::creater().create_argument_number_error(
 			"get-enable-syouryaku",0,args.size(),false);
@@ -24,7 +24,7 @@ p_data_t get_enable_syouryaku(const std::vector<p_data_t>& args,p_data_t&) {
 }
 
 // 生成され、削除されていない環境とデータの種類ごとの数を表示する
-p_data_t print_statistics(const std::vector<p_data_t>& args,p_data_t&) {
+p_data_t print_statistics(const std::vector<p_data_t>& args,p_data_t&,p_data_t&) {
 	if(args.size()!=0) {
 		return creater_t::creater().create_argument_number_error(
 			"print-statistics",0,args.size(),false);
@@ -34,7 +34,7 @@ p_data_t print_statistics(const std::vector<p_data_t>& args,p_data_t&) {
 }
 
 // 生成され、削除されていない環境とデータの数を取得する
-p_data_t get_number_of_data(const std::vector<p_data_t>& args,p_data_t&) {
+p_data_t get_number_of_data(const std::vector<p_data_t>& args,p_data_t&,p_data_t&) {
 	if(args.size()!=0) {
 		return creater_t::creater().create_argument_number_error(
 			"get-number-of-data",0,args.size(),false);
@@ -44,7 +44,7 @@ p_data_t get_number_of_data(const std::vector<p_data_t>& args,p_data_t&) {
 }
 
 // 環境とデータの自動削除の有効/無効を設定する
-p_data_t set_enable_auto_delete(const std::vector<p_data_t>& args,p_data_t&) {
+p_data_t set_enable_auto_delete(const std::vector<p_data_t>& args,p_data_t&,p_data_t&) {
 	if(args.size()!=1) {
 		return creater_t::creater().create_argument_number_error(
 			"set-enable-auto-delete",1,args.size(),false);
@@ -55,7 +55,7 @@ p_data_t set_enable_auto_delete(const std::vector<p_data_t>& args,p_data_t&) {
 }
 
 // 環境とデータの自動削除の有効/無効を取得する
-p_data_t get_enable_auto_delete(const std::vector<p_data_t>& args,p_data_t&) {
+p_data_t get_enable_auto_delete(const std::vector<p_data_t>& args,p_data_t&,p_data_t&) {
 	if(args.size()!=0) {
 		return creater_t::creater().create_argument_number_error(
 			"get-enable-auto-delete",0,args.size(),false);
@@ -64,7 +64,7 @@ p_data_t get_enable_auto_delete(const std::vector<p_data_t>& args,p_data_t&) {
 }
 
 // 参照カウントが0以下の環境とデータを削除する
-p_data_t delete_zero_sansyo(const std::vector<p_data_t>& args,p_data_t&) {
+p_data_t delete_zero_sansyo(const std::vector<p_data_t>& args,p_data_t&,p_data_t&) {
 	if(args.size()!=0) {
 		return creater_t::creater().create_argument_number_error(
 			"delete-zero-sansyo",0,args.size(),false);
