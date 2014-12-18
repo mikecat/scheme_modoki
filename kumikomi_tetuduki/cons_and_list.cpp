@@ -80,6 +80,16 @@ p_data_t is_null(const std::vector<p_data_t>& args,p_data_t&,p_data_t&) {
 	}
 }
 
+// 引数がCONSセルかを判定する
+p_data_t is_pair(const std::vector<p_data_t>& args,p_data_t&,p_data_t&) {
+	if(args.size()!=1) {
+		return creater_t::creater().create_argument_number_error(
+			"pair?",1,args.size(),false);
+	} else {
+		return creater_t::creater().create_boolean(args[0]->get_type()==DT_CONS);
+	}
+}
+
 // 引数のリストを作成する
 p_data_t list(const std::vector<p_data_t>& args,p_data_t&,p_data_t&) {
 	p_data_t cur=creater_t::creater().create_null();

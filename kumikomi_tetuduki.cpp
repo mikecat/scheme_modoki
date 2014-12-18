@@ -163,6 +163,7 @@ void add_kumikomi_tetuduki_to_kankyo(p_data_t& kankyo) {
 	sokubaku["set-car!"]=creater_t::creater().create_native_func(set_car);
 	sokubaku["set-cdr!"]=creater_t::creater().create_native_func(set_cdr);
 	sokubaku["null?"]=creater_t::creater().create_native_func(is_null);
+	sokubaku["pair?"]=creater_t::creater().create_native_func(is_pair);
 	sokubaku["list"]=creater_t::creater().create_native_func(list);
 	sokubaku["length"]=creater_t::creater().create_native_func(length);
 	sokubaku["iota"]=creater_t::creater().create_native_func(iota);
