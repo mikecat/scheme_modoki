@@ -90,6 +90,20 @@ p_data_t is_pair(const std::vector<p_data_t>& args,p_data_t&,p_data_t&) {
 	}
 }
 
+// 引数がリストかを判定する
+p_data_t is_list(const std::vector<p_data_t>& args,p_data_t&,p_data_t&) {
+	if(args.size()!=1) {
+		return creater_t::creater().create_argument_number_error(
+			"list?",1,args.size(),false);
+	} else {
+		p_data_t cur=args[0];
+		while(cur->get_type()==DT_CONS) {
+			cur=((cons_t*)&*cur)->cons_cdr;
+		}
+		return creater_t::creater().create_boolean(cur->get_type()==DT_NULL);
+	}
+}
+
 // 引数のリストを作成する
 p_data_t list(const std::vector<p_data_t>& args,p_data_t&,p_data_t&) {
 	p_data_t cur=creater_t::creater().create_null();
